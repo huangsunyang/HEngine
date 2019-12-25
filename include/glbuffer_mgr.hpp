@@ -3,7 +3,7 @@
 #include "sb7color.h"
 #include "shader_mgr.h"
 #include "shape_base.hpp"
-#include <fstream>
+#include "logger.hpp"
 
 #define VBO_NUM 2
 #define VBO_SIZE 1024 * 1024
@@ -15,7 +15,9 @@ public:
         glBindVertexArray(vao);
         glCreateBuffers(VBO_NUM, &vbo[0]);
         glNamedBufferStorage(vbo[0], VBO_SIZE, NULL, GL_DYNAMIC_STORAGE_BIT);
+        glNamedBufferStorage(vbo[1], VBO_SIZE, NULL, GL_DYNAMIC_STORAGE_BIT);
         glVertexArrayVertexBuffer(vao, 0, vbo[0], 0, sizeof(GLfloat) * 3);
+        glVertexArrayElementBuffer(vao, vbo[1]);
         glEnableVertexArrayAttrib(vao, 0);
         glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
         glVertexArrayAttribBinding(vao, 0, 0);
@@ -28,9 +30,12 @@ public:
 
     void draw(HShapeBase* shape) {
         if (!shape->is_visible()) return;
-        int triangle_num = shape->get_triangle_num();
-        glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * triangle_num, shape->get_points());
-        glDrawArrays(GL_TRIANGLES, 0, triangle_num);
+        int point_num = shape->get_point_num();
+        int triangle_num = point_num - 2;
+        int indice_num = point_num;
+        glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * point_num, shape->get_points());
+        glNamedBufferSubData(vbo[1], 0, sizeof(GLuint) * indice_num, shape->get_indices());
+        glDrawElements(GL_TRIANGLE_STRIP, indice_num, GL_UNSIGNED_INT, 0);
     }
 
     GLuint vao;

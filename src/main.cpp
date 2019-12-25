@@ -33,11 +33,12 @@ public:
     }
 
     void init_shape() {
-        triangle = HTriangle::from_vertex(
-            0.25f, 0.25f, 0.25f,
-            0.25f, -0.25f, 0.25f,
-            0.25f, 0.25f, 0.25f
-        );
+        shape = HPolygon<4>::from_vertex({
+            0, 0.25f, 0,
+            0, 0, 0.25f,
+            0, 0, -0.25f,
+            0, -0.25f, 0,
+        });
     }
 
     void bind_buffer() {
@@ -83,8 +84,8 @@ public:
                 (float)currentTime * 81.0f, 1.0f, 0.0f, 0.0f
             );
             glUniformMatrix4fv(0, 1, GL_FALSE, mv_matrix);
-            triangle->visible = sinf(f) > 0.5;
-            GLBufferMgr::get_instance()->draw(triangle);
+            shape->visible = sinf(f) > 0.5;
+            GLBufferMgr::get_instance()->draw(shape);
         }
     }
 
@@ -93,7 +94,7 @@ private:
     GLuint vao;
     float aspect;
     vmath::mat4 proj_matrix;
-    HTriangle * triangle;
+    HShapeBase * shape;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
