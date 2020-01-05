@@ -9,11 +9,14 @@ set include_path=%include_path% /I "C:/Program Files (x86)/Windows Kits/10/Inclu
 set include_path=%include_path% /I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/ucrt"
 set include_path=%include_path% /I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/winrt"
 set include_path=%include_path% /I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/cppwinrt"
+set include_path=%include_path% /I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/atlmfc/include"
+set include_path=%include_path% /I "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/include"
 
 set lib_path=
 set lib_path=%lib_path% /link
 set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/ucrt/x86"
 set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x86"
+set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/lib/x86"
 
 set output_path=/link /OUT:./engine.exe
 
@@ -37,6 +40,7 @@ set lib_files=%lib_files% odbccp32.lib
 set lib_files=%lib_files% msvcrtd.lib
 
 set src_files=./src/*.cpp ./src/sb7/*
+set cl_exe="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/bin/Hostx86/x86/cl.exe"
 
-cl %src_files% %include_path% %lib_path% %lib_files% %output_path%
+%cl_exe% %src_files% %include_path% %lib_path% %lib_files% %output_path%
 start ./engine.exe
