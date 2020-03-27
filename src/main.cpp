@@ -70,19 +70,30 @@ public:
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                float diff_x_scale = float(x - mouse_pos_x) / 10.0;
-                float diff_z_scale = float(y - mouse_pos_y) / 10.0;
-                vmath::vec3 lookat_dir = lookat_pos - eye_pos;
-                lookat_pos[0] += diff_x_scale, eye_pos[0] += diff_x_scale;
-                lookat_pos[2] += diff_z_scale, eye_pos[2] += diff_z_scale;
-                LOG(diff_x_scale);
-                LOG('\n');
-                LOG(diff_z_scale);
-                LOG('\n');
-                camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
+                diff_x_scale += float(x - mouse_pos_x) / -100.0;
+                diff_z_scale += float(y - mouse_pos_y) / 100.0;
             }
             mouse_pos_x = x, mouse_pos_y = y;
         }
+    }
+
+    void onMouseWheel(int pos) {
+        vmath::vec3 lookat_dir = normalize(lookat_pos - eye_pos);
+        eye_pos -= lookat_dir * pos * 0.1;
+    }
+
+    void tick_camera() {
+        vmath::vec3 lookat_dir = lookat_pos - eye_pos;
+        vmath::vec3 f = normalize(lookat_pos - eye_pos);
+        vmath::vec3 upN = vmath::vec3(0, 1, 0);
+        vmath::vec3 x = cross(f, upN);
+        vmath::vec3 y = cross(x, f);
+
+        vmath::vec3 diff = x * diff_x_scale + y * diff_z_scale;
+        diff_x_scale = diff_z_scale = 0;
+        lookat_pos += diff;
+        eye_pos += diff;
+        camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
     }
 
     void onResize(int w, int h) {
@@ -102,7 +113,7 @@ public:
     void render(double currentTime)
     {
         if (!gl3wIsSupported(4, 3)) return;
-
+        tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::White);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         shader_mgr->use_program();
@@ -133,6 +144,8 @@ private:
     int mouse_pos_y = -1;
     vmath::vec3 eye_pos = {1, 1, 0};
     vmath::vec3 lookat_pos = {0, 0, 0};
+    float diff_x_scale = 0;
+    float diff_z_scale = 0;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
