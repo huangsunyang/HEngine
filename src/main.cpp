@@ -7,6 +7,7 @@
 #include "shader_mgr.h"
 #include "shape2d.hpp"
 #include "glbuffer_mgr.hpp"
+#include "logger.hpp"
 
 
 // Derive my_application from sb7::application
@@ -26,18 +27,16 @@ public:
         */
         init_shape();
         bind_buffer();
-        aspect = (float)info.windowWidth / (float)info.windowHeight;
-        proj_matrix = vmath::perspective(
-            50.0f, aspect, 0.1f, 1000.0f
-        );
+        onResize(info.windowWidth, info.windowHeight);
+        camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
     }
 
     void init_shape() {
         shape = HPolygon<4>::from_vertex({
-            0, 0.25f, 0,
+            0.25f, 0, 0,
             0, 0, 0.25f,
             0, 0, -0.25f,
-            0, -0.25f, 0,
+            -0.25f, 0, 0,
         });
     }
 
@@ -47,6 +46,43 @@ public:
 
     void bind_texture() {
 
+    }
+
+    void onMouseButton(int button, int action) {
+        if (button == GLFW_MOUSE_BUTTON_1) {
+            if (action == GLFW_PRESS) {
+                left_mouse_down = true;
+            } else if (action == GLFW_RELEASE) {
+                left_mouse_down = false;
+            }
+        } else if (button == GLFW_MOUSE_BUTTON_3) {
+            if (action == GLFW_PRESS) {
+                middle_mouse_down = true;
+            } else if (action == GLFW_RELEASE) {
+                middle_mouse_down = false;
+                mouse_pos_x = mouse_pos_y = -1;
+            }
+        }
+    }
+
+    void onMouseMove(int x, int y) {
+        if (left_mouse_down) {
+        }
+        if (middle_mouse_down) {
+            if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
+                float diff_x_scale = float(x - mouse_pos_x) / 10.0;
+                float diff_z_scale = float(y - mouse_pos_y) / 10.0;
+                vmath::vec3 lookat_dir = lookat_pos - eye_pos;
+                lookat_pos[0] += diff_x_scale, eye_pos[0] += diff_x_scale;
+                lookat_pos[2] += diff_z_scale, eye_pos[2] += diff_z_scale;
+                LOG(diff_x_scale);
+                LOG('\n');
+                LOG(diff_z_scale);
+                LOG('\n');
+                camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
+            }
+            mouse_pos_x = x, mouse_pos_y = y;
+        }
     }
 
     void onResize(int w, int h) {
@@ -70,21 +106,16 @@ public:
         glClearBufferfv(GL_COLOR, 0, sb7::color::White);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         shader_mgr->use_program();
-        glUniformMatrix4fv(1, 1, GL_FALSE, proj_matrix);
+        glUniformMatrix4fv(2, 1, GL_FALSE, proj_matrix);
+        glUniformMatrix4fv(1, 1, GL_FALSE, camera_matrix);
         for (int i = 0; i < 24; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
-            vmath::mat4 mv_matrix = vmath::translate(0.0f, 0.0f, -4.0f)
-            * vmath::translate(
+            vmath::mat4 mv_matrix = vmath::translate(
                 sinf(2.1f * f) * 0.5f,
                 cosf(1.7f * f) * 0.5f,
                 sinf(1.3f * f) * cosf(1.5f * f) * 2.0f
-            ) * vmath::rotate(
-                (float)currentTime * 45.0f, 0.0f, 1.0f, 0.0f
-            ) * vmath::rotate(
-                (float)currentTime * 81.0f, 1.0f, 0.0f, 0.0f
             );
             glUniformMatrix4fv(0, 1, GL_FALSE, mv_matrix);
-            shape->visible = sinf(f) > 0.5;
             GLBufferMgr::get_instance()->draw(shape);
         }
     }
@@ -94,7 +125,14 @@ private:
     GLuint vao;
     float aspect;
     vmath::mat4 proj_matrix;
+    vmath::mat4 camera_matrix;
     HShapeBase * shape;
+    bool left_mouse_down = false;
+    bool middle_mouse_down = false;
+    int mouse_pos_x = -1;
+    int mouse_pos_y = -1;
+    vmath::vec3 eye_pos = {1, 1, 0};
+    vmath::vec3 lookat_pos = {0, 0, 0};
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

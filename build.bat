@@ -18,7 +18,7 @@ set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Windows Kits/10/Lib/10.
 set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x86"
 set lib_path=%lib_path% /LIBPATH:"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/lib/x86"
 
-set output_path=/link /OUT:./engine.exe
+set output_path=/OUT:./engine.exe
 
 set lib_files=
 set lib_files=%lib_files% ./lib/glfw3.lib

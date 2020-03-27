@@ -21,8 +21,6 @@ public:
         int i = 0;
         for(auto x = vec.begin(); x != vec.end(); ++x, ++i) {
             polygon->verteces[i] = *x;
-            LOG(*x);
-            LOG('\n');
         }
 
         for (int i = 0; i < N; i++) {
@@ -47,4 +45,5 @@ public:
 
 
 typedef HPolygon<3> HTriangle;
+
 #endif
