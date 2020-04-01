@@ -32,12 +32,7 @@ public:
     }
 
     void init_shape() {
-        shape = HPolygon<4>::from_vertex({
-            0.25f, 0, 0,
-            0, 0, 0.25f,
-            0, 0, -0.25f,
-            -0.25f, 0, 0,
-        });
+        shape = new ObjLoader("suzanne.obj");
     }
 
     void bind_buffer() {
@@ -119,7 +114,7 @@ public:
         shader_mgr->use_program();
         glUniformMatrix4fv(2, 1, GL_FALSE, proj_matrix);
         glUniformMatrix4fv(1, 1, GL_FALSE, camera_matrix);
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 1; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
             vmath::mat4 mv_matrix = vmath::translate(
                 sinf(2.1f * f) * 0.5f,
@@ -137,7 +132,7 @@ private:
     float aspect;
     vmath::mat4 proj_matrix;
     vmath::mat4 camera_matrix;
-    HShapeBase * shape;
+    ObjLoader * shape;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
     int mouse_pos_x = -1;

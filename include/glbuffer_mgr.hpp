@@ -4,6 +4,8 @@
 #include "shader_mgr.h"
 #include "shape_base.hpp"
 #include "logger.hpp"
+#include "ObjLoader.hpp"
+
 
 #define VBO_NUM 2
 #define VBO_SIZE 1024 * 1024
@@ -31,11 +33,18 @@ public:
     void draw(HShapeBase* shape) {
         if (!shape->is_visible()) return;
         int point_num = shape->get_point_num();
-        int triangle_num = point_num - 2;
         int indice_num = point_num;
         glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * point_num, shape->get_points());
         glNamedBufferSubData(vbo[1], 0, sizeof(GLuint) * indice_num, shape->get_indices());
         glDrawElements(GL_TRIANGLE_STRIP, indice_num, GL_UNSIGNED_INT, 0);
+    }
+
+    void draw(ObjLoader* loader) {
+        int point_num = loader->get_vertex_num();
+        int indice_num = loader->get_index_num();
+        glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * point_num, loader->get_points());
+        glNamedBufferSubData(vbo[1], 0, sizeof(GLuint) * indice_num, loader->get_indices());
+        glDrawElements(GL_TRIANGLES, indice_num, GL_UNSIGNED_INT, 0);
     }
 
     GLuint vao;
