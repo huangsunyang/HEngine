@@ -11,6 +11,7 @@ public:
     void link_program();
     void delete_program();
     void use_program();
+    GLuint get_location(const char *);
 
 protected:
     GLuint program;

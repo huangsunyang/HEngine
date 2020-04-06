@@ -29,6 +29,8 @@ public:
         bind_buffer();
         onResize(info.windowWidth, info.windowHeight);
         camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
     }
 
     void init_shape() {
@@ -109,19 +111,22 @@ public:
     {
         if (!gl3wIsSupported(4, 3)) return;
         tick_camera();
-        glClearBufferfv(GL_COLOR, 0, sb7::color::White);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         shader_mgr->use_program();
-        glUniformMatrix4fv(2, 1, GL_FALSE, proj_matrix);
-        glUniformMatrix4fv(1, 1, GL_FALSE, camera_matrix);
+        // glUniformMatrix4fv(2, 1, GL_FALSE, proj_matrix);
+        // glUniformMatrix4fv(1, 1, GL_FALSE, camera_matrix);
         for (int i = 0; i < 1; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
-            vmath::mat4 mv_matrix = vmath::translate(
-                sinf(2.1f * f) * 0.5f,
-                cosf(1.7f * f) * 0.5f,
-                sinf(1.3f * f) * cosf(1.5f * f) * 2.0f
+            vmath::mat4 mv_matrix = vmath::rotate(
+                sinf(2.1f * f) * 0,
+                cosf(1.7f * f) * 0,
+                sinf(1.3f * f) * cosf(1.5f * f) * 200.0f
             );
-            glUniformMatrix4fv(0, 1, GL_FALSE, mv_matrix);
+            vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * mv_matrix;
+            vmath::mat4 mvp_matrix_transpose = mv_matrix.transpose();
+            glUniformMatrix4fv(shader_mgr->get_location("mvp_matrix"), 1, GL_FALSE, mvp_matrix);
+            glUniformMatrix4fv(shader_mgr->get_location("mvp_matrix_transpose"), 1, GL_FALSE, mv_matrix);
             GLBufferMgr::get_instance()->draw(shape);
         }
     }

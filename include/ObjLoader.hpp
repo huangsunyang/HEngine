@@ -23,6 +23,7 @@ public:
     int get_surface_num() {return vertex_index.size() / 3;}
     float * get_points() {return &vertex[0];}
     int * get_indices() {return &vertex_index[0];}
+    float * get_vertex_and_normal() {return &vertex_and_normal[0];}
 
 protected:
     void parse();
@@ -38,6 +39,7 @@ protected:
     fstream f;
     vector<float> vertex;
     vector<float> normal;
+    vector<float> vertex_and_normal;
     vector<int> vertex_index;
     vector<int> normal_index;
 };

@@ -1,6 +1,7 @@
 #include "shader_mgr.h"
 #include <string>
 #include <fstream>
+#include "logger.hpp"
 
 
 ShaderMgr::ShaderMgr()
@@ -35,6 +36,13 @@ void ShaderMgr::use_program() {
 
 void ShaderMgr::delete_program() {
     glDeleteProgram(program);
+}
+
+GLuint ShaderMgr::get_location(const char * name) {
+    GLuint ret = glGetUniformLocation(program, name);
+    LOG(name);
+    LOG(ret);
+    return ret;
 }
 
 ShaderMgr::~ShaderMgr()

@@ -3,8 +3,8 @@
 
 #include <fstream>
 
-// #define LOG(str) Logger::get_instance()->log(str)
-#define LOG(str) 
+#define LOG(str) Logger::get_instance()->log(str)
+// #define LOG(str) 
 using std::fstream;
 
 class Logger {

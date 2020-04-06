@@ -67,6 +67,17 @@ void ObjLoader::parse_surface_line(string line) {
             vertex_index.push_back(vi - 1);
             normal_index.push_back(ni - 1);
         }
+
+        int cur_size = vertex_index.size();
+        for (int i = 3; i > 0; i--) {
+            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 0]);
+            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 1]);
+            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 2]);
+            
+            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 0]);
+            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 1]);
+            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 2]);
+        }
     }
 }
 

@@ -8,21 +8,29 @@
 
 
 #define VBO_NUM 2
-#define VBO_SIZE 1024 * 1024
+#define VBO_SIZE 1024 * 1024 * 1024
+
 
 class GLBufferMgr {
 public:
     GLBufferMgr() {
-        glGenVertexArrays(1, &vao);
+        glCreateVertexArrays(1, &vao);
         glBindVertexArray(vao);
         glCreateBuffers(VBO_NUM, &vbo[0]);
         glNamedBufferStorage(vbo[0], VBO_SIZE, NULL, GL_DYNAMIC_STORAGE_BIT);
+        
+        glVertexArrayAttribBinding(vao, 0, 0); // attribute index/binding index
+        glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);    // attribute index/size/relative offset
+        glEnableVertexArrayAttrib(vao, 0);  //attribute index
+        
+        glVertexArrayAttribBinding(vao, 1, 0);
+        glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3);
+        glEnableVertexArrayAttrib(vao, 1);
+
         glNamedBufferStorage(vbo[1], VBO_SIZE, NULL, GL_DYNAMIC_STORAGE_BIT);
-        glVertexArrayVertexBuffer(vao, 0, vbo[0], 0, sizeof(GLfloat) * 3);
         glVertexArrayElementBuffer(vao, vbo[1]);
-        glEnableVertexArrayAttrib(vao, 0);
-        glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
-        glVertexArrayAttribBinding(vao, 0, 0);
+        
+        glVertexArrayVertexBuffer(vao, 0, vbo[0], 0, sizeof(GLfloat) * 6); // binding index/offset/stride
     }
 
     static GLBufferMgr * get_instance() {
@@ -40,11 +48,15 @@ public:
     }
 
     void draw(ObjLoader* loader) {
-        int point_num = loader->get_vertex_num();
-        int indice_num = loader->get_index_num();
-        glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * point_num, loader->get_points());
-        glNamedBufferSubData(vbo[1], 0, sizeof(GLuint) * indice_num, loader->get_indices());
-        glDrawElements(GL_TRIANGLES, indice_num, GL_UNSIGNED_INT, 0);
+        int surface_num = loader->get_surface_num();
+        glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 18 * surface_num, loader->get_vertex_and_normal());
+        glDrawArrays(GL_TRIANGLES, 0, surface_num * 3);
+
+        // int point_num = loader->get_vertex_num();
+        // int indice_num = loader->get_index_num();
+        // glNamedBufferSubData(vbo[0], 0, sizeof(GLfloat) * 3 * point_num, loader->get_points());
+        // glNamedBufferSubData(vbo[1], 0, sizeof(GLuint) * indice_num, loader->get_indices());
+        // glDrawElements(GL_TRIANGLES, indice_num, GL_UNSIGNED_INT, 0);
     }
 
     GLuint vao;
