@@ -16,6 +16,7 @@ class my_application : public sb7::application
 public:
     void startup()
     {
+        AllocConsole();
         shader_mgr = new ShaderMgr;
         shader_mgr->bind_shader(GL_VERTEX_SHADER, "./shader/vertex");
         shader_mgr->bind_shader(GL_FRAGMENT_SHADER, "./shader/fragment");
@@ -109,6 +110,13 @@ public:
     // Our rendering function
     void render(double currentTime)
     {
+        HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); 
+        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+        DWORD cWritten;
+        char string[500];
+        snprintf(string, sizeof(string), "%lf\n", currentTime);
+        WriteFile(hStdout, string, strlen(string), &cWritten, NULL);
+        flushall();
         if (!gl3wIsSupported(4, 3)) return;
         tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
