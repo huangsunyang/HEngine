@@ -40,8 +40,6 @@ void ShaderMgr::delete_program() {
 
 GLuint ShaderMgr::get_location(const char * name) {
     GLuint ret = glGetUniformLocation(program, name);
-    LOG(name);
-    LOG(ret);
     return ret;
 }
 
