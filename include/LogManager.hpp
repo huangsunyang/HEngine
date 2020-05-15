@@ -9,12 +9,19 @@ class ILogger;
 using std::map;
 using std::string;
 
-#define DEBUG(str, ...) LogManager::log(LogLevel::DEBUG, (str), __VA_ARGS__)
-#define INFO(str, ...) LogManager::log(LogLevel::INFO, (str), __VA_ARGS__)
-#define WARNING(str, ...) LogManager::log(LogLevel::WARNING, (str), __VA_ARGS__)
-#define ERROR(str, ...) LogManager::log(LogLevel::ERROR, (str), __VA_ARGS__)
+#ifdef ERROR
+#undef ERROR    // conflict with other macro
+#endif
 
-enum LogLevel {
+#define DEBUG(str, ...) LOG::LogManager::log(LOG::LogLevel::DEBUG, (str), __VA_ARGS__)
+#define INFO(str, ...) LOG::LogManager::log(LOG::LogLevel::INFO, (str), __VA_ARGS__)
+#define WARNING(str, ...) LOG::LogManager::log(LOG::LogLevel::WARNING, (str), __VA_ARGS__)
+#define ERRORS(str, ...) LOG::LogManager::log(LOG::LogLevel::ERROR, (str), __VA_ARGS__)
+
+
+namespace LOG {
+
+enum class LogLevel: unsigned int {
     DEBUG,
     INFO,
     WARNING,
@@ -30,7 +37,7 @@ enum LogLevel {
 class LogManager {
     public:
         static void init();
-        static void log(int level, char * format, ...);
+        static void log(LogLevel level, char * format, ...);
         static void registerLogger(ILogger * log);
         static void unregisterLogger(ILogger * log);
         static void unregisterLogger(string log_name);
@@ -40,5 +47,6 @@ class LogManager {
         static map<string, ILogger *> m_loggers;
 };
 
+}
 
 #endif // __LOG_MANAGER__

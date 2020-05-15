@@ -2,14 +2,17 @@
 #include "Logger.hpp"
 #include <cstdarg>
 
+
+namespace LOG {
+
 map<string, ILogger *> LogManager::m_loggers = map<string, ILogger *>();
 
 void LogManager::init() {
     LogManager::registerLogger(new ConsoleLogger);
-    LogManager::registerLogger(new FileLogger("log.txt"));
+    LogManager::registerLogger(new FileLogger("log/log.txt"));
 }
 
-void LogManager::log(int level, char * format, ...) {
+void LogManager::log(LogLevel level, char * format, ...) {
     va_list args, args1;
     va_start(args, format);
     va_copy(args1, args);
@@ -41,4 +44,6 @@ void LogManager::showAllLogger() {
     for (auto iter: LogManager::m_loggers) {
         LogManager::log(LogLevel::INFO, "%s\n", iter.first.c_str());
     }
+}
+
 }

@@ -41,6 +41,7 @@ set lib_files=%lib_files% msvcrtd.lib
 
 set src_files=./src/*.cpp ./src/sb7/* ./src/model_loader/*
 set cl_exe="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/bin/Hostx86/x86/cl.exe"
+set cl_exe=%cl_exe% /EHsc
 
 %cl_exe% %src_files% %include_path% %lib_path% %lib_files% %output_path%
 start ./engine.exe

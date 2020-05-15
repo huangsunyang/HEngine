@@ -2,8 +2,9 @@
 #define __LOGGER__
 
 #include <cstdio>
-#include "LogManager.hpp"
 #include <Windows.h>
+#include <typeinfo>
+#include "LogManager.hpp"
 
 
 class ILogger {

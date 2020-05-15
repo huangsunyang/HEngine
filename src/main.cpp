@@ -19,8 +19,8 @@ public:
     void startup()
     {
         // redirect unbuffered STDOUT to the console
-        LogManager::init();
-        LogManager::showAllLogger();
+        LOG::LogManager::init();
+        LOG::LogManager::showAllLogger();
 
         shader_mgr = new ShaderMgr;
         shader_mgr->bind_shader(GL_VERTEX_SHADER, "./shader/vertex");
