@@ -3,6 +3,7 @@
         "*.py": "python",
         "vector": "cpp",
         "xstring": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "bitset": "cpp"
     }
 }

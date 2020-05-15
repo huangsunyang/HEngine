@@ -11,6 +11,7 @@
 #include "glbuffer_mgr.hpp"
 #include "LogManager.hpp"
 
+void test_binding_python();
 
 // Derive my_application from sb7::application
 class my_application : public sb7::application
@@ -21,6 +22,7 @@ public:
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
+        test_binding_python();
 
         shader_mgr = new ShaderMgr;
         shader_mgr->bind_shader(GL_VERTEX_SHADER, "./shader/vertex");
