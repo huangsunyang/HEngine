@@ -10,8 +10,8 @@
 #include "shape2d.hpp"
 #include "glbuffer_mgr.hpp"
 #include "LogManager.hpp"
+#include <pybind11/embed.h>
 
-void test_binding_python();
 
 // Derive my_application from sb7::application
 class my_application : public sb7::application
@@ -22,7 +22,6 @@ public:
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
-        test_binding_python();
 
         shader_mgr = new ShaderMgr;
         shader_mgr->bind_shader(GL_VERTEX_SHADER, "./shader/vertex");
@@ -114,11 +113,18 @@ public:
         shader_mgr->delete_program();
     }
 
+    virtual void run(application * app) {
+        pybind11::scoped_interpreter guard{};
+        pybind11::module::import("sys").attr("path").cast<pybind11::list>().append("./script");
+        this->application::run(this);
+    }
+
     // Our rendering function
     void render(double currentTime)
     {
-        INFO("%lf\n", currentTime);
         if (!gl3wIsSupported(4, 3)) return;
+        auto python_module = pybind11::module::import("python");
+        python_module.attr("logic")(currentTime);
         tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);

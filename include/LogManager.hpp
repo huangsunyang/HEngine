@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <Python.h>
 
 class ILogger;
 
@@ -46,6 +47,17 @@ class LogManager {
     protected:
         static map<string, ILogger *> m_loggers;
 };
+
+
+/* python LogManager wrapper，which redirect python print to
+ * LogManager::log
+ */
+struct PyLogManager
+{
+    PyObject_HEAD
+};
+
+extern PyTypeObject PyLogManagerType;
 
 }
 

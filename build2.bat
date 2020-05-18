@@ -1,9 +1,10 @@
 rem del *.obj
 del *.exe
+del *.ilk
+del *.pdb
 
 set include_path=
 set include_path=%include_path% /I "./include/"
-REM set include_path=%include_path% /I "./include/python"
 set include_path=%include_path% /I "./include/sb7"
 set include_path=%include_path% /I "D:/Python27_x86/include"
 set include_path=%include_path% /I "C:/Program Files (x86)/Windows Kits/10/Include/10.0.17763.0/um"
