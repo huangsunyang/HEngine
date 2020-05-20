@@ -14,10 +14,10 @@ void LogManager::init() {
 		return;
 	}
 	PyLogManager *logoutput = PyObject_NEW_VAR(PyLogManager, &PyLogManagerType, 0);
-
 	PySys_SetObject((char*)"stdout", (PyObject*)logoutput);
 	PySys_SetObject((char*)"stderr", (PyObject*)logoutput);
 	Py_DECREF(logoutput);
+	
     LogManager::registerLogger(new ConsoleLogger);
     LogManager::registerLogger(new FileLogger("log/log.txt"));
 }
