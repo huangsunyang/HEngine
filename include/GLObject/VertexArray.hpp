@@ -2,15 +2,25 @@
 #define __VERTEX_ARRAY_HPP__
 
 #include <GL/gl3w.h>
+#include <GLObject/VertexBuffer.hpp>
 
 class VertexArray {
 public:
     VertexArray();
     void activate();
-    void bindAttribute();
+
+    void setVertexBuffer(GLuint bindingIndex, VertexBuffer * vbo, GLuint stride);
+    void setVertexBuffer(GLuint bindingIndex, VertexBuffer * vbo, GLuint offset, GLuint stride);
+    void setVertexAttrib(GLuint attribIndex, GLuint size, GLuint type, GLuint relativeOffset);
+    void bindVertexAttrib(GLuint attribIndex, GLuint bindingIndex);
+    
+    void enableAttrib(GLuint attribIndex);
+    void disableAttrib(GLuint attribIndex);
+
+    void setElementBuffer(VertexBuffer * vbo);
 
 protected:
-    GLuint vao;
+    GLuint m_vao;
 };
 
 
