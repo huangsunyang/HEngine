@@ -50,21 +50,21 @@ void VertexBuffer::subData(GLintptr offset, GLsizeiptr size, const void * data) 
     glNamedBufferSubData(m_vbo, offset, size, data);
 }
 
-void * VertexBuffer::getData(GLbitfield access) {
+void * VertexBuffer::mapData(GLbitfield access) {
     // glMapNamedBuffer(m_vbo, usage); we prefer glmapnamedbufferrange
     // access could be one of following, same as bit when call alloc
     // GL_MAP_READ_BIT
     // GL_MAP_WRITE_BIT
     // GL_MAP_COHERENT_BIT
     // GL_MAP_PERSISTENT_BIT
-    return getData(0, m_size, access);
+    return mapData(0, m_size, access);
 }
 
-void * VertexBuffer::getData(GLintptr offset, GLsizei size, GLbitfield access) {
+void * VertexBuffer::mapData(GLintptr offset, GLsizei size, GLbitfield access) {
     return glMapNamedBufferRange(m_vbo, offset, size, access);
 }
 
-void VertexBuffer::retData() {
+void VertexBuffer::unmapData() {
     glUnmapNamedBuffer(m_vbo);
 }
 

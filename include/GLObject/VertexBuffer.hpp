@@ -16,9 +16,9 @@ public:
     void subData(GLsizeiptr size, const void * data);
     void subData(GLintptr offset, GLsizeiptr size, const void * data);
     
-    void * getData(GLbitfield access);
-    void * getData(GLintptr offset, GLsizei size, GLbitfield access);
-    void retData();
+    void * mapData(GLbitfield access);
+    void * mapData(GLintptr offset, GLsizei size, GLbitfield access);
+    void unmapData();
     void copyDataFrom(VertexBuffer & vb, GLintptr read_offset, GLintptr write_offset, GLsizeiptr size);
     void copyDataFrom(GLuint vbo, GLintptr read_offset, GLintptr write_offset, GLsizeiptr size);
 

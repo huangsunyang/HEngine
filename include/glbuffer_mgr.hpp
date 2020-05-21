@@ -1,11 +1,11 @@
 #include <math.h>
 #include "sb7.h"
 #include "sb7color.h"
-#include "shader_mgr.h"
 #include "shape_base.hpp"
 #include "logger.hpp"
 #include "ObjLoader.hpp"
 #include "GLObject/VertexArray.hpp"
+#include "GLObject/Program.hpp"
 
 
 #define VBO_NUM 2
