@@ -31,11 +31,11 @@ public:
 
         texture = new Texture;
         texture->bindTexture();
-        texture->loadImage(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, "Package/res/Wall.jpg");
+        texture->loadImage("Package/res/Wall.jpg");
 
         texture1 = new Texture;
         texture1->bindTexture(1);
-        texture1->loadImage(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, "Package/res/awesomeface.png");
+        texture1->loadImage("Package/res/awesomeface.png");
         /*
         shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
         shader_mgr.bind_shader(GL_TESS_EVALUATION_SHADER, "tess_evaluation_shader");

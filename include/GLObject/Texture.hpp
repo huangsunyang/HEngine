@@ -13,7 +13,7 @@ public:
     void subImage2D(GLint level, GLint xOffset, GLint yOffset, GLsizei width, GLsizei height,
         GLenum format, GLenum type, const void * pixels);
     void loadKTX(const char * name);
-    void loadImage(GLenum internalFormat, GLenum format, GLenum type, const char *name);
+    void loadImage(const char *name);
 protected:
     GLuint m_texture;
     GLsizei m_width;
