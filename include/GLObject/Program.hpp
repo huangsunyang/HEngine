@@ -17,7 +17,7 @@ public:
     void bindShader(GLenum shader_type, const char * file_name);
     void linkProgram();
     void deleteProgram();
-    void activate();
+    void useProgram();
 
     GLuint getLocation(const char * name);
     // vector<int> getLocations(GLsizei count, const char ** names, GLuint * indices);

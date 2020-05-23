@@ -31,7 +31,7 @@ void Program::linkProgram() {
     glLinkProgram(m_program);
 }
 
-void Program::activate() {
+void Program::useProgram() {
     glUseProgram(m_program);
 }
 

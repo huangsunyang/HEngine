@@ -38,6 +38,10 @@ void VertexBuffer::realloc(GLsizeiptr size, GLbitfield flags) {
     alloc(size, flags);
 }
 
+void VertexBuffer::realloc(GLsizeiptr size) {
+    realloc(size, m_flags);
+}
+
 void VertexBuffer::subData(const void * data) {
     subData(0, m_size, data);
 }

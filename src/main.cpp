@@ -11,6 +11,7 @@
 #include "LogManager.hpp"
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
+#include "GLObject/Texture.hpp"
 
 
 // Derive my_application from sb7::application
@@ -24,9 +25,17 @@ public:
         LOG::LogManager::showAllLogger();
 
         program = new Program;
-        program->bindShader(GL_VERTEX_SHADER, "./shader/vertex");
-        program->bindShader(GL_FRAGMENT_SHADER, "./shader/fragment");
+        program->bindShader(GL_VERTEX_SHADER, "./shader/common.vs");
+        program->bindShader(GL_FRAGMENT_SHADER, "./shader/common.fs");
         program->linkProgram();
+
+        texture = new Texture;
+        texture->bindTexture();
+        texture->loadImage(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, "Package/res/Wall.jpg");
+
+        texture1 = new Texture;
+        texture1->bindTexture(1);
+        texture1->loadImage(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, "Package/res/awesomeface.png");
         /*
         shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
         shader_mgr.bind_shader(GL_TESS_EVALUATION_SHADER, "tess_evaluation_shader");
@@ -42,6 +51,8 @@ public:
 
     void init_shape() {
         shape = new ObjLoader("suzanne.obj");
+        triangle = HTriangle::from_vertex({-1, -1, 0, 1, -1, 0, -1, 1, 0});
+        triangle->setTexcoord({0, 0, 1, 0, 0, 1});
     }
 
     void bind_buffer() {
@@ -161,9 +172,7 @@ public:
         tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        program->activate();
-        // glUniformMatrix4fv(2, 1, GL_FALSE, proj_matrix);
-        // glUniformMatrix4fv(1, 1, GL_FALSE, camera_matrix);
+        program->useProgram();
         for (int i = 0; i < 1; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
             vmath::mat4 m_matrix = vmath::rotate(
@@ -175,7 +184,9 @@ public:
             vmath::mat4 m_matrix_t = m_matrix.transpose();
             glUniformMatrix4fv(program->getLocation("mvp_matrix"), 1, GL_FALSE, mvp_matrix);
             glUniformMatrix4fv(program->getLocation("m_matrix_it"), 1, GL_FALSE, m_matrix);
-            GLBufferMgr::get_instance()->draw(shape);
+            glUniform1i(program->getLocation("s"), 0);
+            glUniform1i(program->getLocation("s1"), 1);
+            GLBufferMgr::get_instance()->draw(triangle);
         }
     }
 
@@ -186,6 +197,9 @@ private:
     vmath::mat4 proj_matrix;
     vmath::mat4 camera_matrix;
     ObjLoader * shape;
+    HTriangle * triangle;
+    Texture * texture;
+    Texture * texture1;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
     bool m_isFullScreen = false;

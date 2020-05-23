@@ -13,6 +13,7 @@ class HPolygon: public HShapeBase {
 public:
     vmath::vec3 vertex[N];
     GLfloat verteces[3 * N];
+    GLfloat texcoord[2 * N];
     GLuint indices[N];
 
     static HPolygon<N>* from_vertex(initializer_list<float> vec) {
@@ -28,6 +29,17 @@ public:
         }
 
         return polygon;
+    }
+
+    virtual void setTexcoord(initializer_list<float> vec) {
+        int i = 0;
+        for(auto x = vec.begin(); x != vec.end(); ++x, ++i) {
+            texcoord[i] = *x;
+        }
+    }
+
+    virtual GLfloat * getTexcoord() {
+        return texcoord;
     }
 
     virtual GLfloat * get_points() {

@@ -4,7 +4,7 @@ VertexArray::VertexArray() {
     glGenVertexArrays(1, &m_vao);
 }
 
-void VertexArray::activate() {
+void VertexArray::bindVertexArray() {
     glBindVertexArray(m_vao);
 }
 

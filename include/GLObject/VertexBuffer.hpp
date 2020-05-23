@@ -10,6 +10,7 @@ public:
     void bindTarget(GLenum target);
 
     void alloc(GLsizeiptr size, GLbitfield flags);
+    void realloc(GLsizeiptr size);
     void realloc(GLsizeiptr size, GLbitfield flags);
     
     void subData(const void * data);
@@ -24,6 +25,7 @@ public:
 
     GLuint getHandle() {return m_vbo;}
     GLuint getSize() {return m_size;}
+    GLuint isAlloc() {return m_size > 0;}
 protected:
     GLuint m_vbo;
     GLsizeiptr m_size;

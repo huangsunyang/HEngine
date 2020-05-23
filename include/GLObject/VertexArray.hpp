@@ -7,7 +7,7 @@
 class VertexArray {
 public:
     VertexArray();
-    void activate();
+    void bindVertexArray();
 
     void setVertexBuffer(GLuint bindingIndex, VertexBuffer * vbo, GLuint stride);
     void setVertexBuffer(GLuint bindingIndex, VertexBuffer * vbo, GLuint offset, GLuint stride);
