@@ -182,10 +182,10 @@ public:
             );
             vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             vmath::mat4 m_matrix_t = m_matrix.transpose();
-            glUniformMatrix4fv(program->getLocation("mvp_matrix"), 1, GL_FALSE, mvp_matrix);
-            glUniformMatrix4fv(program->getLocation("m_matrix_it"), 1, GL_FALSE, m_matrix);
-            glUniform1i(program->getLocation("s"), 0);
-            glUniform1i(program->getLocation("s1"), 1);
+            program->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
+            program->setMatrix4fvUniform("m_matrix_it", m_matrix);
+            program->setIntUniform("s", 0);
+            program->setIntUniform("s1", 1);
             GLBufferMgr::get_instance()->draw(triangle);
         }
     }

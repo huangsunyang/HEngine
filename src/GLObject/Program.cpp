@@ -48,8 +48,19 @@ GLuint Program::getLocation(const char * name) {
     // glGetUniformIndices(m_program, count, names, indices);
 // }
 
-void Program::setUniform(GLuint location, GLfloat value) {
+void Program::setIntUniform(const char * name, GLint value) {
+    GLuint location = getLocation(name);
+    glUniform1i(location, value);
+}
+
+void Program::setFloatUniform(const char * name, GLfloat value) {
+    GLuint location = getLocation(name);
     glUniform1f(location, value);
+}
+
+void Program::setMatrix4fvUniform(const char * name, GLfloat * value) {
+    GLuint location = getLocation(name);
+    glUniformMatrix4fv(location, 1, false, value);
 }
 
 GLuint Program::getUniformBlockIndex(const GLchar * uniformBlockName) {

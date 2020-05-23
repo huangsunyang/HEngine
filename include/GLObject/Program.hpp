@@ -21,7 +21,9 @@ public:
 
     GLuint getLocation(const char * name);
     // vector<int> getLocations(GLsizei count, const char ** names, GLuint * indices);
-    void setUniform(GLuint location, GLfloat value);
+    void setIntUniform(const char * name, GLint value);
+    void setFloatUniform(const char * name, GLfloat value);
+    void setMatrix4fvUniform(const char * name, GLfloat * value);
 
     GLuint getUniformBlockIndex(const GLchar * uniformBlockName);
     void bindUniformBlock(const GLchar * uniformBlockName, GLuint bindingIndex);
