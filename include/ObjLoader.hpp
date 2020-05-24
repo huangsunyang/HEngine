@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "GLObject/iMesh.hpp"
 
 using std::string;
 using std::fstream;
@@ -15,14 +16,13 @@ using std::stringstream;
 using std::vector;
 
 
-class ObjLoader {
+class ObjLoader: public iMesh {
 public:
-    ObjLoader(const char * filename);
-    int get_vertex_num() {return vertex.size() / 3;}
-    int get_index_num() {return vertex_index.size();}
-    int get_surface_num() {return vertex_index.size() / 3;}
-    float * get_points() {return &vertex[0];}
-    int * get_indices() {return &vertex_index[0];}
+    ObjLoader(const string& filename);
+    virtual size_t getPointNum() {return vertex.size() / 3;}
+    virtual size_t getIndiceNum() {return vertex_index.size();}
+    virtual GLfloat * getPoints() {return &vertex[0];}
+    virtual GLuint * getIndices() {return &vertex_index[0];}
     float * get_vertex_and_normal() {return &vertex_and_normal[0];}
 
 protected:
@@ -37,11 +37,11 @@ private:
 protected:
     string filename;
     fstream f;
-    vector<float> vertex;
-    vector<float> normal;
-    vector<float> vertex_and_normal;
-    vector<int> vertex_index;
-    vector<int> normal_index;
+    vector<GLfloat> vertex;
+    vector<GLfloat> normal;
+    vector<GLfloat> vertex_and_normal;
+    vector<GLuint> vertex_index;
+    vector<GLuint> normal_index;
 };
 
 #endif

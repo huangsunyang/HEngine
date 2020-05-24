@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "logger.hpp"
+#include "utils/FileUtils.hpp"
 
 using namespace std;
 
@@ -10,6 +11,16 @@ Program::Program()
     m_program = glCreateProgram();
 }
 
+void Program::bindShader(string shader_path) {
+    string file_format_str = Utils::file_format(shader_path);
+    GLenum shader_format;
+    if (file_format_str == ".vs") {
+        shader_format = GL_VERTEX_SHADER;
+    } else if (file_format_str == ".fs") {
+        shader_format = GL_FRAGMENT_SHADER;
+    }
+    bindShader(shader_format, shader_path.c_str());
+}
 
 void Program::bindShader(GLenum shader_type, const char * file_name) {
     std::ifstream t(file_name);
@@ -50,16 +61,19 @@ GLuint Program::getLocation(const char * name) {
 
 void Program::setIntUniform(const char * name, GLint value) {
     GLuint location = getLocation(name);
+    useProgram();
     glUniform1i(location, value);
 }
 
 void Program::setFloatUniform(const char * name, GLfloat value) {
     GLuint location = getLocation(name);
+    useProgram();
     glUniform1f(location, value);
 }
 
 void Program::setMatrix4fvUniform(const char * name, GLfloat * value) {
     GLuint location = getLocation(name);
+    useProgram();
     glUniformMatrix4fv(location, 1, false, value);
 }
 

@@ -27,6 +27,11 @@ void VertexBuffer::alloc(GLsizeiptr size, GLbitfield flags) {
     glNamedBufferStorage(m_vbo, size, NULL, flags);
 }
 
+void VertexBuffer::alloc(GLsizeiptr size, GLbitfield flags, const void * data) {
+    alloc(size, flags);
+    subData(0, size, data);
+}
+
 void VertexBuffer::realloc(GLsizeiptr size, GLbitfield flags) {
     /* if you want to changs size of flags of a buffer
      * no way, you could only delete it and alloc a new one

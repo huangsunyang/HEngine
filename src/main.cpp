@@ -19,15 +19,22 @@ class my_application : public sb7::application
 {
 public:
     void startup()
-    {
+    {   
+        left_mouse_down = false;
+        middle_mouse_down = false;
+        m_isFullScreen = false;
+        mouse_pos_x = -1;
+        mouse_pos_y = -1;
+        eye_pos = {1, 1, 0};
+        lookat_pos = {0, 0, 0};
+        diff_x_scale = 0;
+        diff_z_scale = 0;
+        x_rotate = 0;
+        y_rotate = 0;
+
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
-
-        program = new Program;
-        program->bindShader(GL_VERTEX_SHADER, "./shader/common.vs");
-        program->bindShader(GL_FRAGMENT_SHADER, "./shader/common.fs");
-        program->linkProgram();
 
         texture = new Texture;
         texture->bindTexture();
@@ -50,9 +57,26 @@ public:
     }
 
     void init_shape() {
-        shape = new ObjLoader("suzanne.obj");
-        triangle = HTriangle::from_vertex({-1, -1, 0, 1, -1, 0, -1, 1, 0});
-        triangle->setTexcoord({0, 0, 1, 0, 0, 1});
+        // shape = new ObjLoader("suzanne.obj");
+        triangle = new DrawCommand();
+        triangle->setShader({"shader/common.vs", "shader/common.fs"});
+        triangle->loadGeometry({-1, 0, -1, 1, -1, 0, -1, 1, 0});
+        // triangle->setTexcoord({0, 0, 1, 0, 0, 1});
+        // lines = HPolygon::from_vertex({
+        //     10., .0, .0, 
+        //     .0, .0, .0, 
+        //     .0, .0, 10.0,
+        //     .0, .0, .0,
+        //     .0, 10.0, 0.,
+        //     .0, .0, .0
+        // });
+        // for (int i = 0; i < 18; i++) {
+        //     INFO("%f ", lines->verteces[i]);
+        //     if (i % 3 == 2) {
+        //         INFO("\n");
+        //     }
+        // }
+        // lines->setTexcoord({0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1});
     }
 
     void bind_buffer() {
@@ -82,14 +106,18 @@ public:
 
     void onMouseMove(int x, int y) {
         if (left_mouse_down) {
+            if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
+                x_rotate += float(x - mouse_pos_x); 
+                y_rotate += float(y - mouse_pos_y);
+            }
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
                 diff_x_scale += float(x - mouse_pos_x) / -100.0;
                 diff_z_scale += float(y - mouse_pos_y) / 100.0;
             }
-            mouse_pos_x = x, mouse_pos_y = y;
         }
+        mouse_pos_x = x, mouse_pos_y = y;
     }
 
     void onKey(int key, int action) {
@@ -104,16 +132,26 @@ public:
     }
 
     void tick_camera() {
-        vmath::vec3 lookat_dir = lookat_pos - eye_pos;
-        vmath::vec3 f = normalize(lookat_pos - eye_pos);
+        vmath::vec3 lookat_dir = normalize(lookat_pos - eye_pos);
         vmath::vec3 upN = vmath::vec3(0, 1, 0);
-        vmath::vec3 x = cross(f, upN);
-        vmath::vec3 y = cross(x, f);
+        vmath::vec3 x = cross(lookat_dir, upN);
+        vmath::vec3 y = cross(x, lookat_dir);
 
         vmath::vec3 diff = x * diff_x_scale + y * diff_z_scale;
         diff_x_scale = diff_z_scale = 0;
         lookat_pos += diff;
         eye_pos += diff;
+
+        vmath::vec4 new_look_at_dir = vmath::rotate(
+            y_rotate,
+            0.0f,
+            0.0f
+        ) * vmath::vec4(lookat_dir, 0.0);
+        vmath::vec3 dir(new_look_at_dir[0], new_look_at_dir[1], new_look_at_dir[2]);
+        dir = normalize(dir);
+        // INFO("%f %f %f\n", dir[0], dir[1], dir[2]);
+        // lookat_pos = eye_pos + dir;
+        x_rotate = y_rotate = 0;
         camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
     }
 
@@ -154,7 +192,6 @@ public:
 
     void shutdown()
     {
-        program->deleteProgram();
     }
 
     virtual void run(application * app) {
@@ -172,7 +209,6 @@ public:
         tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        program->useProgram();
         for (int i = 0; i < 1; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
             vmath::mat4 m_matrix = vmath::rotate(
@@ -182,22 +218,21 @@ public:
             );
             vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             vmath::mat4 m_matrix_t = m_matrix.transpose();
-            program->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
-            program->setMatrix4fvUniform("m_matrix_it", m_matrix);
-            program->setIntUniform("s", 0);
-            program->setIntUniform("s1", 1);
-            GLBufferMgr::get_instance()->draw(triangle);
+            triangle->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
+            triangle->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+            triangle->getProgram()->setIntUniform("s", 0);
+            triangle->getProgram()->setIntUniform("s1", 1);
+            triangle->draw();
         }
     }
 
 private:
-    Program * program;
     GLuint vao;
     float aspect;
     vmath::mat4 proj_matrix;
     vmath::mat4 camera_matrix;
     ObjLoader * shape;
-    HTriangle * triangle;
+    DrawCommand * triangle;
     Texture * texture;
     Texture * texture1;
     bool left_mouse_down = false;
@@ -211,6 +246,8 @@ private:
     vmath::vec3 lookat_pos = {0, 0, 0};
     float diff_x_scale = 0;
     float diff_z_scale = 0;
+    float x_rotate = 0;
+    float y_rotate = 0;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

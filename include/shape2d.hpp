@@ -3,21 +3,33 @@
 #include <initializer_list>
 #include "sb7.h"
 #include "vmath.h"
-#include "shape_base.hpp"
+#include "GLObject/iMesh.hpp"
 #include "logger.hpp"
 
 using std::initializer_list;
 
-template <int N>
-class HPolygon: public HShapeBase {
+class HPolygon: public iMesh {
 public:
-    vmath::vec3 vertex[N];
-    GLfloat verteces[3 * N];
-    GLfloat texcoord[2 * N];
-    GLuint indices[N];
+    GLfloat * verteces;
+    GLfloat * texcoord;
+    GLuint * indices;
+    VertexInfo * vertexInfo;
+    size_t N;
 
-    static HPolygon<N>* from_vertex(initializer_list<float> vec) {
-        HPolygon<N> * polygon = new HPolygon<N>;
+    static HPolygon* from_vertex(initializer_list<float> vec) {
+        HPolygon * polygon = new HPolygon;
+
+        size_t N = vec.size();
+        polygon->N = N;
+        polygon->verteces = new GLfloat[3 * N];
+        polygon->indices = new GLuint[N];
+        polygon->texcoord = nullptr; 
+
+        polygon->vertexInfo = new VertexInfo;
+        polygon->vertexInfo->useIndice = true;
+        polygon->vertexInfo->attrInfos = vector<VertexAttrInfo> {
+            {3, GL_FLOAT, 12}
+        };
 
         int i = 0;
         for(auto x = vec.begin(); x != vec.end(); ++x, ++i) {
@@ -38,24 +50,15 @@ public:
         }
     }
 
-    virtual GLfloat * getTexcoord() {
-        return texcoord;
-    }
-
-    virtual GLfloat * get_points() {
-        return verteces;
-    }
-
-    virtual int get_point_num() {
-        return N;
-    }
-
-    virtual GLuint * get_indices() {
-        return indices;
-    }
+    virtual GLfloat * getTexcoord() {return texcoord;}
+    virtual GLfloat * getPoints() {return verteces;}
+    virtual GLuint * getIndices() {return indices;}
+    virtual size_t getPointNum() {return N;}
+    virtual size_t getIndiceNum() {return N;}
+    virtual VertexInfo * getVertexInfo() {return vertexInfo;};
 };
 
 
-typedef HPolygon<3> HTriangle;
+typedef HPolygon HTriangle;
 
 #endif

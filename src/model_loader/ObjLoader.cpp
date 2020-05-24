@@ -1,8 +1,8 @@
 #include "ObjLoader.hpp"
 
 
-ObjLoader::ObjLoader(const char * name) {
-    f.open(name, ios::in);
+ObjLoader::ObjLoader(const string &name) {
+    f.open(name.c_str(), ios::in);
     parse();
     f.close();
 }
@@ -79,18 +79,4 @@ void ObjLoader::parse_surface_line(string line) {
             vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 2]);
         }
     }
-}
-
-
-void test() {
-    ObjLoader parser = ObjLoader("suzanne.obj");
-    std::cout << parser.get_surface_num() << std::endl;
-    std::cout << parser.get_vertex_num() << std::endl;
-    system("pause");
-}
-
-
-int main1() {
-    test();
-    return 0;
 }

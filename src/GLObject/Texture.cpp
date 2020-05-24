@@ -2,6 +2,7 @@
 #include "stb/stb_image.h"
 #include "sb7ktx.h"
 #include "LogManager.hpp"
+#include "utils/FileUtils.hpp"
 
 Texture::Texture() {
     glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
@@ -42,10 +43,7 @@ void Texture::loadKTX(const char * name) {
 }
 
 void Texture::loadImage(const char *name) {
-    string filename = string(name);
-    size_t filename_length = filename.size();
-    int dot_pos = filename.find_last_of('.');
-    string format_str = dot_pos>=0 ? filename.substr(dot_pos) : "";
+    string format_str = Utils::file_format(name);
 
     // don't know why png files are flipped vertically...
     bool need_filp = format_str == ".png";

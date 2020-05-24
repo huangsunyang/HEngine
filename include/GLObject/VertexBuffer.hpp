@@ -10,6 +10,7 @@ public:
     void bindTarget(GLenum target);
 
     void alloc(GLsizeiptr size, GLbitfield flags);
+    void alloc(GLsizeiptr size, GLbitfield flags, const void * data);
     void realloc(GLsizeiptr size);
     void realloc(GLsizeiptr size, GLbitfield flags);
     

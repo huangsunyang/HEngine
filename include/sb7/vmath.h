@@ -832,6 +832,16 @@ public:
         return result;
     }
 
+    inline const vecN<T, h> operator*(const vecN<T, w> vec) const {
+        vecN<T, h> result;
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                result[j] += data[i][j] * vec[i];
+            }
+        }
+        return result;
+    } 
+
     inline my_type& operator*=(const my_type& that)
     {
         return (*this = *this * that);

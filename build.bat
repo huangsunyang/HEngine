@@ -50,7 +50,7 @@ REM set lib_files=%lib_files% unicodedata.lib
 REM set lib_files=%lib_files% winsound.lib
 REM set lib_files=%lib_files% select.lib
 
-set src_files=./src/*.cpp ./src/sb7/* ./src/model_loader/* ./src/GLObject/*
+set src_files=./src/*.cpp ./src/sb7/* ./src/model_loader/* ./src/GLObject/* ./src/utils/*
 set cl_exe="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/bin/Hostx86/x86/cl.exe"
 set cl_exe=%cl_exe% /Zi /EHsc
 
