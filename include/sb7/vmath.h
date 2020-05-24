@@ -308,6 +308,15 @@ public:
         base::data[1] = v[0];
         base::data[2] = v[1];
     }
+
+    Tvec3 rotate(Tvec3 axis, float angle) {
+        axis = normalize(axis);
+        Tvec3 this_axis = dot(*this, axis) * axis;
+        Tvec3 this_axis_v = *this - this_axis;
+        Tvec3 up = cross(axis, this_axis_v);
+        Tvec3 result = cosf(angle) * this_axis_v + sinf(angle) * up;
+        return result + this_axis;
+    }
 };
 
 template <typename T>

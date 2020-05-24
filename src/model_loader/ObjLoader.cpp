@@ -2,6 +2,12 @@
 
 
 ObjLoader::ObjLoader(const string &name) {
+    m_vertexInfo = new VertexInfo;
+    m_vertexInfo->useIndice = false;
+    m_vertexInfo->attrInfos = vector<VertexAttrInfo> {
+        {3, GL_FLOAT, 12},
+        {3, GL_FLOAT, 12}
+    };
     f.open(name.c_str(), ios::in);
     parse();
     f.close();
@@ -79,4 +85,8 @@ void ObjLoader::parse_surface_line(string line) {
             vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 2]);
         }
     }
+}
+
+VertexInfo * ObjLoader::getVertexInfo() {
+    return m_vertexInfo;
 }

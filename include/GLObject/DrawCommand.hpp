@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <initializer_list>
 
 #include "GLObject/Program.hpp"
 #include "GLObject/VertexArray.hpp"
@@ -23,16 +22,20 @@ public:
     VertexArray * getVertexArray() {return m_vao;}
     
     // shader relative
-    void setShader(initializer_list<string> shaders);
+    void setShader(vector<string> shaders);
     Program * getProgram() {return m_program;}
 
     // mesh info
     void loadMesh(string fileName);
-    void loadGeometry(initializer_list<GLfloat> points);
+    void loadGeometry(vector<GLfloat> points);
     GLfloat * getPoints() {return m_mesh->getPoints();}
     GLuint * getIndices() {return m_mesh->getIndices();}
     size_t getPointNum() {return m_mesh->getPointNum();}
     size_t getIndiceNum() {return m_mesh->getIndiceNum();}
+
+    // mode relative
+    void setDrawMode(GLenum mode) {m_drawMode = mode;}
+    void setUseIndice(bool enable) {m_useIndice = enable;}
 
     // draw
     void draw();

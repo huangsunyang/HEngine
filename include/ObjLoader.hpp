@@ -19,11 +19,11 @@ using std::vector;
 class ObjLoader: public iMesh {
 public:
     ObjLoader(const string& filename);
-    virtual size_t getPointNum() {return vertex.size() / 3;}
+    virtual size_t getPointNum() {return vertex_index.size();}
     virtual size_t getIndiceNum() {return vertex_index.size();}
-    virtual GLfloat * getPoints() {return &vertex[0];}
-    virtual GLuint * getIndices() {return &vertex_index[0];}
-    float * get_vertex_and_normal() {return &vertex_and_normal[0];}
+    virtual GLfloat * getPoints() {return &vertex_and_normal[0];}
+    virtual GLuint * getIndices() {return nullptr;}
+    virtual VertexInfo * getVertexInfo();
 
 protected:
     void parse();
@@ -37,6 +37,8 @@ private:
 protected:
     string filename;
     fstream f;
+
+    VertexInfo * m_vertexInfo;
     vector<GLfloat> vertex;
     vector<GLfloat> normal;
     vector<GLfloat> vertex_and_normal;

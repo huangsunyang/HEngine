@@ -7,11 +7,11 @@
 #include "sb7.h"
 #include "sb7color.h"
 #include "shape2d.hpp"
-#include "glbuffer_mgr.hpp"
 #include "LogManager.hpp"
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
+#include "GLObject/DrawCommand.hpp"
 
 
 // Derive my_application from sb7::application
@@ -25,7 +25,7 @@ public:
         m_isFullScreen = false;
         mouse_pos_x = -1;
         mouse_pos_y = -1;
-        eye_pos = {1, 1, 0};
+        eye_pos = {2, 2, 2};
         lookat_pos = {0, 0, 0};
         diff_x_scale = 0;
         diff_z_scale = 0;
@@ -49,7 +49,6 @@ public:
         shader_mgr.bind_shader(GL_GEOMETRY_SHADER, "geometry_shader");
         */
         init_shape();
-        bind_buffer();
         onResize(info.windowWidth, info.windowHeight);
         camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
         glEnable(GL_DEPTH_TEST);
@@ -58,33 +57,29 @@ public:
 
     void init_shape() {
         // shape = new ObjLoader("suzanne.obj");
-        triangle = new DrawCommand();
-        triangle->setShader({"shader/common.vs", "shader/common.fs"});
+        drawCommands = vector<DrawCommand *>();
+        DrawCommand * triangle = new DrawCommand();
+        triangle->setShader({"shader/axis.vs", "shader/common.fs"});
         triangle->loadGeometry({-1, 0, -1, 1, -1, 0, -1, 1, 0});
-        // triangle->setTexcoord({0, 0, 1, 0, 0, 1});
-        // lines = HPolygon::from_vertex({
-        //     10., .0, .0, 
-        //     .0, .0, .0, 
-        //     .0, .0, 10.0,
-        //     .0, .0, .0,
-        //     .0, 10.0, 0.,
-        //     .0, .0, .0
-        // });
-        // for (int i = 0; i < 18; i++) {
-        //     INFO("%f ", lines->verteces[i]);
-        //     if (i % 3 == 2) {
-        //         INFO("\n");
-        //     }
-        // }
-        // lines->setTexcoord({0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1});
-    }
+        drawCommands.push_back(triangle);
 
-    void bind_buffer() {
-        GLBufferMgr::get_instance();
-    }
+        DrawCommand * obj = new DrawCommand();
+        obj->setShader({"shader/common_light.vs", "shader/common.fs"});
+        obj->loadMesh("./suzanne.obj");
+        drawCommands.push_back(obj);
 
-    void bind_texture() {
-
+        DrawCommand * axis = new DrawCommand();
+        axis->setShader({"shader/axis.vs", "shader/common.fs"});
+        axis->setDrawMode(GL_LINES);
+        axis->loadGeometry({
+            10., .0, .0, 
+            .0, .0, .0, 
+            .0, .0, 10.0,
+            .0, .0, .0,
+            .0, 10.0, 0.,
+            .0, .0, .0
+        });
+        drawCommands.push_back(axis);
     }
 
     void onMouseButton(int button, int action) {
@@ -142,15 +137,10 @@ public:
         lookat_pos += diff;
         eye_pos += diff;
 
-        vmath::vec4 new_look_at_dir = vmath::rotate(
-            y_rotate,
-            0.0f,
-            0.0f
-        ) * vmath::vec4(lookat_dir, 0.0);
-        vmath::vec3 dir(new_look_at_dir[0], new_look_at_dir[1], new_look_at_dir[2]);
-        dir = normalize(dir);
-        // INFO("%f %f %f\n", dir[0], dir[1], dir[2]);
-        // lookat_pos = eye_pos + dir;
+        lookat_dir = lookat_dir.rotate(y, -x_rotate / 100.0);
+        lookat_dir = lookat_dir.rotate(x, -y_rotate / 100.0);
+        lookat_pos = eye_pos + lookat_dir;
+        INFO("%f %f %f %f %f %f %f %f\n", x_rotate, y_rotate, lookat_pos[0], lookat_pos[1], lookat_pos[2], eye_pos[0], eye_pos[1], eye_pos[2]);
         x_rotate = y_rotate = 0;
         camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
     }
@@ -218,11 +208,16 @@ public:
             );
             vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             vmath::mat4 m_matrix_t = m_matrix.transpose();
-            triangle->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
-            triangle->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-            triangle->getProgram()->setIntUniform("s", 0);
-            triangle->getProgram()->setIntUniform("s1", 1);
-            triangle->draw();
+            for (auto triangle: drawCommands) {
+                triangle->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
+                triangle->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
+                triangle->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
+                triangle->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
+                triangle->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+                triangle->getProgram()->setIntUniform("s", 0);
+                triangle->getProgram()->setIntUniform("s1", 1);
+                triangle->draw();
+            }
         }
     }
 
@@ -231,8 +226,7 @@ private:
     float aspect;
     vmath::mat4 proj_matrix;
     vmath::mat4 camera_matrix;
-    ObjLoader * shape;
-    DrawCommand * triangle;
+    vector<DrawCommand *> drawCommands;
     Texture * texture;
     Texture * texture1;
     bool left_mouse_down = false;
@@ -242,8 +236,8 @@ private:
     int _wndSize[2];
     int mouse_pos_x = -1;
     int mouse_pos_y = -1;
-    vmath::vec3 eye_pos = {1, 1, 0};
-    vmath::vec3 lookat_pos = {0, 0, 0};
+    vmath::vec3 eye_pos;
+    vmath::vec3 lookat_pos;
     float diff_x_scale = 0;
     float diff_z_scale = 0;
     float x_rotate = 0;

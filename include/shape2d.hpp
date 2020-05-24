@@ -1,6 +1,5 @@
 #ifndef __SHAPE_2D__
 #define __SHAPE_2D__
-#include <initializer_list>
 #include "sb7.h"
 #include "vmath.h"
 #include "GLObject/iMesh.hpp"
@@ -16,7 +15,7 @@ public:
     VertexInfo * vertexInfo;
     size_t N;
 
-    static HPolygon* from_vertex(initializer_list<float> vec) {
+    static HPolygon* from_vertex(vector<float> vec) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = vec.size();

@@ -6,7 +6,7 @@
 #define VBO_SIZE 1024 * 1024 * 4
 
 
-void DrawCommand::setShader(initializer_list<string> shaders) {
+void DrawCommand::setShader(vector<string> shaders) {
     for (const string& shader: shaders) {
         m_program->bindShader(shader);
     }
@@ -68,7 +68,7 @@ void DrawCommand::loadMesh(string name) {
 }
 
 
-void DrawCommand::loadGeometry(initializer_list<GLfloat> points) {
+void DrawCommand::loadGeometry(vector<GLfloat> points) {
     m_mesh = HPolygon::from_vertex(points);
     initBuffers();
 }
