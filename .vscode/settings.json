@@ -5,6 +5,15 @@
         "xstring": "cpp",
         "xtree": "cpp",
         "bitset": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "cmath": "cpp",
+        "initializer_list": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "type_traits": "cpp",
+        "valarray": "cpp",
+        "xhash": "cpp",
+        "fstream": "cpp"
     }
 }
