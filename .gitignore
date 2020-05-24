@@ -4,5 +4,6 @@
 *.pdb
 *.pyc
 .vs
-log/*
+*.txt
+*.compile
 
