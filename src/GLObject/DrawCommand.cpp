@@ -34,12 +34,18 @@ void DrawCommand::initBuffers() {
     m_vbo->alloc(pointNum * stride, GL_DYNAMIC_STORAGE_BIT);
     m_vbo->subData(points);
 
+    for (int i = 0; i < pointNum * stride / sizeof(GLfloat); i++) {
+        // INFO("%d %f\n", i, points[i]);
+    }
+    INFO("\n");
+
     // init attributes
     int attrNum = m_vertexInfo->attrInfos.size();
     int relativeOffset = 0;
     INFO("attribute size %d\n", attrNum);
     for (int i = 0; i < attrNum; i++) {
         VertexAttrInfo attrInfo = m_vertexInfo->attrInfos[i];
+        INFO("attribute %d num: %d\n", i, attrInfo.num);
         m_vao->setVertexAttrib(i, attrInfo.num, attrInfo.type, relativeOffset);
         m_vao->bindVertexAttrib(i, 0);
         m_vao->enableAttrib(i);
@@ -68,8 +74,14 @@ void DrawCommand::loadMesh(string name) {
 }
 
 
-void DrawCommand::loadGeometry(vector<GLfloat> points) {
+void DrawCommand::loadVertex(vector<GLfloat> points) {
     m_mesh = HPolygon::from_vertex(points);
+    initBuffers();
+}
+
+
+void DrawCommand::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords) {
+    m_mesh = HPolygon::fromVertexCoord(points, coords);
     initBuffers();
 }
 

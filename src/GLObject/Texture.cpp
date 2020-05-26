@@ -63,7 +63,7 @@ void Texture::loadImage(const char *name) {
     // for easy we use stricter rule
     if (width != height || width & (width - 1)) {
         INFO("width has to be equal to height and be power of 2!\n");
-        return;
+        // return;
     }
 
     // determine channel num to opengl
@@ -82,6 +82,7 @@ void Texture::loadImage(const char *name) {
     // but only GL_RGB8 in glTextureStorage
     // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     alloc(1, internalFormat, width, height);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     subImage2D(0, format, type, data);
     glGenerateTextureMipmap(m_texture);
     

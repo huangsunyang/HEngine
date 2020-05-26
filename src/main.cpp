@@ -25,7 +25,7 @@ public:
         m_isFullScreen = false;
         mouse_pos_x = -1;
         mouse_pos_y = -1;
-        eye_pos = {2, 2, 2};
+        eye_pos = {0, 0, 2};
         lookat_pos = {0, 0, 0};
         diff_x_scale = 0;
         diff_z_scale = 0;
@@ -37,7 +37,7 @@ public:
         LOG::LogManager::showAllLogger();
 
         texture = new Texture;
-        texture->bindTexture();
+        texture->bindTexture(0);
         texture->loadImage("Package/res/Wall.jpg");
 
         texture1 = new Texture;
@@ -56,11 +56,10 @@ public:
     }
 
     void init_shape() {
-        // shape = new ObjLoader("suzanne.obj");
         drawCommands = vector<DrawCommand *>();
         DrawCommand * triangle = new DrawCommand();
-        triangle->setShader({"shader/axis.vs", "shader/common.fs"});
-        triangle->loadGeometry({-1, 0, -1, 1, -1, 0, -1, 1, 0});
+        triangle->setShader({"shader/texture.vs", "shader/texture.fs"});
+        triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
         drawCommands.push_back(triangle);
 
         DrawCommand * obj = new DrawCommand();
@@ -71,7 +70,7 @@ public:
         DrawCommand * axis = new DrawCommand();
         axis->setShader({"shader/axis.vs", "shader/common.fs"});
         axis->setDrawMode(GL_LINES);
-        axis->loadGeometry({
+        axis->loadVertex({
             10., .0, .0, 
             .0, .0, .0, 
             .0, .0, 10.0,
@@ -137,10 +136,10 @@ public:
         lookat_pos += diff;
         eye_pos += diff;
 
-        lookat_dir = lookat_dir.rotate(y, -x_rotate / 100.0);
-        lookat_dir = lookat_dir.rotate(x, -y_rotate / 100.0);
+        lookat_dir = lookat_dir.rotate(vmath::vec3(0, 1, 0), -x_rotate / 300.0);
+        lookat_dir = lookat_dir.rotate(x, -y_rotate / 300.0);
         lookat_pos = eye_pos + lookat_dir;
-        INFO("%f %f %f %f %f %f %f %f\n", x_rotate, y_rotate, lookat_pos[0], lookat_pos[1], lookat_pos[2], eye_pos[0], eye_pos[1], eye_pos[2]);
+        // INFO("%f %f %f %f %f %f %f %f\n", x_rotate, y_rotate, lookat_pos[0], lookat_pos[1], lookat_pos[2], eye_pos[0], eye_pos[1], eye_pos[2]);
         x_rotate = y_rotate = 0;
         camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
     }
@@ -150,7 +149,7 @@ public:
         glViewport(0, 0, w, h);
         aspect = (float)info.windowWidth / (float)info.windowHeight;
         proj_matrix = vmath::perspective(
-            50.0f, aspect, 0.1f, 1000.0f
+            30.0f, aspect, 0.1f, 100.0f
         );
     }
 
@@ -161,7 +160,6 @@ public:
     void onFullScreen() {
         if (!isFullscreen()) {
             // backup windwo position and window size
-            
             glfwGetWindowPos(window, &_wndPos[0], &_wndPos[1]);
             glfwGetWindowSize(window, &_wndSize[0], &_wndSize[1]);
 
@@ -171,9 +169,7 @@ public:
             // swithc to full screen
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, 0);
             glViewport(0, 0, mode->width, mode->height);
-        }
-        else
-        {
+        } else {
             // restore last window size and position
             glfwSetWindowMonitor(window, nullptr,  _wndPos[0], _wndPos[1], _wndSize[0], _wndSize[1], 0 );
             glViewport(0, 0, _wndSize[0], _wndSize[1]);
