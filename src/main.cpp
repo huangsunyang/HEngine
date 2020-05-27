@@ -36,11 +36,11 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
-        texture = new Texture;
+        texture = new Texture2D;
         texture->bindTexture(0);
         texture->loadImage("Package/res/Wall.jpg");
 
-        texture1 = new Texture;
+        texture1 = new Texture2D;
         texture1->bindTexture(1);
         texture1->loadImage("Package/res/awesomeface.png");
         /*
@@ -223,8 +223,8 @@ private:
     vmath::mat4 proj_matrix;
     vmath::mat4 camera_matrix;
     vector<DrawCommand *> drawCommands;
-    Texture * texture;
-    Texture * texture1;
+    Texture2D * texture;
+    Texture2D * texture1;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
     bool m_isFullScreen = false;

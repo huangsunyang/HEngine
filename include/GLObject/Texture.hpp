@@ -3,12 +3,13 @@
 
 #include <GL/gl3w.h>
 
-class Texture {
+class Texture2D {
 public:
-    Texture();
-    ~Texture();
+    Texture2D();
+    ~Texture2D();
     void alloc(GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height);
     void bindTexture(int textureBinding=0);
+    void setTexParami(GLenum, GLenum);
     void subImage2D(GLint level, GLenum format, GLenum type, const void * pixels);
     void subImage2D(GLint level, GLint xOffset, GLint yOffset, GLsizei width, GLsizei height,
         GLenum format, GLenum type, const void * pixels);
