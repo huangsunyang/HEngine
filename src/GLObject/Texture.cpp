@@ -8,6 +8,10 @@ Texture2D::Texture2D() {
     glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 }
 
+Texture2D::~Texture2D() {
+    glDeleteTextures(1, &m_texture);
+}
+
 void Texture2D::alloc(GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height) {
     m_width = width;
     m_height = height;
@@ -50,12 +54,9 @@ void Texture2D::loadKTX(const char * name) {
 }
 
 void Texture2D::loadImage(const char *name) {
-    string format_str = Utils::file_format(name);
-
-    // don't know why png files are flipped vertically...
-    bool need_filp = format_str == ".png";
-    INFO("need flip %d\n", need_filp);
-    stbi_set_flip_vertically_on_load(need_filp);
+    // opengl (0, 0) is left-bottom corner, but
+    // most picture stores pixel from up to buttom...
+    stbi_set_flip_vertically_on_load(true);
 
     int width, height, nrChannels;
     unsigned char *data = stbi_load(name, &width, &height, &nrChannels, 0);

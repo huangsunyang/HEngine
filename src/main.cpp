@@ -35,14 +35,7 @@ public:
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
-
-        texture = new Texture2D;
-        texture->bindTexture(0);
-        texture->loadImage("Package/res/Wall.jpg");
-
-        texture1 = new Texture2D;
-        texture1->bindTexture(1);
-        texture1->loadImage("Package/res/awesomeface.png");
+        
         /*
         shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
         shader_mgr.bind_shader(GL_TESS_EVALUATION_SHADER, "tess_evaluation_shader");
@@ -57,8 +50,10 @@ public:
 
     void init_shape() {
         drawCommands = vector<DrawCommand *>();
+
         DrawCommand * triangle = new DrawCommand();
         triangle->setShader({"shader/texture.vs", "shader/texture.fs"});
+        triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
         drawCommands.push_back(triangle);
 

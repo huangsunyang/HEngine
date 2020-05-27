@@ -85,10 +85,35 @@ void DrawCommand::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords
     initBuffers();
 }
 
+/* set texture at binding point
+ */
+void DrawCommand::setTexture(int bindingIndex, const char * textureFile) {
+    Texture2D * texture = new Texture2D;
+    texture->bindTexture(0);
+    texture->loadImage(textureFile);
+    
+    // replace old texture with new one
+    if (m_textures.find(bindingIndex) != m_textures.end()) {
+        Texture2D * oldTexture = m_textures[bindingIndex];
+        delete oldTexture;
+    }
+    m_textures[bindingIndex] = texture;
+}
+
+
+void DrawCommand::setTexture(vector<string> textureFiles) {
+    for (int i = 0; i < textureFiles.size(); i++) {
+        setTexture(i, textureFiles[i].c_str());
+    }
+}
+
 
 void DrawCommand::draw() {
     m_vao->bindVertexArray();
     m_program->useProgram();
+    for (auto pair: m_textures) {
+        pair.second->bindTexture(pair.first);
+    }
 
     size_t point_num = getPointNum();
     size_t indice_num = getIndiceNum();
