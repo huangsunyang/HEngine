@@ -111,8 +111,13 @@ void DrawCommand::setTexture(vector<string> textureFiles) {
 void DrawCommand::draw() {
     m_vao->bindVertexArray();
     m_program->useProgram();
+
+    /* by default, we use sampler name s1, s2, s3, s4... */
+    char sampler_name[5];
     for (auto pair: m_textures) {
         pair.second->bindTexture(pair.first);
+        sprintf(sampler_name, "s%d", pair.first);
+        m_program->setIntUniform(sampler_name, pair.first);
     }
 
     size_t point_num = getPointNum();
