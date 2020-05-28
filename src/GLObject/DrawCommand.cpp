@@ -34,12 +34,18 @@ void DrawCommand::initBuffers() {
     m_vbo->alloc(pointNum * stride, GL_DYNAMIC_STORAGE_BIT);
     m_vbo->subData(points);
 
+    for (int i = 0; i < pointNum * stride / sizeof(GLfloat); i++) {
+        // INFO("%d %f\n", i, points[i]);
+    }
+    INFO("\n");
+
     // init attributes
     int attrNum = m_vertexInfo->attrInfos.size();
     int relativeOffset = 0;
     INFO("attribute size %d\n", attrNum);
     for (int i = 0; i < attrNum; i++) {
         VertexAttrInfo attrInfo = m_vertexInfo->attrInfos[i];
+        INFO("attribute %d num: %d\n", i, attrInfo.num);
         m_vao->setVertexAttrib(i, attrInfo.num, attrInfo.type, relativeOffset);
         m_vao->bindVertexAttrib(i, 0);
         m_vao->enableAttrib(i);
@@ -68,15 +74,51 @@ void DrawCommand::loadMesh(string name) {
 }
 
 
-void DrawCommand::loadGeometry(vector<GLfloat> points) {
+void DrawCommand::loadVertex(vector<GLfloat> points) {
     m_mesh = HPolygon::from_vertex(points);
     initBuffers();
+}
+
+
+void DrawCommand::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords) {
+    m_mesh = HPolygon::fromVertexCoord(points, coords);
+    initBuffers();
+}
+
+/* set texture at binding point
+ */
+void DrawCommand::setTexture(int bindingIndex, const char * textureFile) {
+    Texture2D * texture = new Texture2D;
+    texture->bindTexture(0);
+    texture->loadImage(textureFile);
+    
+    // replace old texture with new one
+    if (m_textures.find(bindingIndex) != m_textures.end()) {
+        Texture2D * oldTexture = m_textures[bindingIndex];
+        delete oldTexture;
+    }
+    m_textures[bindingIndex] = texture;
+}
+
+
+void DrawCommand::setTexture(vector<string> textureFiles) {
+    for (int i = 0; i < textureFiles.size(); i++) {
+        setTexture(i, textureFiles[i].c_str());
+    }
 }
 
 
 void DrawCommand::draw() {
     m_vao->bindVertexArray();
     m_program->useProgram();
+
+    /* by default, we use sampler name s1, s2, s3, s4... */
+    char sampler_name[5];
+    for (auto pair: m_textures) {
+        pair.second->bindTexture(pair.first);
+        sprintf(sampler_name, "s%d", pair.first);
+        m_program->setIntUniform(sampler_name, pair.first);
+    }
 
     size_t point_num = getPointNum();
     size_t indice_num = getIndiceNum();
