@@ -123,6 +123,7 @@ void DrawCommand::draw() {
     size_t point_num = getPointNum();
     size_t indice_num = getIndiceNum();
 
+    glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
     if (!m_vertexInfo->useIndice) {
         glDrawArrays(m_drawMode, 0, point_num);
     } else {

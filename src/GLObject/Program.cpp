@@ -36,16 +36,19 @@ void Program::bindShader(GLenum shader_type, const char * file_name) {
 
     GLint status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (status == GL_FALSE) {
-        GLint logSize = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+    INFO("Compile Shader %s %s!\n", file_name, status == GL_FALSE ? "Error": "Success");
+    
+    GLint logSize = 0;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+    if (logSize > 0) {
         char * message = new char[logSize];
         glGetShaderInfoLog(shader, logSize, nullptr, message);
-        glDeleteShader(shader);
-        INFO("Compile Shader %s ERROR!!!!\n", file_name);
         INFO("%s\n", message);
-    } else {
-        INFO("Compile Shader %s Success!\n", file_name);
+    }
+    
+    if (status == GL_FALSE) {
+        glDeleteShader(shader);
+        return;
     }
 
     glAttachShader(m_program, shader);

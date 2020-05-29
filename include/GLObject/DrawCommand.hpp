@@ -17,7 +17,12 @@ using namespace std;
 
 class DrawCommand {
 public:
-    DrawCommand(): m_drawMode(GL_TRIANGLES) {m_program = new Program();}
+    DrawCommand(): 
+        m_drawMode(GL_TRIANGLES),
+        m_polygonMode(GL_FILL) 
+    {
+        m_program = new Program();
+    }
 
     // buffer relative
     void initBuffers();
@@ -42,6 +47,7 @@ public:
 
     // mode relative
     void setDrawMode(GLenum mode) {m_drawMode = mode;}
+    void setPolygonMode(GLenum mode) {m_polygonMode = mode;}
     void setUseIndice(bool enable) {m_useIndice = enable;}
 
     // draw
@@ -55,6 +61,7 @@ protected:
 
     VertexInfo * m_vertexInfo;
     GLenum m_drawMode;              //绘制模式
+    GLenum m_polygonMode;           //线框/填充？
     bool m_useIndice;               //是否使用索引绘制
 
     iMesh * m_mesh;

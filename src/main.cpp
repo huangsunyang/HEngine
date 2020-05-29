@@ -31,6 +31,7 @@ public:
         diff_z_scale = 0;
         x_rotate = 0;
         y_rotate = 0;
+        m_polygonMode = GL_FILL;
 
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
@@ -53,9 +54,9 @@ public:
 
         DrawCommand * triangle = new DrawCommand();
         triangle->setShader({"shader/texture.vs", "shader/texture.fs"});
-        triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg"});
+        triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
-        drawCommands.push_back(triangle);
+        // drawCommands.push_back(triangle);
 
         DrawCommand * obj = new DrawCommand();
         obj->setShader({"shader/common_light.vs", "shader/common.fs"});
@@ -74,6 +75,19 @@ public:
             .0, .0, .0
         });
         drawCommands.push_back(axis);
+
+        DrawCommand * polygon = new DrawCommand();
+        polygon->setShader({"shader/ui.vs", "shader/common.fs"});
+        polygon->setDrawMode(GL_TRIANGLE_FAN);
+        polygon->loadVertex({
+            .25, .0, .0, 
+            .75, .0, .0, 
+            1.0, .5, .0,
+            0.75, 1.0, .0,
+            0.25, 1.0, .0,
+            .0, .5, .0
+        });
+        drawCommands.push_back(polygon);
     }
 
     void onMouseButton(int button, int action) {
@@ -112,6 +126,15 @@ public:
     void onKey(int key, int action) {
         if (key == GLFW_KEY_F && action == GLFW_PRESS) {
             onFullScreen();
+        } else if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+            if (m_polygonMode == GL_LINE) {
+                m_polygonMode = GL_FILL;
+            } else {
+                m_polygonMode = GL_LINE;
+            }
+            for (auto command: drawCommands) {
+                command->setPolygonMode(m_polygonMode);
+            }
         }
     }
 
@@ -144,7 +167,7 @@ public:
         glViewport(0, 0, w, h);
         aspect = (float)info.windowWidth / (float)info.windowHeight;
         proj_matrix = vmath::perspective(
-            30.0f, aspect, 0.1f, 100.0f
+            50.0f, aspect, 0.1f, 100.0f
         );
     }
 
@@ -205,8 +228,6 @@ public:
                 triangle->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
                 triangle->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
                 triangle->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-                triangle->getProgram()->setIntUniform("s", 0);
-                triangle->getProgram()->setIntUniform("s1", 1);
                 triangle->draw();
             }
         }
@@ -233,6 +254,7 @@ private:
     float diff_z_scale = 0;
     float x_rotate = 0;
     float y_rotate = 0;
+    GLenum m_polygonMode;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
