@@ -12,6 +12,7 @@
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
 #include "GLObject/DrawCommand.hpp"
+#include "Camera.hpp"
 
 
 // Derive my_application from sb7::application
@@ -22,20 +23,16 @@ public:
     {   
         left_mouse_down = false;
         middle_mouse_down = false;
-        m_isFullScreen = false;
         mouse_pos_x = -1;
         mouse_pos_y = -1;
-        eye_pos = {0, 0, 2};
-        lookat_pos = {0, 0, 0};
-        diff_x_scale = 0;
-        diff_z_scale = 0;
-        x_rotate = 0;
-        y_rotate = 0;
         m_polygonMode = GL_FILL;
 
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
+
+        // init camera
+        m_camera = new Camera;
         
         /*
         shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
@@ -44,7 +41,6 @@ public:
         */
         init_shape();
         onResize(info.windowWidth, info.windowHeight);
-        camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
     }
@@ -110,14 +106,16 @@ public:
     void onMouseMove(int x, int y) {
         if (left_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                x_rotate += float(x - mouse_pos_x); 
-                y_rotate += float(y - mouse_pos_y);
+                float diff_x = float(x - mouse_pos_x) / 1000.0; 
+                float diff_y = float(y - mouse_pos_y) / -1000.0;
+                m_camera->rotateCameraBy(diff_x, diff_y);
             }
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                diff_x_scale += float(x - mouse_pos_x) / -100.0;
-                diff_z_scale += float(y - mouse_pos_y) / 100.0;
+                float diff_x = float(x - mouse_pos_x) / -100.0;
+                float diff_y = float(y - mouse_pos_y) / 100.0;
+                m_camera->moveCameraBy(diff_x, diff_y, 0);
             }
         }
         mouse_pos_x = x, mouse_pos_y = y;
@@ -139,36 +137,14 @@ public:
     }
 
     void onMouseWheel(int pos) {
-        vmath::vec3 lookat_dir = normalize(lookat_pos - eye_pos);
-        eye_pos -= lookat_dir * pos * 0.1;
-    }
-
-    void tick_camera() {
-        vmath::vec3 lookat_dir = normalize(lookat_pos - eye_pos);
-        vmath::vec3 upN = vmath::vec3(0, 1, 0);
-        vmath::vec3 x = cross(lookat_dir, upN);
-        vmath::vec3 y = cross(x, lookat_dir);
-
-        vmath::vec3 diff = x * diff_x_scale + y * diff_z_scale;
-        diff_x_scale = diff_z_scale = 0;
-        lookat_pos += diff;
-        eye_pos += diff;
-
-        lookat_dir = lookat_dir.rotate(vmath::vec3(0, 1, 0), -x_rotate / 300.0);
-        lookat_dir = lookat_dir.rotate(x, -y_rotate / 300.0);
-        lookat_pos = eye_pos + lookat_dir;
-        // INFO("%f %f %f %f %f %f %f %f\n", x_rotate, y_rotate, lookat_pos[0], lookat_pos[1], lookat_pos[2], eye_pos[0], eye_pos[1], eye_pos[2]);
-        x_rotate = y_rotate = 0;
-        camera_matrix = vmath::lookat(eye_pos, lookat_pos, vmath::vec3(0, 1, 0));
+        m_camera->moveCameraBy(0, 0, pos * 0.1);
     }
 
     void onResize(int w, int h) {
         sb7::application::onResize(w, h);
         glViewport(0, 0, w, h);
         aspect = (float)info.windowWidth / (float)info.windowHeight;
-        proj_matrix = vmath::perspective(
-            50.0f, aspect, 0.1f, 100.0f
-        );
+        m_camera->setAspect(aspect);
     }
 
     bool isFullscreen() {
@@ -210,9 +186,10 @@ public:
         if (!gl3wIsSupported(4, 3)) return;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        tick_camera();
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+        vmath::mat4 camera_matrix = m_camera->getCameraTransform();
+        vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
         for (int i = 0; i < 1; i++) {
             float f = (float)currentTime * 0.3f + (float)i;
             vmath::mat4 m_matrix = vmath::rotate(
@@ -236,24 +213,16 @@ public:
 private:
     GLuint vao;
     float aspect;
-    vmath::mat4 proj_matrix;
-    vmath::mat4 camera_matrix;
     vector<DrawCommand *> drawCommands;
     Texture2D * texture;
     Texture2D * texture1;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
-    bool m_isFullScreen = false;
     int _wndPos[2];
     int _wndSize[2];
     int mouse_pos_x = -1;
     int mouse_pos_y = -1;
-    vmath::vec3 eye_pos;
-    vmath::vec3 lookat_pos;
-    float diff_x_scale = 0;
-    float diff_z_scale = 0;
-    float x_rotate = 0;
-    float y_rotate = 0;
+    Camera * m_camera;
     GLenum m_polygonMode;
 };
 // Our one and only instance of DECLARE_MAIN
