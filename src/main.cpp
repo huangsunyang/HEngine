@@ -26,6 +26,9 @@ public:
         mouse_pos_x = -1;
         mouse_pos_y = -1;
         m_polygonMode = GL_FILL;
+        m_pause = false;
+        m_gameTime = 0;
+        m_lastTickTime = 0;
 
         // redirect unbuffered STDOUT to the console
         LOG::LogManager::init();
@@ -55,7 +58,7 @@ public:
         // drawCommands.push_back(triangle);
 
         DrawCommand * obj = new DrawCommand();
-        obj->setShader({"shader/common_light.vs", "shader/common.fs"});
+        obj->setShader({"shader/common_light.vs", "shader/common_light.fs"});
         obj->loadMesh("./suzanne.obj");
         drawCommands.push_back(obj);
 
@@ -133,6 +136,8 @@ public:
             for (auto command: drawCommands) {
                 command->setPolygonMode(m_polygonMode);
             }
+        } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+            m_pause = !m_pause;
         }
     }
 
@@ -184,6 +189,10 @@ public:
     void render(double currentTime)
     {
         if (!gl3wIsSupported(4, 3)) return;
+        if (!m_pause) {
+            m_gameTime += currentTime - m_lastTickTime;
+        }
+        m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
         glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
@@ -191,15 +200,17 @@ public:
         vmath::mat4 camera_matrix = m_camera->getCameraTransform();
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
         for (int i = 0; i < 1; i++) {
-            float f = (float)currentTime * 0.3f + (float)i;
-            vmath::mat4 m_matrix = vmath::rotate(
-                sinf(2.1f * f) * 0,
-                cosf(1.7f * f) * 0,
-                sinf(1.3f * f) * cosf(1.5f * f) * 200.0f
+            float f = (float)m_gameTime * 0.3f + (float)i;
+            vmath::vec3 rotate = vmath::vec3(
+                sinf(2.1f * f),
+                cosf(1.7f * f),
+                sinf(1.3f * f)
             );
-            vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
-            vmath::mat4 m_matrix_t = m_matrix.transpose();
             for (auto triangle: drawCommands) {
+                triangle->getTransform()->setPosition(rotate);
+                vmath::mat4 m_matrix = triangle->getTransformMatrix();
+                vmath::mat4 m_matrix_t = m_matrix.transpose();
+                vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
                 triangle->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
                 triangle->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
                 triangle->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
@@ -224,6 +235,10 @@ private:
     int mouse_pos_y = -1;
     Camera * m_camera;
     GLenum m_polygonMode;
+
+    bool m_pause;
+    float m_gameTime;
+    float m_lastTickTime;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

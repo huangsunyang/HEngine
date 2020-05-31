@@ -10,6 +10,7 @@
 #include "GLObject/VertexBuffer.hpp"
 #include "GLObject/Texture.hpp"
 #include "GLObject/iMesh.hpp"
+#include "GLObject/Transform.hpp"
 #include "GL/gl3w.h"
 
 using namespace std;
@@ -22,6 +23,7 @@ public:
         m_polygonMode(GL_FILL) 
     {
         m_program = new Program();
+        m_transform = new Transform;
     }
 
     // buffer relative
@@ -50,6 +52,10 @@ public:
     void setPolygonMode(GLenum mode) {m_polygonMode = mode;}
     void setUseIndice(bool enable) {m_useIndice = enable;}
 
+    // transform relative
+    Transform * getTransform() {return m_transform;}
+    vmath::mat4 getTransformMatrix() {return m_transform->getMatrix();}
+
     // draw
     void draw();
 
@@ -66,6 +72,8 @@ protected:
 
     iMesh * m_mesh;
     map<int, Texture2D *> m_textures;
+
+    Transform * m_transform;
 };
 
 #endif //__DRAW_COMMAND__

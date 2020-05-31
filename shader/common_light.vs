@@ -3,13 +3,14 @@
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec4 normal;
 
-out vec4 vs_color;
+out vec4 o_position;
+out vec3 o_normal;
 
 uniform mat4 mvp_matrix;
 uniform mat4 m_matrix_it;
 
 void main(void) {
     gl_Position = mvp_matrix * position;
-    vec3 normals = normalize((m_matrix_it * normal).xyz);
-    vs_color = clamp(dot(normals, vec3(-1,1,-1)), 0, 1) * position;
+    o_normal = normalize((m_matrix_it * normal).xyz);
+    o_position = position;
 }
