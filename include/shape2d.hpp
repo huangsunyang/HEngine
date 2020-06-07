@@ -14,12 +14,14 @@ public:
     GLuint * indices;
     VertexInfo * vertexInfo;
     size_t N;
+    size_t m_indiceNum;
 
     static HPolygon* from_vertex(vector<float> vec) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = vec.size() / 3;
         polygon->N = N;
+        polygon->m_indiceNum = N;
         polygon->verteces = new GLfloat[3 * N];
         polygon->indices = new GLuint[N];
         polygon->texcoord = nullptr; 
@@ -42,11 +44,40 @@ public:
         return polygon;
     }
 
+    static HPolygon* fromVertexIndice(vector<float> vec, vector<GLuint> index) {
+        HPolygon * polygon = new HPolygon;
+
+        size_t N = vec.size() / 3;
+        polygon->N = N;
+        polygon->m_indiceNum = index.size();
+        polygon->verteces = new GLfloat[3 * N];
+        polygon->indices = new GLuint[index.size()];
+        polygon->texcoord = nullptr;
+
+        polygon->vertexInfo = new VertexInfo;
+        polygon->vertexInfo->useIndice = true;
+        polygon->vertexInfo->attrInfos = vector<VertexAttrInfo> {
+            {3, GL_FLOAT, 12}
+        };
+
+        int i = 0;
+        for(auto x = vec.begin(); x != vec.end(); ++x, ++i) {
+            polygon->verteces[i] = *x;
+        }
+
+        for (int i = 0; i < index.size(); i++) {
+            polygon->indices[i] = index[i];
+        }
+
+        return polygon;
+    }
+
     static HPolygon* fromVertexCoord(vector<float> points, vector<float> coords) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = points.size() / 3;
         polygon->N = N;
+        polygon->m_indiceNum = N;
         polygon->verteces = new GLfloat[5 * N];
         polygon->indices = new GLuint[N];
         polygon->texcoord = nullptr; 
@@ -78,7 +109,7 @@ public:
     virtual GLfloat * getPoints() {return verteces;}
     virtual GLuint * getIndices() {return indices;}
     virtual size_t getPointNum() {return N;}
-    virtual size_t getIndiceNum() {return N;}
+    virtual size_t getIndiceNum() {return m_indiceNum;}
     virtual VertexInfo * getVertexInfo() {return vertexInfo;};
 };
 

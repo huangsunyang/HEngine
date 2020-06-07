@@ -41,6 +41,7 @@ public:
     // mesh info
     void loadMesh(string fileName);
     void loadVertex(vector<GLfloat> points);
+    void loadVertexIndice(vector<GLfloat> points, vector<GLuint> indexs);
     void loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords);
     GLfloat * getPoints() {return m_mesh->getPoints();}
     GLuint * getIndices() {return m_mesh->getIndices();}

@@ -67,6 +67,10 @@ float Camera::getCameraPitch() {
     return m_cameraPitch;
 }
 
+vmath::vec3 Camera::getCameraFront() {
+    return m_cameraFront;
+}
+
 void Camera::moveCameraBy(vmath::vec3 diff) {
     moveCameraBy(diff[0], diff[1], diff[2]);
 }

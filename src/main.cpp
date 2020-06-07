@@ -76,6 +76,10 @@ public:
         });
         models.push_back(axis);
 
+        light = new Light();
+        light->getTransform()->setPosition({0, 5, 0});
+        models.push_back(light);
+
         Model * polygon = new Model();
         polygon->setShader({"shader/ui.vs", "shader/common.fs"});
         polygon->setDrawMode(GL_TRIANGLE_FAN);
@@ -87,7 +91,7 @@ public:
             0.25, 1.0, .0,
             .0, .5, .0
         });
-        models.push_back(polygon);
+        // models.push_back(polygon);
     }
 
     void onMouseButton(int button, int action) {
@@ -196,31 +200,31 @@ public:
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::LightPink);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Black);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         vmath::mat4 camera_matrix = m_camera->getCameraTransform();
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
-        for (int i = 0; i < 1; i++) {
-            float f = (float)m_gameTime * 0.3f + (float)i;
-            vmath::vec3 translate = vmath::vec3(
-                sinf(2.1f * f) + 2,
-                cosf(1.7f * f) + 2,
-                sinf(1.3f * f) + 2
-            );
-            vmath::vec3 rotate = translate * 50;
-            for (auto model: models) {
-                model->getTransform()->setPosition(translate);
-                model->getTransform()->setRotation(rotate);
-                vmath::mat4 m_matrix = model->getTransformMatrix();
-                vmath::mat4 m_matrix_t = m_matrix.transpose();
-                vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
-                model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
-                model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
-                model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
-                model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
-                model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-                model->draw();
-            }
+
+        float f = (float)m_gameTime * 0.3f;
+        vmath::vec3 translate = vmath::vec3(
+            sinf(2.1f * f) * 5,
+            cosf(1.7f * f) * 5,
+            sinf(1.3f * f) * 5
+        );
+        vmath::vec3 rotate = translate * 50;
+        light->getTransform()->setPosition(translate);
+        for (auto model: models) {
+            vmath::mat4 m_matrix = model->getTransformMatrix();
+            vmath::mat4 m_matrix_t = m_matrix.transpose();
+            vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
+            model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
+            model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
+            model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
+            model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
+            model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+            model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+            model->getProgram()->setVec3Uniform("light_dir", light->getTransform()->getPosition() - model->getTransform()->getPosition());
+            model->draw();
         }
     }
 
@@ -228,6 +232,7 @@ private:
     GLuint vao;
     float aspect;
     vector<Model *> models;
+    Light * light;
     Texture2D * texture;
     Texture2D * texture1;
     bool left_mouse_down = false;

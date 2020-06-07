@@ -16,6 +16,9 @@
         "xhash": "cpp",
         "fstream": "cpp",
         "utility": "cpp",
-        "streambuf": "cpp"
+        "streambuf": "cpp",
+        "algorithm": "cpp",
+        "complex": "cpp",
+        "memory": "cpp"
     }
 }

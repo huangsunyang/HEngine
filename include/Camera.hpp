@@ -26,6 +26,7 @@ public:
 
     float getCameraYaw();
     float getCameraPitch();
+    vmath::vec3 getCameraFront();
     vmath::mat4 getCameraTransform();
     vmath::mat4 getProjectionMatrix();
 

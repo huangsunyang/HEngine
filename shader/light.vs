@@ -3,15 +3,14 @@
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec4 normal;
 
-out vec4 o_position;
-out vec3 o_normal;
+out vec4 vs_color;
 
 uniform mat4 mvp_matrix;
-uniform mat4 m_matrix;
-
+uniform mat4 v_matrix;
+uniform mat4 p_matrix;
+uniform mat4 m_matrix_it;
 
 void main(void) {
     gl_Position = mvp_matrix * position;
-    o_normal = normalize((transpose(m_matrix) * normal).xyz);
-    o_position = position;
+    vs_color = vec4(1, 1, 1, 1);
 }

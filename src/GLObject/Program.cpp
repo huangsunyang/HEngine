@@ -89,7 +89,13 @@ void Program::setFloatUniform(const char * name, GLfloat value) {
     glUniform1f(location, value);
 }
 
-void Program::setMatrix4fvUniform(const char * name, GLfloat * value) {
+void Program::setVec3Uniform(const char * name, const GLfloat * value) {
+    GLuint location = getLocation(name);
+    useProgram();
+    return glUniform3fv(location, 1, value);
+}
+
+void Program::setMatrix4fvUniform(const char * name, const GLfloat * value) {
     GLuint location = getLocation(name);
     useProgram();
     glUniformMatrix4fv(location, 1, false, value);
