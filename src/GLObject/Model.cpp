@@ -1,4 +1,4 @@
-#include "GLObject/DrawCommand.hpp"
+#include "GLObject/Model.hpp"
 #include "utils/FileUtils.hpp"
 #include "ObjLoader.hpp"
 #include "shape2d.hpp"
@@ -6,14 +6,14 @@
 #define VBO_SIZE 1024 * 1024 * 4
 
 
-void DrawCommand::setShader(vector<string> shaders) {
+void Model::setShader(vector<string> shaders) {
     for (const string& shader: shaders) {
         m_program->bindShader(shader);
     }
     m_program->linkProgram();
 }
 
-void DrawCommand::initBuffers() {
+void Model::initBuffers() {
     m_vertexInfo = m_mesh->getVertexInfo();
     size_t pointNum = getPointNum();
     GLfloat * points = getPoints();
@@ -63,7 +63,7 @@ void DrawCommand::initBuffers() {
 }
 
 
-void DrawCommand::loadMesh(string name) {
+void Model::loadMesh(string name) {
     string format = Utils::file_format(name);
     if (format == ".obj") {
         m_mesh = new ObjLoader(name);
@@ -74,20 +74,20 @@ void DrawCommand::loadMesh(string name) {
 }
 
 
-void DrawCommand::loadVertex(vector<GLfloat> points) {
+void Model::loadVertex(vector<GLfloat> points) {
     m_mesh = HPolygon::from_vertex(points);
     initBuffers();
 }
 
 
-void DrawCommand::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords) {
+void Model::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords) {
     m_mesh = HPolygon::fromVertexCoord(points, coords);
     initBuffers();
 }
 
 /* set texture at binding point
  */
-void DrawCommand::setTexture(int bindingIndex, const char * textureFile) {
+void Model::setTexture(int bindingIndex, const char * textureFile) {
     Texture2D * texture = new Texture2D;
     texture->bindTexture(0);
     texture->loadImage(textureFile);
@@ -101,14 +101,14 @@ void DrawCommand::setTexture(int bindingIndex, const char * textureFile) {
 }
 
 
-void DrawCommand::setTexture(vector<string> textureFiles) {
+void Model::setTexture(vector<string> textureFiles) {
     for (int i = 0; i < textureFiles.size(); i++) {
         setTexture(i, textureFiles[i].c_str());
     }
 }
 
 
-void DrawCommand::draw() {
+void Model::draw() {
     m_vao->bindVertexArray();
     m_program->useProgram();
 

@@ -11,7 +11,8 @@
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
-#include "GLObject/DrawCommand.hpp"
+#include "GLObject/Model.hpp"
+#include "GLObject/Light.hpp"
 #include "Camera.hpp"
 
 
@@ -49,20 +50,20 @@ public:
     }
 
     void init_shape() {
-        drawCommands = vector<DrawCommand *>();
+        models = vector<Model *>();
 
-        DrawCommand * triangle = new DrawCommand();
+        Model * triangle = new Model();
         triangle->setShader({"shader/texture.vs", "shader/texture.fs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
         // drawCommands.push_back(triangle);
 
-        DrawCommand * obj = new DrawCommand();
+        Model * obj = new Model();
         obj->setShader({"shader/common_light.vs", "shader/common_light.fs"});
         obj->loadMesh("./suzanne.obj");
-        drawCommands.push_back(obj);
+        models.push_back(obj);
 
-        DrawCommand * axis = new DrawCommand();
+        Model * axis = new Model();
         axis->setShader({"shader/axis.vs", "shader/common.fs"});
         axis->setDrawMode(GL_LINES);
         axis->loadVertex({
@@ -73,9 +74,9 @@ public:
             .0, 10.0, 0.,
             .0, .0, .0
         });
-        drawCommands.push_back(axis);
+        models.push_back(axis);
 
-        DrawCommand * polygon = new DrawCommand();
+        Model * polygon = new Model();
         polygon->setShader({"shader/ui.vs", "shader/common.fs"});
         polygon->setDrawMode(GL_TRIANGLE_FAN);
         polygon->loadVertex({
@@ -86,7 +87,7 @@ public:
             0.25, 1.0, .0,
             .0, .5, .0
         });
-        drawCommands.push_back(polygon);
+        models.push_back(polygon);
     }
 
     void onMouseButton(int button, int action) {
@@ -133,7 +134,7 @@ public:
             } else {
                 m_polygonMode = GL_LINE;
             }
-            for (auto command: drawCommands) {
+            for (auto command: models) {
                 command->setPolygonMode(m_polygonMode);
             }
         } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
@@ -165,7 +166,7 @@ public:
             // get reolution of monitor
             const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-            // swithc to full screen
+            // switch to full screen
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, 0);
             glViewport(0, 0, mode->width, mode->height);
         } else {
@@ -201,22 +202,24 @@ public:
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
         for (int i = 0; i < 1; i++) {
             float f = (float)m_gameTime * 0.3f + (float)i;
-            vmath::vec3 rotate = vmath::vec3(
-                sinf(2.1f * f),
-                cosf(1.7f * f),
-                sinf(1.3f * f)
+            vmath::vec3 translate = vmath::vec3(
+                sinf(2.1f * f) + 2,
+                cosf(1.7f * f) + 2,
+                sinf(1.3f * f) + 2
             );
-            for (auto triangle: drawCommands) {
-                triangle->getTransform()->setPosition(rotate);
-                vmath::mat4 m_matrix = triangle->getTransformMatrix();
+            vmath::vec3 rotate = translate * 50;
+            for (auto model: models) {
+                model->getTransform()->setPosition(translate);
+                model->getTransform()->setRotation(rotate);
+                vmath::mat4 m_matrix = model->getTransformMatrix();
                 vmath::mat4 m_matrix_t = m_matrix.transpose();
                 vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
-                triangle->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
-                triangle->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
-                triangle->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
-                triangle->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
-                triangle->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-                triangle->draw();
+                model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
+                model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
+                model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
+                model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
+                model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+                model->draw();
             }
         }
     }
@@ -224,7 +227,7 @@ public:
 private:
     GLuint vao;
     float aspect;
-    vector<DrawCommand *> drawCommands;
+    vector<Model *> models;
     Texture2D * texture;
     Texture2D * texture1;
     bool left_mouse_down = false;

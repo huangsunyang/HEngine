@@ -16,9 +16,9 @@
 using namespace std;
 
 
-class DrawCommand {
+class Model {
 public:
-    DrawCommand(): 
+    Model(): 
         m_drawMode(GL_TRIANGLES),
         m_polygonMode(GL_FILL) 
     {

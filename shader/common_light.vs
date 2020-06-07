@@ -7,10 +7,10 @@ out vec4 o_position;
 out vec3 o_normal;
 
 uniform mat4 mvp_matrix;
-uniform mat4 m_matrix_it;
+uniform mat4 m_matrix;
 
 void main(void) {
     gl_Position = mvp_matrix * position;
-    o_normal = normalize((m_matrix_it * normal).xyz);
+    o_normal = normalize((transpose(m_matrix) * normal).xyz);
     o_position = position;
 }
