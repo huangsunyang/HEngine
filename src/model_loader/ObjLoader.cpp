@@ -1,4 +1,5 @@
 #include "ObjLoader.hpp"
+// http://paulbourke.net/dataformats/obj/
 
 
 ObjLoader::ObjLoader(const string &name) {
@@ -67,9 +68,18 @@ void ObjLoader::parse_surface_line(string line) {
     while (getline(buffer, each)) {
         stringstream each_buffer(each);
         for (int i = 0; i < 3; i++) {
-            int vi, ni, oi;
+            int vi, ti, ni;
             char delim1, delim2;
-            each_buffer >> vi >> delim1 >> delim2 >> ni;
+            each_buffer >> vi >> delim1;
+            delim2 = each_buffer.peek();
+            if (delim2 == '/') {
+                // f v//vn v//vn v//vn
+                each_buffer >> delim2 >> ni;
+            } else {
+                // f v/vt/vn v/vt/vn v/vt/vn
+                each_buffer >> ti >> delim2 >> ni;
+            }
+
             vertex_index.push_back(vi - 1);
             normal_index.push_back(ni - 1);
         }

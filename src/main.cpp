@@ -60,7 +60,7 @@ public:
 
         Model * obj = new Model();
         obj->setShader({"shader/common_light.vs", "shader/common_light.fs"});
-        obj->loadMesh("./suzanne.obj");
+        obj->loadMesh("Package/res/capsule.obj");
         models.push_back(obj);
 
         Model * axis = new Model();
