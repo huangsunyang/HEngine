@@ -7,7 +7,8 @@ ObjLoader::ObjLoader(const string &name) {
     m_vertexInfo->useIndice = false;
     m_vertexInfo->attrInfos = vector<VertexAttrInfo> {
         {3, GL_FLOAT, 12},
-        {3, GL_FLOAT, 12}
+        {3, GL_FLOAT, 12},
+        {2, GL_FLOAT, 8},
     };
     f.open(name.c_str(), ios::in);
     parse();
@@ -26,6 +27,8 @@ void ObjLoader::parse() {
             parse_vertex_line(line);
         } else if (line[0] == 'v' && line[1] == 'n') {
             parse_normal_line(line);
+        } else if (line[0] == 'v' && line[1] == 't') {
+            parse_tex_line(line);
         } else if (line[0] == 'f' && line[1] == ' ') {
             parse_surface_line(line);
         }
@@ -37,24 +40,34 @@ void ObjLoader::parse() {
 }
 
 
-vector<float> ObjLoader::parse_float3_line(string line) {
+vector<float> ObjLoader::parse_floatn(string line, int n) {
     stringstream buffer(line);
     string header;
-    float v1, v2, v3;
-    buffer >> header >> v1 >> v2 >> v3;
-    return vector<float>{v1, v2, v3};
+    buffer >> header;
+    vector<float> ret;
+    for (int i = 0; i < n; i++) {
+        float v1;
+        buffer >> v1;
+        ret.push_back(v1);
+    }
+    return ret;
 }
 
 
 void ObjLoader::parse_vertex_line(string line) {
-    vector<float> point = parse_float3_line(line);
+    vector<float> point = parse_floatn(line, 3);
     vertex.insert(vertex.end(), point.begin(), point.end());
 }
 
 
 void ObjLoader::parse_normal_line(string line) {
-    vector<float> point = parse_float3_line(line);
+    vector<float> point = parse_floatn(line, 3);
     normal.insert(normal.end(), point.begin(), point.end());
+}
+
+void ObjLoader::parse_tex_line(string line) {
+    vector<float> point = parse_floatn(line, 2);
+    tex.insert(tex.end(), point.begin(), point.end());
 }
 
 
@@ -82,6 +95,7 @@ void ObjLoader::parse_surface_line(string line) {
 
             vertex_index.push_back(vi - 1);
             normal_index.push_back(ni - 1);
+            tex_index.push_back(ti - 1);
         }
 
         int cur_size = vertex_index.size();
@@ -93,6 +107,9 @@ void ObjLoader::parse_surface_line(string line) {
             vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 0]);
             vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 1]);
             vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 2]);
+            
+            vertex_and_normal.push_back(tex[tex_index[cur_size - i] * 2 + 0]);
+            vertex_and_normal.push_back(tex[tex_index[cur_size - i] * 2 + 1]);
         }
     }
 }

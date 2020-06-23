@@ -70,6 +70,8 @@ void Model::loadMesh(string name) {
     } else {
         // other format in future
     }
+    //fixme: test texture, should read from mtl
+    setTexture({"Package/res/capsule0.jpg"});
     initBuffers();
 }
 

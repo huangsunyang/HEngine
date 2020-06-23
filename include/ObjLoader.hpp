@@ -29,10 +29,12 @@ protected:
     void parse();
     void parse_vertex_line(string s);
     void parse_normal_line(string s);
+    void parse_tex_line(string s);
     void parse_surface_line(string s);
 
 private:
     vector<float> parse_float3_line(string s);
+    vector<float> parse_floatn(string, int);
 
 protected:
     string filename;
@@ -41,9 +43,11 @@ protected:
     VertexInfo * m_vertexInfo;
     vector<GLfloat> vertex;
     vector<GLfloat> normal;
+    vector<GLfloat> tex;
     vector<GLfloat> vertex_and_normal;
     vector<GLuint> vertex_index;
     vector<GLuint> normal_index;
+    vector<GLuint> tex_index;
 };
 
 #endif
