@@ -1,4 +1,12 @@
 #include "ObjLoader.hpp"
+#include "utils/StringUtils.hpp"
+#include "utils/FileUtils.hpp"
+#include "LogManager.hpp"
+
+
+using namespace Utils;
+
+
 // http://paulbourke.net/dataformats/obj/
 
 
@@ -10,27 +18,44 @@ ObjLoader::ObjLoader(const string &name) {
         {3, GL_FLOAT, 12},
         {2, GL_FLOAT, 8},
     };
+
+    fstream f;
     f.open(name.c_str(), ios::in);
-    parse();
+    parse(f);
     f.close();
 }
 
 
-void ObjLoader::parse() {
+void ObjLoader::parse(fstream& f) {
     string line;
     while (getline(f, line)) {
         if (line.size() < 2) {
             continue;
         }
 
-        if (line[0] == 'v' && line[1] == ' ') {
-            parse_vertex_line(line);
-        } else if (line[0] == 'v' && line[1] == 'n') {
-            parse_normal_line(line);
-        } else if (line[0] == 'v' && line[1] == 't') {
-            parse_tex_line(line);
-        } else if (line[0] == 'f' && line[1] == ' ') {
-            parse_surface_line(line);
+        stringstream lineBuffer(line);
+        string head, s0, s1, s2;
+        float f0, f1, f2;
+
+        if (string_starts_with(line, "v ")) {
+            lineBuffer >> head >> f0 >> f1 >> f2;
+            vertex.push_back(f0); vertex.push_back(f1); vertex.push_back(f2);
+        } else if (string_starts_with(line, "vn ")) {
+            lineBuffer >> head >> f0 >> f1 >> f2;
+            normal.push_back(f0); normal.push_back(f1); normal.push_back(f2);
+        } else if (string_starts_with(line, "vt ")) {
+            lineBuffer >> head >> f0 >> f1;
+            tex.push_back(f0); tex.push_back(f1);
+        } else if (string_starts_with(line, "f ")) {
+            parse_surface_line(lineBuffer);
+        } else if (string_starts_with(line, "mtllib ")) {
+            lineBuffer >> head >> s0;
+            // fixme: should use Path::res_folder to get res
+            mtllib = new MtlLoader(path_ensure_dir(s0, "package/res"));
+            INFO("%s\n", path_ensure_dir(s0, "package/res").c_str());
+        } else if (string_starts_with(line, "usemtl ")) {
+            lineBuffer >> head >> s0;
+            material = mtllib->getMaterial(s0);
         }
 
         if (f.eof()) {
@@ -40,39 +65,7 @@ void ObjLoader::parse() {
 }
 
 
-vector<float> ObjLoader::parse_floatn(string line, int n) {
-    stringstream buffer(line);
-    string header;
-    buffer >> header;
-    vector<float> ret;
-    for (int i = 0; i < n; i++) {
-        float v1;
-        buffer >> v1;
-        ret.push_back(v1);
-    }
-    return ret;
-}
-
-
-void ObjLoader::parse_vertex_line(string line) {
-    vector<float> point = parse_floatn(line, 3);
-    vertex.insert(vertex.end(), point.begin(), point.end());
-}
-
-
-void ObjLoader::parse_normal_line(string line) {
-    vector<float> point = parse_floatn(line, 3);
-    normal.insert(normal.end(), point.begin(), point.end());
-}
-
-void ObjLoader::parse_tex_line(string line) {
-    vector<float> point = parse_floatn(line, 2);
-    tex.insert(tex.end(), point.begin(), point.end());
-}
-
-
-void ObjLoader::parse_surface_line(string line) {
-    stringstream buffer(line);
+void ObjLoader::parse_surface_line(stringstream& buffer) {
     string header, each;
     vector<int> index;
     
@@ -93,23 +86,18 @@ void ObjLoader::parse_surface_line(string line) {
                 each_buffer >> ti >> delim2 >> ni;
             }
 
-            vertex_index.push_back(vi - 1);
-            normal_index.push_back(ni - 1);
-            tex_index.push_back(ti - 1);
-        }
-
-        int cur_size = vertex_index.size();
-        for (int i = 3; i > 0; i--) {
-            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 0]);
-            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 1]);
-            vertex_and_normal.push_back(vertex[vertex_index[cur_size - i] * 3 + 2]);
+            --vi; --ni; --ti;
             
-            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 0]);
-            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 1]);
-            vertex_and_normal.push_back(normal[normal_index[cur_size - i] * 3 + 2]);
+            vertex_and_normal.push_back(vertex[vi * 3 + 0]);
+            vertex_and_normal.push_back(vertex[vi * 3 + 1]);
+            vertex_and_normal.push_back(vertex[vi * 3 + 2]);
             
-            vertex_and_normal.push_back(tex[tex_index[cur_size - i] * 2 + 0]);
-            vertex_and_normal.push_back(tex[tex_index[cur_size - i] * 2 + 1]);
+            vertex_and_normal.push_back(normal[ni * 3 + 0]);
+            vertex_and_normal.push_back(normal[ni * 3 + 1]);
+            vertex_and_normal.push_back(normal[ni * 3 + 2]);
+            
+            vertex_and_normal.push_back(tex[ti * 2 + 0]);
+            vertex_and_normal.push_back(tex[ti * 2 + 1]);
         }
     }
 }

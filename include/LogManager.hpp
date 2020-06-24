@@ -38,7 +38,7 @@ enum class LogLevel: unsigned int {
 class LogManager {
     public:
         static void init();
-        static void log(LogLevel level, char * format, ...);
+        static void log(LogLevel level, const char * format, ...);
         static void registerLogger(ILogger * log);
         static void unregisterLogger(ILogger * log);
         static void unregisterLogger(string log_name);

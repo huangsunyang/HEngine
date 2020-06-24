@@ -22,7 +22,7 @@ void LogManager::init() {
     LogManager::registerLogger(new FileLogger("log/log.txt"));
 }
 
-void LogManager::log(LogLevel level, char * format, ...) {
+void LogManager::log(LogLevel level, const char * format, ...) {
     va_list args, args1;
     va_start(args, format);
     va_copy(args1, args);

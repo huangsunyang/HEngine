@@ -2,12 +2,15 @@
 #define __FILE_UTILS__
 
 #include <string>
+#include <vector>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 namespace Utils {
 
 string file_format(string filename);
+string path_ensure_dir(string file, string dir);
 
 }
 

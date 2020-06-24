@@ -28,6 +28,7 @@ public:
     virtual GLfloat * getTexcoord() {return nullptr;}    // point_num * 2
     virtual GLuint * getIndices() {return nullptr;}      // indexnum
     virtual VertexInfo * getVertexInfo() {return nullptr;}
+    virtual vector<string> getTextures() {return {};}
 };
 
 #endif
