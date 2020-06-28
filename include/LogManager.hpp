@@ -3,7 +3,15 @@
 
 #include <map>
 #include <string>
-#include <Python.h>
+
+// no python27_d.lib in python/libs.. using release python lib
+#ifdef _DEBUG
+    #undef _DEBUG
+    #include <Python.h>
+    #define _DEBUG
+#else
+    #include <Python.h>
+#endif
 
 class ILogger;
 

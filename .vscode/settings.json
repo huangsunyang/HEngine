@@ -19,6 +19,7 @@
         "streambuf": "cpp",
         "algorithm": "cpp",
         "complex": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "xiosbase": "cpp"
     }
 }

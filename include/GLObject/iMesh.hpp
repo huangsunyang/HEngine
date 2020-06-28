@@ -2,6 +2,7 @@
 #define __MESH__
 
 #include <vector>
+#include <string>
 #include "GL/gl3w.h"
 
 using namespace std;

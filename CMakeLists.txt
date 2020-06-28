@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(HEngine)
+
+aux_source_directory(${PROJECT_SOURCE_DIR}/src ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/sb7 ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/model_loader ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/GLObject ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils ALL_SRC)
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/sb7)
+include_directories(D:/Python27_x86/include)
+
+link_directories(D:/Python27_x86/libs)
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+
+link_libraries(glfw3)
+link_libraries(freeglutd)
+link_libraries(libglew32d)
+link_libraries(python27)
+link_libraries(opengl32)
+link_libraries(kernel32)
+link_libraries(user32)
+link_libraries(gdi32)
+link_libraries(winspool)
+link_libraries(comdlg32)
+link_libraries(advapi32)
+link_libraries(shell32)
+link_libraries(ole32)
+link_libraries(oleaut32)
+link_libraries(uuid)
+link_libraries(odbc32)
+link_libraries(odbccp32)
+link_libraries(msvcrtd)
+
+add_executable(engine WIN32 ${ALL_SRC})

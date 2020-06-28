@@ -2,12 +2,14 @@
 #include "utils/FileUtils.hpp"
 #include "ObjLoader.hpp"
 #include "shape2d.hpp"
+#include "LogManager.hpp"
 
 #define VBO_SIZE 1024 * 1024 * 4
 
 
 void Model::setShader(vector<string> shaders) {
     for (const string& shader: shaders) {
+        INFO("%s\n", shader.c_str());
         m_program->bindShader(shader);
     }
     m_program->linkProgram();

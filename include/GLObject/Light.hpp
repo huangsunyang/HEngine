@@ -7,7 +7,7 @@
 class Light: public Box {
 public:
     Light(): Box(2, 2, 2) {
-        setShader({"shader/light.vs", "shader/common.fs"});
+        setShader({"package/shader/light.vs", "package/shader/common.fs"});
     }
 };
 

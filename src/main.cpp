@@ -53,18 +53,18 @@ public:
         models = vector<Model *>();
 
         Model * triangle = new Model();
-        triangle->setShader({"shader/texture.vs", "shader/texture.fs"});
+        triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
         // drawCommands.push_back(triangle);
 
         Model * obj = new Model();
-        obj->setShader({"shader/common_light.vs", "shader/common_light.fs"});
+        obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
         obj->loadMesh("Package/res/capsule.obj");
         models.push_back(obj);
 
         Model * axis = new Model();
-        axis->setShader({"shader/axis.vs", "shader/common.fs"});
+        axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
         axis->setDrawMode(GL_LINES);
         axis->loadVertex({
             10., .0, .0, 
@@ -81,7 +81,7 @@ public:
         models.push_back(light);
 
         Model * polygon = new Model();
-        polygon->setShader({"shader/ui.vs", "shader/common.fs"});
+        polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
         polygon->setDrawMode(GL_TRIANGLE_FAN);
         polygon->loadVertex({
             .25, .0, .0, 
@@ -186,7 +186,7 @@ public:
 
     virtual void run(application * app) {
         pybind11::scoped_interpreter guard{};
-        pybind11::module::import("sys").attr("path").cast<pybind11::list>().append("./script");
+        pybind11::module::import("sys").attr("path").cast<pybind11::list>().append("./package/script");
         this->application::run(this);
     }
 

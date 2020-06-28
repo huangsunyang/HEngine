@@ -23,12 +23,13 @@ void Program::bindShader(string shader_path) {
 }
 
 void Program::bindShader(GLenum shader_type, const char * file_name) {
-    std::ifstream t(file_name);
+    std::fstream t(file_name, std::ios::in);
     std::string ret((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
     const GLchar* shader_source[] = {
         ret.c_str()
     };
+    t.close();
 
     GLuint shader = glCreateShader(shader_type);
     glShaderSource(shader, 1, shader_source, NULL);
@@ -45,7 +46,7 @@ void Program::bindShader(GLenum shader_type, const char * file_name) {
         glGetShaderInfoLog(shader, logSize, nullptr, message);
         INFO("%s\n", message);
     }
-    
+
     if (status == GL_FALSE) {
         glDeleteShader(shader);
         return;
