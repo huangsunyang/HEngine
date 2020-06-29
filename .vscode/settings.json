@@ -21,5 +21,6 @@
         "complex": "cpp",
         "memory": "cpp",
         "xiosbase": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

@@ -17,7 +17,7 @@ target_include_directories(engine PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # add python lib/include dir
 find_package(Python2 COMPONENTS Interpreter Development)
-# link_directories("${Python2_LIBRARY_DIRS}")
+link_directories("${Python2_LIBRARY_DIRS}")
 target_include_directories(engine PUBLIC ${Python2_INCLUDE_DIRS})
 target_link_libraries(engine ${Python2_LIBRARIES})
 MESSAGE(STATUS "${Python2_LIBRARIES} ${Python2_LIBRARY_DIRS}")
@@ -33,6 +33,9 @@ target_link_libraries(engine stb)
 add_subdirectory(3rd_party/sb7)
 add_dependencies(engine sb7)
 target_link_libraries(engine sb7)
+
+add_subdirectory(3rd_party/pybind11)
+target_link_libraries(engine pybind11)
 
 target_link_libraries(engine opengl32)
 
