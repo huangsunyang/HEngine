@@ -23,6 +23,8 @@ add_subdirectory(3rd_party/glfw-3.3.2)
 add_dependencies(engine glfw)
 target_link_libraries(engine glfw)
 
+add_subdirectory(src/test)
+
 set_target_properties(engine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT engine)
 
