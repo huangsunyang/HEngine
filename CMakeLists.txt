@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8)
 
 project(HEngine)
 
@@ -13,25 +13,16 @@ include_directories(${PROJECT_SOURCE_DIR}/include/sb7)
 include_directories(D:/Python27_x86/include)
 
 link_directories(D:/Python27_x86/libs)
-link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-link_libraries(glfw3)
-link_libraries(freeglutd)
-link_libraries(libglew32d)
 link_libraries(python27)
 link_libraries(opengl32)
-link_libraries(kernel32)
-link_libraries(user32)
-link_libraries(gdi32)
-link_libraries(winspool)
-link_libraries(comdlg32)
-link_libraries(advapi32)
-link_libraries(shell32)
-link_libraries(ole32)
-link_libraries(oleaut32)
-link_libraries(uuid)
-link_libraries(odbc32)
-link_libraries(odbccp32)
-link_libraries(msvcrtd)
 
 add_executable(engine WIN32 ${ALL_SRC})
+
+add_subdirectory(3rd_party/glfw-3.3.2)
+add_dependencies(engine glfw)
+target_link_libraries(engine glfw)
+
+set_target_properties(engine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT engine)
+
