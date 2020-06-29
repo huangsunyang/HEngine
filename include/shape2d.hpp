@@ -1,7 +1,7 @@
 #ifndef __SHAPE_2D__
 #define __SHAPE_2D__
-#include "sb7.h"
-#include "vmath.h"
+#include "sb7/sb7.h"
+#include "sb7/vmath.h"
 #include "GLObject/iMesh.hpp"
 #include "logger.hpp"
 

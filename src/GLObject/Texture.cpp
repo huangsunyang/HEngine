@@ -1,6 +1,6 @@
 #include "GLObject/Texture.hpp"
 #include "stb/stb_image.h"
-#include "sb7ktx.h"
+#include "sb7/sb7ktx.h"
 #include "LogManager.hpp"
 #include "utils/FileUtils.hpp"
 

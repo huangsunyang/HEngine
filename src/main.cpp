@@ -4,8 +4,8 @@
 #include <io.h>
 #include <fcntl.h>
 #include <streambuf>
-#include "sb7.h"
-#include "sb7color.h"
+#include "sb7/sb7.h"
+#include "sb7/sb7color.h"
 #include "shape2d.hpp"
 #include "LogManager.hpp"
 #include <pybind11/embed.h>

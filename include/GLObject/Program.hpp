@@ -1,7 +1,7 @@
 #ifndef __GLOBJECT__PROGRAM__
 #define __GLOBJECT__PROGRAM__
 
-#include "sb7.h"
+#include "sb7/sb7.h"
 #include "GLObject/VertexBuffer.hpp"
 #include <vector>
 #include <string>

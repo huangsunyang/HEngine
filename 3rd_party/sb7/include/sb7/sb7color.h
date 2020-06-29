@@ -27,7 +27,7 @@
 #ifndef __SB7COLOR_H__
 #define __SB7COLOR_H__
 
-#include <vmath.h>
+#include <sb7/vmath.h>
 
 namespace sb7
 {
