@@ -37,6 +37,10 @@ target_link_libraries(engine sb7)
 add_subdirectory(3rd_party/pybind11)
 target_link_libraries(engine pybind11)
 
+add_subdirectory(3rd_party/pugixml)
+add_dependencies(engine pugixml)
+target_link_libraries(engine pugixml)
+
 target_link_libraries(engine opengl32)
 
 add_subdirectory(src/test)

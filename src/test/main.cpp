@@ -1,7 +1,10 @@
 #include "utils/FileUtils.hpp"
+#include "pugixml.hpp"
 #include <iostream>
+#include <string>
 
 using namespace Utils;
+using std::string;
 
 static int test_count = 0;
 static int pass_count = 0;
@@ -10,12 +13,26 @@ static int pass_count = 0;
     do {                                \
         auto x = a;                     \
         auto y = b;                     \
-        if ((x) == (y)) ++pass_count;   \
-        else std::cout << test_count << ". expect " << y << " but get " << x << std::endl; \
         ++test_count;                   \
+        if ((x) == (y)) ++pass_count;   \
+        else std::cout << '[' << test_count << "] expect " << y << " but get " << x << std::endl; \
     } while (0)
 
-int main() {
+
+#define TESTBEGIN(name)                 \
+    void test##name() {
+
+
+#define TESTENG()                       \
+        printf("Test Finish: %d/%d pass!\n", pass_count, test_count);  \
+        test_count = 0;                 \
+        pass_count = 0;                 \
+    }
+
+#define TEST(name)                      \
+    test##name()
+
+TESTBEGIN(FileUtils)
     AssertEqual(path_norm("a\\b\\c"), "a/b/c");
     AssertEqual(path_norm("a//b//c"), "a/b/c");
     AssertEqual(path_norm("./a/./b/./c"), "a/b/c");
@@ -31,8 +48,27 @@ int main() {
     AssertEqual(path_ensure_dir("a/b", "."), "a/b");
     AssertEqual(path_ensure_dir("../a/b", ".."), "../a/b");
     AssertEqual(path_ensure_dir("a/b", ".."), "../a/b");
+TESTENG()
 
-    printf("Test Finish: %d/%d pass!\n", pass_count, test_count);
+
+TESTBEGIN(XmlUtils)
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file("package/config/test.xml");
+    std::cout << "Load result: " << result.description() << std::endl;
+    AssertEqual(doc.child("mesh").attribute("name").value(), string("mesh_root"));
+    pugi::xml_node mesh = doc.child("mesh");
+    int index = 1;
+    for (pugi::xml_node node = mesh.first_child(); node; node = node.next_sibling(), index++) {
+        AssertEqual(node.attribute("attr").value(), string("value") + std::to_string(index));
+    }
+    AssertEqual(doc.child("mesh").child("node").attribute("attr").value(), string("value1"));
+TESTENG()
+
+
+int main() {
+    TEST(FileUtils);
+    TEST(XmlUtils);
+
     getchar();
     return 0;
 }

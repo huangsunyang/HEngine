@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mesh name="mesh_root">
+	<!-- here is a mesh node -->
+	<node attr="value1" />
+	<node attr="value2" />
+	<node attr="value3" />
+	<node attr="value4" />
+	<node attr="value5" />
+</mesh>
