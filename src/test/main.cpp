@@ -23,8 +23,8 @@ static int pass_count = 0;
     void test##name() {
 
 
-#define TESTENG()                       \
-        printf("Test Finish: %d/%d pass!\n", pass_count, test_count);  \
+#define TESTENG(name)                       \
+        printf("Test %s Finish: %d/%d pass!\n", #name, pass_count, test_count);  \
         test_count = 0;                 \
         pass_count = 0;                 \
     }
@@ -48,7 +48,7 @@ TESTBEGIN(FileUtils)
     AssertEqual(path_ensure_dir("a/b", "."), "a/b");
     AssertEqual(path_ensure_dir("../a/b", ".."), "../a/b");
     AssertEqual(path_ensure_dir("a/b", ".."), "../a/b");
-TESTENG()
+TESTENG(FileUtils)
 
 
 TESTBEGIN(XmlUtils)
@@ -62,7 +62,7 @@ TESTBEGIN(XmlUtils)
         AssertEqual(node.attribute("attr").value(), string("value") + std::to_string(index));
     }
     AssertEqual(doc.child("mesh").child("node").attribute("attr").value(), string("value1"));
-TESTENG()
+TESTENG(XmlUtils)
 
 
 int main() {
