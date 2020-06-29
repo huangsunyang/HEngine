@@ -114,15 +114,15 @@ public:
     void onMouseMove(int x, int y) {
         if (left_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                float diff_x = float(x - mouse_pos_x) / 1000.0; 
-                float diff_y = float(y - mouse_pos_y) / -1000.0;
+                float diff_x = float(x - mouse_pos_x) / 1000.0f; 
+                float diff_y = float(y - mouse_pos_y) / -1000.0f;
                 m_camera->rotateCameraBy(diff_x, diff_y);
             }
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                float diff_x = float(x - mouse_pos_x) / -100.0;
-                float diff_y = float(y - mouse_pos_y) / 100.0;
+                float diff_x = float(x - mouse_pos_x) / -100.0f;
+                float diff_y = float(y - mouse_pos_y) / 100.0f;
                 m_camera->moveCameraBy(diff_x, diff_y, 0);
             }
         }
@@ -147,7 +147,7 @@ public:
     }
 
     void onMouseWheel(int pos) {
-        m_camera->moveCameraBy(0, 0, pos * 0.1);
+        m_camera->moveCameraBy(0, 0, pos * 0.1f);
     }
 
     void onResize(int w, int h) {
@@ -245,8 +245,8 @@ private:
     GLenum m_polygonMode;
 
     bool m_pause;
-    float m_gameTime;
-    float m_lastTickTime;
+    double m_gameTime;
+    double m_lastTickTime;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

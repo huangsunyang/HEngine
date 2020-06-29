@@ -2,6 +2,7 @@
 #include "Logger.hpp"
 #include <pybind11/embed.h>
 #include <cstdarg>
+#include <cstdio>
 
 
 namespace LOG {
@@ -29,7 +30,7 @@ void LogManager::log(LogLevel level, const char * format, ...) {
 
     size_t len = _vscprintf(format, args) + 1;
     char * log_string = new char[len];
-    vsprintf(log_string, format, args1);
+    vsnprintf(log_string, len, format, args1);
     for(auto iter: LogManager::m_loggers) {
         iter.second->write(log_string);
     }

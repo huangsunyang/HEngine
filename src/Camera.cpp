@@ -6,10 +6,10 @@ Camera::Camera(vmath::vec3 pos) {
     m_cameraUp = vmath::vec3(0, 1, 0);
     setCameraRotation(0, 0);
 
-    m_near = 0.1;
-    m_far = 100.0;
-    m_fovy = 30.0;
-    m_aspect = 1;
+    m_near = 0.1f;
+    m_far = 100.0f;
+    m_fovy = 30.0f;
+    m_aspect = 1.f;
 }
 
 Camera::Camera(): Camera(vmath::vec3(-5, 0, 0)) {}
@@ -43,10 +43,10 @@ void Camera::setCameraPitch(float pitch) {
 
 void Camera::setCameraRotation(float yaw, float pitch) {
     m_cameraYaw = yaw;
-    if (pitch > M_PI_2 - 0.3) {
-        pitch = M_PI_2 - 0.3;
-    } else if (pitch < 0.3 - M_PI_2) {
-        pitch = 0.3 - M_PI_2;
+    if (pitch > M_PI_2 - 0.3f) {
+        pitch = float(M_PI_2 - 0.3f);
+    } else if (pitch < 0.3f - M_PI_2) {
+        pitch = float(0.3f - M_PI_2);
     }
     m_cameraPitch = pitch;
     updateCameraFront();

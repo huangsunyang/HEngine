@@ -36,7 +36,7 @@ void Model::initBuffers() {
     m_vbo->alloc(pointNum * stride, GL_DYNAMIC_STORAGE_BIT);
     m_vbo->subData(points);
 
-    for (int i = 0; i < pointNum * stride / sizeof(GLfloat); i++) {
+    for (size_t i = 0; i < pointNum * stride / sizeof(GLfloat); i++) {
         // INFO("%d %f\n", i, points[i]);
     }
     INFO("\n");
@@ -111,7 +111,7 @@ void Model::setTexture(int bindingIndex, const char * textureFile) {
 
 
 void Model::setTexture(vector<string> textureFiles) {
-    for (int i = 0; i < textureFiles.size(); i++) {
+    for (size_t i = 0; i < textureFiles.size(); i++) {
         setTexture(i, textureFiles[i].c_str());
     }
 }
@@ -125,7 +125,7 @@ void Model::draw() {
     char sampler_name[5];
     for (auto pair: m_textures) {
         pair.second->bindTexture(pair.first);
-        sprintf(sampler_name, "s%d", pair.first);
+        sprintf_s(sampler_name, 5, "s%d", pair.first);
         m_program->setIntUniform(sampler_name, pair.first);
     }
 

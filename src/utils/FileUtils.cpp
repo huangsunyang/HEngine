@@ -66,7 +66,7 @@ string path_norm(string filename) {
     filename = string_replace(filename, "\\", "/");
     vector<string> parts = string_split(filename, "/");
     string ret = "";
-    for (int i = 0; i < parts.size(); i++) {
+    for (size_t i = 0; i < parts.size(); i++) {
         printf("%d %s\n", i, parts[i].c_str());
         if (parts[i] == ".") {
             continue;

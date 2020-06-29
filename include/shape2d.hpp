@@ -37,7 +37,7 @@ public:
             polygon->verteces[i] = *x;
         }
 
-        for (int i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++) {
             polygon->indices[i] = i;
         }
 
@@ -65,7 +65,7 @@ public:
             polygon->verteces[i] = *x;
         }
 
-        for (int i = 0; i < index.size(); i++) {
+        for (size_t i = 0; i < index.size(); i++) {
             polygon->indices[i] = index[i];
         }
 
@@ -89,7 +89,7 @@ public:
             {2, GL_FLOAT, 8},
         };
 
-        for (int i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++) {
             polygon->verteces[5 * i + 0] = points[3 * i + 0];
             polygon->verteces[5 * i + 1] = points[3 * i + 1];
             polygon->verteces[5 * i + 2] = points[3 * i + 2];
@@ -98,7 +98,7 @@ public:
         }
 
 
-        for (int i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++) {
             polygon->indices[i] = i;
         }
 
