@@ -4,7 +4,11 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/include/sb7",
+                "${workspaceFolder}/3rd_party/pugixml/include",
+                "${workspaceFolder}/3rd_party/pybind11/include",
+                "${workspaceFolder}/3rd_party/sb7/include",
+                "${workspaceFolder}/3rd_party/stb/include",
+                "${workspaceFolder}/3rd_party/glfw-3.3.2/include",
                 "D:/Python27_x86/include"
             ],
             "defines": [

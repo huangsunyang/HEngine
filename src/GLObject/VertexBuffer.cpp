@@ -9,6 +9,10 @@ VertexBuffer::~VertexBuffer() {
 }
 
 void VertexBuffer::bindTarget(GLenum target) {
+    /* in fact in opengl 4.5 where DSA methods like glNamedBufferSubData are introduced
+     * glBindBuffer may not be called any more. even at old times, the [target] parameter
+     * doesn't seem useful, though some types like GL_UNIFORM_BUFFER/GL_ARRAY_BUFFER exist
+     */
     glBindBuffer(target, m_vbo);
 }
 
