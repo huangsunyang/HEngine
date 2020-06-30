@@ -32,6 +32,9 @@ public:
     void bindUniformBuffer(GLuint bindingIndex, VertexBuffer * buffer);
 
 protected:
+    void bindConstUniformBuffer();
+
+protected:
     GLuint m_program;
 };
 
