@@ -1,4 +1,5 @@
 #include "GLObject/Program.hpp"
+#include "GLObject/ConstUniform.hpp"
 #include <string>
 #include <fstream>
 #include "logger.hpp"
@@ -63,6 +64,7 @@ void Program::linkProgram() {
 
 void Program::useProgram() {
     glUseProgram(m_program);
+    bindUniformBlock("ConstantBlock", ConstUniform::instance()->getUBOHandle());
 }
 
 void Program::deleteProgram() {
