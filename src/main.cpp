@@ -222,7 +222,6 @@ public:
             model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
             model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-            model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
             model->getProgram()->setVec3Uniform("light_dir", light->getTransform()->getPosition() - model->getTransform()->getPosition());
             model->draw();
         }
