@@ -32,7 +32,7 @@ public:
     }
     LightInfo getLightInfo() {
         vmath::vec3 pos = getTransform()->getPosition();
-        DEBUG("lights info pos: %f %f %f\n", pos[0], pos[1], pos[2]);
+        // DEBUG("lights info pos: %f %f %f\n", pos[0], pos[1], pos[2]);
         return {
             {pos, 0},
             {getTransform()->getForward(), 0},

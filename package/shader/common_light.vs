@@ -19,7 +19,7 @@ struct Light {
 layout (std140) uniform ConstantBlock {
     uniform mat4 view_matrix;
     uniform mat4 proj_matrix;
-    uniform vec4 light_num_info;
+    uniform uvec4 light_num_info;
     uniform Light[10] light_info;
 };
 

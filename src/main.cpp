@@ -81,10 +81,9 @@ public:
         Light * light = m_lightMgr->createLight();
         light->getTransform()->setPosition({0, 5, 0});
         vmath::vec3 dir = light->getTransform()->getForward();
-        vmath::vec4 ret = vmath::rotate(.0f, .0f, .0f) * vmath::vec4(0, 0, 1, 0);
         DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
-        DEBUG("light forward: %lf %lf %lf\n", ret[0], ret[1], ret[2]);
         models.push_back(light);
+        models.push_back(m_lightMgr->createLight());
 
         Model * polygon = new Model();
         polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
@@ -218,13 +217,18 @@ public:
 
         float f = (float)m_gameTime * 0.3f;
         vmath::vec3 translate = vmath::vec3(
-            sinf(2.1f * f) * 5,
-            cosf(1.7f * f) * 5,
-            sinf(1.3f * f) * 5
+            sinf(22.1f * f) * 5,
+            cosf(21.7f * f) * 5,
+            sinf(21.3f * f) * 5
+        );
+        vmath::vec3 translate1 = vmath::vec3(
+            cosf(2.9f * f) * 3,
+            sinf(1.0f * f) * 3,
+            sinf(1.5f * f) * 3
         );
         vmath::vec3 rotate = translate * 50;
-        Light * light = m_lightMgr->getLight(0);
-        light->getTransform()->setPosition(translate);
+        m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
+        m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
         for (auto model: models) {
             vmath::mat4 m_matrix = model->getTransformMatrix();
             vmath::mat4 m_matrix_t = m_matrix.transpose();
