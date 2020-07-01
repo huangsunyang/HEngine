@@ -38,6 +38,9 @@ public:
 
         // init camera
         m_camera = new Camera;
+
+        // init lights
+        m_lightMgr = new LightMgr;
         
         /*
         shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
@@ -51,8 +54,6 @@ public:
     }
 
     void init_shape() {
-        models = vector<Model *>();
-
         Model * triangle = new Model();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
@@ -77,8 +78,12 @@ public:
         });
         models.push_back(axis);
 
-        light = new Light();
+        Light * light = m_lightMgr->createLight();
         light->getTransform()->setPosition({0, 5, 0});
+        vmath::vec3 dir = light->getTransform()->getForward();
+        vmath::vec4 ret = vmath::rotate(.0f, .0f, .0f) * vmath::vec4(0, 0, 1, 0);
+        DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
+        DEBUG("light forward: %lf %lf %lf\n", ret[0], ret[1], ret[2]);
         models.push_back(light);
 
         Model * polygon = new Model();
@@ -207,6 +212,9 @@ public:
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
         UniformBlock::instance()->setUniformBlockMember("view_matrix", camera_matrix);
         UniformBlock::instance()->setUniformBlockMember("proj_matrix", proj_matrix);
+        vmath::uvec4 light_num = m_lightMgr->getLightNum();
+        UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
+        UniformBlock::instance()->setUniformBlockMember("light_info", m_lightMgr->getLightInfo().data());
 
         float f = (float)m_gameTime * 0.3f;
         vmath::vec3 translate = vmath::vec3(
@@ -215,17 +223,15 @@ public:
             sinf(1.3f * f) * 5
         );
         vmath::vec3 rotate = translate * 50;
+        Light * light = m_lightMgr->getLight(0);
         light->getTransform()->setPosition(translate);
         for (auto model: models) {
             vmath::mat4 m_matrix = model->getTransformMatrix();
             vmath::mat4 m_matrix_t = m_matrix.transpose();
             vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
-            model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
-            model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
             model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
-            model->getProgram()->setVec3Uniform("light_dir", light->getTransform()->getPosition() - model->getTransform()->getPosition());
             model->draw();
         }
     }
@@ -234,7 +240,7 @@ private:
     GLuint vao;
     float aspect;
     vector<Model *> models;
-    Light * light;
+    LightMgr * m_lightMgr;
     Texture2D * texture;
     Texture2D * texture1;
     bool left_mouse_down = false;

@@ -9,9 +9,18 @@ out vec3 o_normal;
 out vec2 o_coord;
 
 
+struct Light {
+    vec4 pos;
+    vec4 dir;
+    vec4 color;
+};
+
+
 layout (std140) uniform ConstantBlock {
     uniform mat4 view_matrix;
     uniform mat4 proj_matrix;
+    uniform vec4 light_num_info;
+    uniform Light[10] light_info;
 };
 
 uniform mat4 m_matrix;
