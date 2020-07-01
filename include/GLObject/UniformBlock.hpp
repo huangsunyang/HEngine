@@ -10,8 +10,7 @@
 using std::string;
 using std::vector;
 
-
-struct UniformBlockData {
+struct UniformBlockMemberData {
     string name;
     size_t size;
     size_t offset;
@@ -29,15 +28,16 @@ public:
 
     void setUniformBlockMember(std::string name, void * data);
     GLuint getBindingIndex() {return 2;}
-    string getBlockName() {return "ConstantBlock";}
+    string getBlockName() {return m_blockName;}
 
 private:
-    UniformBlock();
+    UniformBlock(string name);
 
     static UniformBlock * m_instance;
-    static vector<UniformBlockData> m_uniformBlockMembers;
 
     VertexBuffer * m_ubo;   //uniform buffer object
+    string m_blockName;
+    vector<UniformBlockMemberData> m_uniformBlockMembers;
 };
 
 

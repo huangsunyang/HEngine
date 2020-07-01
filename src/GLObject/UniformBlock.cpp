@@ -3,22 +3,21 @@
 #include "GLObject/UniformBlock.hpp"
 
 
-std::vector<UniformBlockData> UniformBlock::m_uniformBlockMembers = {
-};
-
-
 UniformBlock * UniformBlock::m_instance = nullptr;
 
 
-UniformBlock::UniformBlock() {
+UniformBlock::UniformBlock(string name) {
     m_ubo = new VertexBuffer;
+    m_blockName = name;
+    DEBUG("new uniform block: %s\n", name.c_str());
+
     size_t total_size = 0;
     pugi::xml_parse_result result;
     pugi::xml_document doc;
     result = doc.load_file("package/config/UniformBlock.xml");
-    INFO("%s: %s\n", doc.name(), result.description());
+    DEBUG("%s: %s\n", "package/config/UniformBlock.xml", result.description());
 
-    pugi::xml_node root = doc.child("root").child(getBlockName().c_str());
+    pugi::xml_node root = doc.child("root").child(name.c_str());
     for (auto block = root.first_child(); block; block = block.next_sibling()) {
         string name = string(block.attribute("name").value());
         size_t size = std::atoi(block.attribute("size").value());
@@ -35,7 +34,7 @@ UniformBlock::UniformBlock() {
 
 UniformBlock * UniformBlock::instance() {
     if (!m_instance) {
-        m_instance = new UniformBlock;
+        m_instance = new UniformBlock("ConstantBlock");
     }
     return m_instance;
 }
