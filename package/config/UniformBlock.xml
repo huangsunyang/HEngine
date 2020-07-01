@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<root>
+	<block name="ConstantBlock">
+        <member name="view_matrix" size="64" />
+        <member name="proj_matrix" size="64" />
+    </block>
+</root>

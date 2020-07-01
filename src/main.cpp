@@ -13,7 +13,7 @@
 #include "GLObject/Texture.hpp"
 #include "GLObject/Model.hpp"
 #include "GLObject/Light.hpp"
-#include "GLObject/ConstUniform.hpp"
+#include "GLObject/UniformBlock.hpp"
 #include "Camera.hpp"
 
 
@@ -205,8 +205,8 @@ public:
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         vmath::mat4 camera_matrix = m_camera->getCameraTransform();
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
-        ConstUniform::instance()->setConstUniform("view_matrix", camera_matrix);
-        ConstUniform::instance()->setConstUniform("proj_matrix", proj_matrix);
+        UniformBlock::instance()->setUniformBlockMember("view_matrix", camera_matrix);
+        UniformBlock::instance()->setUniformBlockMember("proj_matrix", proj_matrix);
 
         float f = (float)m_gameTime * 0.3f;
         vmath::vec3 translate = vmath::vec3(
