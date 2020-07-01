@@ -6,7 +6,7 @@
 #include <vector>
 #include "GLObject/VertexBuffer.hpp"
 
-
+using std::map;
 using std::string;
 using std::vector;
 
@@ -37,7 +37,7 @@ private:
 
     VertexBuffer * m_ubo;   //uniform buffer object
     string m_blockName;
-    vector<UniformBlockMemberData> m_uniformBlockMembers;
+    map<string, UniformBlockMemberData> m_uniformBlockMembers;
 };
 
 

@@ -23,7 +23,7 @@ UniformBlock::UniformBlock(string name) {
         size_t size = std::atoi(block.attribute("size").value());
         DEBUG("%d %d %s\n", total_size, size, name.c_str());
         
-        m_uniformBlockMembers.push_back({name, size, total_size});
+        m_uniformBlockMembers[name] = {name, size, total_size};
         total_size += size;
     }
 
@@ -49,9 +49,9 @@ UniformBlock * UniformBlock::instance(string name) {
 
 
 void UniformBlock::setUniformBlockMember(std::string name, void * data) {
-    for (const auto& cu: m_uniformBlockMembers) {
-        if (cu.name == name) {
-            m_ubo->subData(cu.offset, cu.size, data);
-        }
+    if (m_uniformBlockMembers.find(name) == m_uniformBlockMembers.end()) {
+        return;
     }
+    auto& cu = m_uniformBlockMembers[name];
+    m_ubo->subData(cu.offset, cu.size, data);
 }
