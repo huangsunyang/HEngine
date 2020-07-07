@@ -1,5 +1,6 @@
 #include "utils/FileUtils.hpp"
 #include "pugixml.hpp"
+#include <pybind11/embed.h>
 #include <iostream>
 #include <string>
 
@@ -23,7 +24,7 @@ static int pass_count = 0;
     void test##name() {
 
 
-#define TESTENG(name)                       \
+#define TESTEND(name)                       \
         printf("Test %s Finish: %d/%d pass!\n", #name, pass_count, test_count);  \
         test_count = 0;                 \
         pass_count = 0;                 \
@@ -48,7 +49,7 @@ TESTBEGIN(FileUtils)
     AssertEqual(path_ensure_dir("a/b", "."), "a/b");
     AssertEqual(path_ensure_dir("../a/b", ".."), "../a/b");
     AssertEqual(path_ensure_dir("a/b", ".."), "../a/b");
-TESTENG(FileUtils)
+TESTEND(FileUtils)
 
 
 TESTBEGIN(XmlUtils)
@@ -62,12 +63,23 @@ TESTBEGIN(XmlUtils)
         AssertEqual(node.attribute("attr").value(), string("value") + std::to_string(index));
     }
     AssertEqual(doc.child("mesh").child("node").attribute("attr").value(), string("value1"));
-TESTENG(XmlUtils)
+TESTEND(XmlUtils)
+
+
+TESTBEGIN(Pybind11)
+    namespace py = pybind11;
+    py::scoped_interpreter p;
+    py::list sys_path = py::module::import("sys").attr("path");
+    for (auto path: sys_path) {
+        py::print(path);
+    }
+TESTEND(Pybind11)
 
 
 int main() {
     TEST(FileUtils);
     TEST(XmlUtils);
+    TEST(Pybind11);
 
     getchar();
     return 0;
