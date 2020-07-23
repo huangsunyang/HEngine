@@ -57,10 +57,10 @@ public:
     }
 
     void initUI() {
-        Scene * scene = new Scene({-0.2f, 0.2f}, {0.2f, 0.2f});
+        Scene * scene = new Scene({-1.0f, 1.0f}, {0.2f, 0.2f});
         scene->setColor({1.0f, 1.0f, 0.0f});
         scene->addTouchEventListener([](Widget * w, Touch * e) {
-            INFO("OnClick %s", w->getName());
+            INFO("OnClick %s\n", w->getName().c_str());
         });
         scene->setCurrentScene();
     }
@@ -113,13 +113,17 @@ public:
 
     void onMouseButton(int button, int action) {
         auto touch = new Touch;
+        auto width = info.windowWidth, height = info.windowHeight;
         if (button == GLFW_MOUSE_BUTTON_1) {
+            touch->pos = {float(mouse_pos_x) / info.windowWidth * 2 - 1, - float(mouse_pos_y) / info.windowHeight * 2 + 1};
             if (action == GLFW_PRESS) {
                 left_mouse_down = true;
                 touch->event = TouchEvent::BEGAN;
                 Director::instance()->onTouchEvent(touch);
             } else if (action == GLFW_RELEASE) {
+                touch->event = TouchEvent::END;
                 left_mouse_down = false;
+                Director::instance()->onTouchEvent(touch);
             }
         } else if (button == GLFW_MOUSE_BUTTON_3) {
             if (action == GLFW_PRESS) {

@@ -1,5 +1,6 @@
 #include "ui/Director.hpp"
 #include "ui/Scene.hpp"
+#include "LogManager.hpp"
 
 Director * Director::m_instance = nullptr;
 

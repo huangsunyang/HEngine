@@ -11,6 +11,8 @@ using vmath::vec3;
 using vmath::vec4;
 
 
+class UIRectangle;
+
 
 class Widget {
 public:
@@ -64,6 +66,8 @@ protected:
     bool m_touchEnabled = true;
     bool m_swallowTouch = false;
     ClickCallback m_callback = nullptr;
+
+    UIRectangle * m_drawer = nullptr;
 
     Widget * m_parent = nullptr;
     vector<Widget *> m_children;
