@@ -15,6 +15,7 @@
 #include "GLObject/Light.hpp"
 #include "GLObject/UniformBlock.hpp"
 #include "Camera.hpp"
+#include "ui/scene.hpp"
 
 
 // Derive my_application from sb7::application
@@ -36,6 +37,8 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
+        initUI();
+
         // init camera
         m_camera = new Camera;
 
@@ -51,6 +54,15 @@ public:
         onResize(info.windowWidth, info.windowHeight);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+    }
+
+    void initUI() {
+        Scene * scene = new Scene({-0.2f, 0.2f}, {0.2f, 0.2f});
+        scene->setColor({1.0f, 1.0f, 0.0f});
+        scene->addTouchEventListener([](Widget * w, Touch * e) {
+            INFO("OnClick %s", w->getName());
+        });
+        scene->setCurrentScene();
     }
 
     void init_shape() {
@@ -100,9 +112,12 @@ public:
     }
 
     void onMouseButton(int button, int action) {
+        auto touch = new Touch;
         if (button == GLFW_MOUSE_BUTTON_1) {
             if (action == GLFW_PRESS) {
                 left_mouse_down = true;
+                touch->event = TouchEvent::BEGAN;
+                Director::instance()->onTouchEvent(touch);
             } else if (action == GLFW_RELEASE) {
                 left_mouse_down = false;
             }
@@ -238,6 +253,7 @@ public:
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
             model->draw();
         }
+        Director::instance()->draw();
     }
 
 private:

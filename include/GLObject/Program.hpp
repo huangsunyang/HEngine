@@ -25,6 +25,7 @@ public:
     void setIntUniform(const char * name, GLint value);
     void setFloatUniform(const char * name, GLfloat value);
     void setVec3Uniform(const char * name, const GLfloat * value);
+    void setVec4Uniform(const char * name, const GLfloat * value);
     void setMatrix4fvUniform(const char * name, const GLfloat * value);
 
     GLuint getUniformBlockIndex(const GLchar * uniformBlockName);

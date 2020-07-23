@@ -98,6 +98,12 @@ void Program::setVec3Uniform(const char * name, const GLfloat * value) {
     return glUniform3fv(location, 1, value);
 }
 
+void Program::setVec4Uniform(const char * name, const GLfloat * value) {
+    GLuint location = getLocation(name);
+    useProgram();
+    return glUniform4fv(location, 1, value);
+}
+
 void Program::setMatrix4fvUniform(const char * name, const GLfloat * value) {
     GLuint location = getLocation(name);
     useProgram();

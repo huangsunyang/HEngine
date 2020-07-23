@@ -8,8 +8,9 @@ uniform mat4 mvp_matrix;
 uniform mat4 v_matrix;
 uniform mat4 p_matrix;
 uniform mat4 m_matrix_it;
+uniform vec4 color;
 
 void main(void) {
     gl_Position = position;
-    vs_color = vec4(1, 1, 1, 1);
+    vs_color = color;
 }

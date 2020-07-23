@@ -58,7 +58,7 @@ public:
     vmath::mat4 getTransformMatrix() {return m_transform->getMatrix();}
 
     // draw
-    void draw();
+    virtual void draw();
 
 protected:
     Program * m_program;
