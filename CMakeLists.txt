@@ -4,6 +4,7 @@ project(HEngine)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/ui ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/base ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/sb7 ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/model_loader ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/GLObject ALL_SRC)

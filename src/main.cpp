@@ -16,6 +16,7 @@
 #include "GLObject/UniformBlock.hpp"
 #include "Camera.hpp"
 #include "ui/scene.hpp"
+#include "base/EventDispatcher.hpp"
 
 
 // Derive my_application from sb7::application
@@ -38,6 +39,7 @@ public:
         LOG::LogManager::showAllLogger();
 
         initUI();
+        initEvent();
 
         // init camera
         m_camera = new Camera;
@@ -57,9 +59,17 @@ public:
     }
 
     void initUI() {
-        Scene * scene = new Scene({-1.0f, 1.0f}, {0.2f, 0.2f});
-        scene->setColor({1.0f, 1.0f, 0.0f});
+        Scene * scene = new Scene("package/ui/scene_test.xml");
+        scene->addTouchEventListener([this](Widget * w, Touch * touch) {
+            switchWireframeMode();
+        });
         scene->setCurrentScene();
+    }
+
+    void initEvent() {
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_F, [this](){switchFullScreen();});
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_W, [this](){switchWireframeMode();});
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_SPACE, [this](){m_pause = !m_pause;});
     }
 
     void init_shape() {
@@ -151,19 +161,10 @@ public:
     }
 
     void onKey(int key, int action) {
-        if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-            onFullScreen();
-        } else if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-            if (m_polygonMode == GL_LINE) {
-                m_polygonMode = GL_FILL;
-            } else {
-                m_polygonMode = GL_LINE;
-            }
-            for (auto command: models) {
-                command->setPolygonMode(m_polygonMode);
-            }
-        } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-            m_pause = !m_pause;
+        if (action == GLFW_PRESS) {
+            EventDispatcher::instance()->dispatchKeyDownEvent(key);
+        } else if (action == GLFW_RELEASE) {
+            EventDispatcher::instance()->dispatchKeyUpEvent(key);
         }
     }
 
@@ -182,7 +183,7 @@ public:
         return glfwGetWindowMonitor(window) != nullptr;
     }
 
-    void onFullScreen() {
+    void switchFullScreen() {
         if (!isFullscreen()) {
             // backup windwo position and window size
             glfwGetWindowPos(window, &_wndPos[0], &_wndPos[1]);
@@ -198,6 +199,17 @@ public:
             // restore last window size and position
             glfwSetWindowMonitor(window, nullptr,  _wndPos[0], _wndPos[1], _wndSize[0], _wndSize[1], 0 );
             glViewport(0, 0, _wndSize[0], _wndSize[1]);
+        }
+    }
+
+    void switchWireframeMode() {
+        if (m_polygonMode == GL_LINE) {
+            m_polygonMode = GL_FILL;
+        } else {
+            m_polygonMode = GL_LINE;
+        }
+        for (auto model: models) {
+            model->setPolygonMode(m_polygonMode);
         }
     }
 

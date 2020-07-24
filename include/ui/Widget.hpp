@@ -3,7 +3,9 @@
 #include "ui/Touch.hpp"
 #include <vector>
 #include <string>
+#include <functional>
 
+using std::function;
 using std::string;
 using std::vector;
 using vmath::vec2;
@@ -16,13 +18,14 @@ class UIRectangle;
 
 class Widget {
 public:
-    using ClickCallback = void (*)(Widget *, Touch *);
+    using ClickCallback = function<void(Widget *, Touch *)>;
     friend class Director;
 
     Widget(): Widget({0, 0}, {0.5, 0.5}) {}
     Widget(vec2 pos, vec2 size): Widget(pos, size, "Widget") {}
     Widget(vec2 pos, vec2 size, string name): Widget(pos, size, name, nullptr) {}
     Widget(vec2 pos, vec2 size, string name, Widget * parent): m_pos(pos), m_size(size), m_name(name), m_parent(m_parent) {}
+    Widget(string);
     
     void setPosition(vec2 pos) {m_pos = pos;}
     void setSize(vec2 size) {m_size = size;}

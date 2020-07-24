@@ -2,6 +2,23 @@
 #include "GLObject/Geometry.hpp"
 #include "LogManager.hpp"
 #include "ui/Touch.hpp"
+#include "pugixml.hpp"
+
+
+Widget::Widget(string fileName) {
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file(fileName.c_str());
+    pugi::xml_node scene = doc.child("Scene");
+    setName(scene.attribute("name").value());
+
+    auto pos = scene.child("position");
+    auto size = scene.child("size");
+    auto color = scene.child("color");
+
+    setPosition({pos.attribute("x").as_float(), pos.attribute("y").as_float()});
+    setSize({size.attribute("width").as_float(), size.attribute("height").as_float()});
+    setColor({color.attribute("r").as_float(), color.attribute("g").as_float(), color.attribute("b").as_float()});
+}
 
 
 void Widget::draw() {
