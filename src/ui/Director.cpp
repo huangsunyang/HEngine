@@ -14,5 +14,9 @@ void Director::draw() {
 void Director::onTouchEvent(Touch * e) {
     if (m_scene) {
         m_scene->onTouchEvent(e);
+        if (e->event == TouchEvent::END) {
+            e->event = TouchEvent::CANCEl;
+            m_scene->onTouchEvent(e);
+        }
     }
 }

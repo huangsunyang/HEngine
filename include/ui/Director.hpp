@@ -2,6 +2,7 @@
 
 class Scene;
 struct Touch;
+enum class TouchEvent;
 
 
 class Director {

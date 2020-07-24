@@ -1,6 +1,8 @@
 #include "ui/Widget.hpp"
 #include "GLObject/Geometry.hpp"
 #include "LogManager.hpp"
+#include "ui/Touch.hpp"
+
 
 void Widget::draw() {
     if (!m_visible) {
@@ -10,7 +12,12 @@ void Widget::draw() {
     if (!m_drawer) {
         m_drawer = new UIRectangle(m_pos, m_size);
     }
-    m_drawer->getProgram()->setVec4Uniform("color", m_color);
+
+    auto color = m_color;
+    if (m_clickedDown) {
+        color *= vec4{0.8f, 0.8f, 0.8f, 1.0f};
+    }
+    m_drawer->getProgram()->setVec4Uniform("color", color);
     m_drawer->draw();
     
     for (auto child: m_children) {
@@ -19,20 +26,25 @@ void Widget::draw() {
 }
 
 
-void Widget::onTouchEvent(Touch * e) {
-    if (!m_callback || !m_touchEnabled) return;
-    
-    if (_inTouchArea(e->pos)) {
-        m_callback(this, e);
-    } else {
-        INFO("not in area %f %f %f %f\n", e->pos[0], e->pos[1], m_pos[0], m_pos[1]);
+bool Widget::onTouchEvent(Touch * e) {
+    // first transmit to children
+    bool processed = false;
+    for (auto child: m_children) {
+        bool processed = child->onTouchEvent(e);
+        if (processed && child->isSwallowTouch()) {
+            return processed;
+        }
     }
 
-    // transmit to children
-    if (!m_swallowTouch) {
-        for (auto child: m_children) {
-            child->onTouchEvent(e);
+    if (m_touchEnabled && _canReceiveTouch(e)) {
+        INFO("%s %s\n", m_name.c_str(), enumToString(e->event).c_str());
+        if(m_callback) {
+            m_callback(this, e);
         }
+        m_clickedDown = e->event == TouchEvent::BEGAN;
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -46,9 +58,16 @@ void Widget::_refreshWorldPosition() {
 }
 
 
+bool Widget::_canReceiveTouch(Touch * touch) {
+    if (touch->event == TouchEvent::CANCEl) {
+        return m_clickedDown;
+    }
+    return _inTouchArea(touch->pos);
+}
+
+
 bool Widget::_inTouchArea(vec2 pos) {
     auto x_min = m_pos[0] - m_size[0] / 2, x_max = m_pos[0] + m_size[0] / 2;
     auto y_min = m_pos[1] - m_size[1] / 2, y_max = m_pos[1] + m_size[1] / 2;
-    INFO("%f %f %f %f\n", x_min, x_max, y_min, y_max);
     return pos[0] >= x_min && pos[0] <= x_max && pos[1] >= y_min && pos[1] <= y_max;
 }

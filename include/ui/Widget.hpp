@@ -49,11 +49,12 @@ public:
     void addTouchEventListener(ClickCallback cb) {m_callback = cb;}
     
     virtual void draw();
-    void onTouchEvent(Touch *);
+    bool onTouchEvent(Touch *);
 
 protected:
     void _refreshWorldPosition();
-    bool _inTouchArea(vec2 pos);
+    bool _inTouchArea(vec2);
+    bool _canReceiveTouch(Touch *);
 
 protected:
     vec2 m_pos;
@@ -64,7 +65,8 @@ protected:
     bool m_visible = true;
 
     bool m_touchEnabled = true;
-    bool m_swallowTouch = false;
+    bool m_swallowTouch = true;
+    bool m_clickedDown = false;
     ClickCallback m_callback = nullptr;
 
     UIRectangle * m_drawer = nullptr;

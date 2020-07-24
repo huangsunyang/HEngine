@@ -59,9 +59,6 @@ public:
     void initUI() {
         Scene * scene = new Scene({-1.0f, 1.0f}, {0.2f, 0.2f});
         scene->setColor({1.0f, 1.0f, 0.0f});
-        scene->addTouchEventListener([](Widget * w, Touch * e) {
-            INFO("OnClick %s\n", w->getName().c_str());
-        });
         scene->setCurrentScene();
     }
 
