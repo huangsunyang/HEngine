@@ -10,7 +10,9 @@ FreeTypeLibrary * FreeTypeLibrary::instance() {
 }
 
 FreeTypeFace * FreeTypeLibrary::loadFont(string name) {
-    FreeTypeFace * font = new FreeTypeFace(name);
-    m_fonts[name] = font;
-    return font;
+    if (m_fonts.find(name) == m_fonts.end()) {
+        FreeTypeFace * font = new FreeTypeFace(name);
+        m_fonts[name] = font;
+    }
+    return m_fonts[name];
 }

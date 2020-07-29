@@ -121,7 +121,7 @@ void Model::draw() {
     m_vao->bindVertexArray();
     m_program->useProgram();
 
-    /* by default, we use sampler name s1, s2, s3, s4... */
+    /* by default, we use sampler name s0, s1, s2, s3, s4... */
     char sampler_name[5];
     for (auto pair: m_textures) {
         pair.second->bindTexture(pair.first);

@@ -20,7 +20,10 @@
         "algorithm": "cpp",
         "complex": "cpp",
         "memory": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "xtr1common": "cpp",
+        "set": "cpp",
+        "functional": "cpp"
     },
     "cmake.configureOnOpen": true
 }

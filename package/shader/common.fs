@@ -5,7 +5,7 @@ in vec4 vs_color;
 
 out vec4 color;
 
-// uniform sampler2D s;
+uniform sampler2D s;
 // uniform sampler2D s1;
 
 

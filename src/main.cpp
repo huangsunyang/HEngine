@@ -67,7 +67,7 @@ public:
         });
         scene->setCurrentScene();
 
-        Text * text = new Text({0, 0}, {0, 0}, "text", scene);
+        Text * text = new Text({0, 0}, {1, 1}, "text", scene);
         text->setParent(scene);
         text->setText("a");
     }

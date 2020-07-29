@@ -44,16 +44,22 @@ public:
     UIRectangle(vmath::vec2 pos, vmath::vec2 size): m_pos(pos), m_size(size) {
         auto length = m_size[0], width = m_size[1];
         auto pos_x = m_pos[0], pos_y = m_pos[1];
-        loadVertexIndice({
+        loadVertexCoord({
             pos_x + length / 2, pos_y + width / 2, 0,
             pos_x - length / 2, pos_y + width / 2, 0,
             pos_x - length / 2, pos_y - width / 2, 0,
+            pos_x + length / 2, pos_y + width / 2, 0,
+            pos_x - length / 2, pos_y - width / 2, 0,
             pos_x + length / 2, pos_y - width / 2, 0,
         }, {
-            0, 1, 2,
-            0, 2, 3,
+            1, 1,
+            0, 1,
+            0, 0,
+            1, 1,
+            0, 0,
+            1, 0,
         });
-        setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
+        setShader({"Package/shader/ui.vs", "package/shader/ui.fs"});
     };
 
 protected:
