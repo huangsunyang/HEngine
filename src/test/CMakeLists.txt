@@ -15,3 +15,6 @@ target_link_libraries(test pugixml)
 
 add_dependencies(test pybind11)
 target_link_libraries(test pybind11)
+
+add_dependencies(test freetype)
+target_link_libraries(test freetype)

@@ -18,30 +18,29 @@ Widget::Widget(string fileName) {
     setPosition({pos.attribute("x").as_float(), pos.attribute("y").as_float()});
     setSize({size.attribute("width").as_float(), size.attribute("height").as_float()});
     setColor({color.attribute("r").as_float(), color.attribute("g").as_float(), color.attribute("b").as_float()});
+    
+    m_drawer = new UIRectangle(m_pos, m_size);
+    m_children = vector<Widget *>{};
 }
-
 
 void Widget::draw() {
     if (!m_visible) {
         return;
     }
-
-    if (!m_drawer) {
-        m_drawer = new UIRectangle(m_pos, m_size);
+    drawSelf();
+    for (auto child: m_children) {
+        child->draw();
     }
+}
 
+void Widget::drawSelf() {
     auto color = m_color;
     if (m_clickedDown) {
         color *= vec4{0.8f, 0.8f, 0.8f, 1.0f};
     }
     m_drawer->getProgram()->setVec4Uniform("color", color);
     m_drawer->draw();
-    
-    for (auto child: m_children) {
-        child->draw();
-    }
 }
-
 
 bool Widget::onTouchEvent(Touch * e) {
     // first transmit to children

@@ -9,6 +9,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/sb7 ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/model_loader ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/GLObject ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/FreeType ALL_SRC)
 
 
 add_executable(engine WIN32 ${ALL_SRC})
@@ -27,6 +28,10 @@ MESSAGE(STATUS "${Python2_LIBRARIES} ${Python2_LIBRARY_DIRS}")
 add_subdirectory(3rd_party/glfw-3.3.2)
 add_dependencies(engine glfw)
 target_link_libraries(engine glfw)
+
+add_subdirectory(3rd_party/freetype-2.10.2)
+add_dependencies(engine freetype)
+target_link_libraries(engine freetype)
 
 add_subdirectory(3rd_party/stb)
 add_dependencies(engine stb)

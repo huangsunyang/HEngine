@@ -3,6 +3,8 @@
 #include <pybind11/embed.h>
 #include <iostream>
 #include <string>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 using namespace Utils;
 using std::string;
@@ -74,6 +76,12 @@ TESTBEGIN(Pybind11)
         py::print(path);
     }
 TESTEND(Pybind11)
+
+
+TESTBEGIN(Freetype)
+    FT_Library ft;
+    FT_Face face;
+TESTEND(FreeType)
 
 
 int main() {

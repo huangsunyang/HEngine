@@ -16,6 +16,7 @@
 #include "GLObject/UniformBlock.hpp"
 #include "Camera.hpp"
 #include "ui/scene.hpp"
+#include "ui/Text.hpp"
 #include "base/EventDispatcher.hpp"
 
 
@@ -62,8 +63,13 @@ public:
         Scene * scene = new Scene("package/ui/scene_test.xml");
         scene->addTouchEventListener([this](Widget * w, Touch * touch) {
             switchWireframeMode();
+            INFO("%d\n", w->getChildren().size());
         });
         scene->setCurrentScene();
+
+        Text * text = new Text({0, 0}, {0, 0}, "text", scene);
+        text->setParent(scene);
+        text->setText("a");
     }
 
     void initEvent() {

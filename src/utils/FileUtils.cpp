@@ -58,7 +58,7 @@ string path_join(vector<string> paths) {
             _path_down_dir(joined_path, path);
         }
     }
-    return joined_path;
+    return path_norm(joined_path);
 }
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "GLObject/Model.hpp"
 #include "sb7/vmath.h"
+#include "GLObject/FontTexture.hpp"
 
 class Box: public Model {
 public:
@@ -58,4 +59,23 @@ public:
 protected:
     vmath::vec2 m_size;
     vmath::vec2 m_pos;
+};
+
+
+class UICharacter: public UIRectangle {
+public:
+    UICharacter(vmath::vec2 pos, vmath::vec2 size): UIRectangle(pos, size) {}
+
+    void setFontTexture(string font, char ch) {
+        FontTexture * texture = new FontTexture;
+        texture->bindTexture(0);
+        texture->loadFont(font, ch);
+    
+        // replace old texture with new one
+        if (m_textures.find(0) != m_textures.end()) {
+            Texture2D * oldTexture = m_textures[0];
+            delete oldTexture;
+        }
+        m_textures[0] = texture;
+    }
 };
