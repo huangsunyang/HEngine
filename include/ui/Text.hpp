@@ -1,4 +1,5 @@
 #pragma once
+#include "ui/Director.hpp"
 #include "ui/Widget.hpp"
 #include "GLObject/FontTexture.hpp"
 #include "GLObject/Geometry.hpp"
@@ -13,14 +14,17 @@ public:
 public:
     void setText(string text) {m_text = text;}
     void setFont(string font) {m_font = font;}
+    void setFontSize(int size) {m_fontSize = size;}
 
     string getText() {return m_text;}
-    string getFont() {return m_font;}
+    string getFont() {return m_font.empty() ? Director::instance()->getDefaultFont() : m_font;}
+    int getFontSize() {return m_fontSize;}
 
     virtual void drawSelf();
 
 protected:
     string m_text;
     string m_font;
+    int m_fontSize = 20;
     vector<UICharacter *> m_charDrawers;
 };

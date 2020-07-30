@@ -3,6 +3,10 @@
 #include "sb7/vmath.h"
 #include "GLObject/FontTexture.hpp"
 
+
+using vmath::vec2;
+
+
 class Box: public Model {
 public:
     Box(float length, float width, float height) {
@@ -41,7 +45,7 @@ protected:
 
 class UIRectangle: public Model {
 public:
-    UIRectangle(vmath::vec2 pos, vmath::vec2 size): m_pos(pos), m_size(size) {
+    UIRectangle(vec2 pos, vec2 size): m_pos(pos), m_size(size), Model() {
         auto length = m_size[0], width = m_size[1];
         auto pos_x = m_pos[0], pos_y = m_pos[1];
         loadVertexCoord({
@@ -63,25 +67,53 @@ public:
     };
 
 protected:
-    vmath::vec2 m_size;
-    vmath::vec2 m_pos;
+    vec2 m_size;
+    vec2 m_pos;
 };
 
 
-class UICharacter: public UIRectangle {
+class UICharacter: public Model {
 public:
-    UICharacter(vmath::vec2 pos, vmath::vec2 size): UIRectangle(pos, size) {}
+    UICharacter(vec2 pos, int height): m_pos(pos), m_height(height), m_diff(1.0f/600.0f), Model() {
+        setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
+    }
 
     void setFontTexture(string font, char ch) {
         FontTexture * texture = new FontTexture;
         texture->bindTexture(0);
-        texture->loadFont(font, ch);
+        texture->loadFont(font, ch, m_height);
     
         // replace old texture with new one
-        if (m_textures.find(0) != m_textures.end()) {
-            Texture2D * oldTexture = m_textures[0];
-            delete oldTexture;
+        if (m_textures.find(0) == m_textures.end()) {
+            m_textures[0] = texture;
+            auto size = texture->getFontRect() * m_diff;
+            auto width = size[0], height = size[1];
+            auto pos = m_pos + texture->getFontOffset() * m_diff;
+            auto pos_x = pos[0], pos_y = pos[1];
+            loadVertexCoord({
+                pos_x + width, pos_y - height, 0,
+                pos_x,         pos_y - height, 0,
+                pos_x,         pos_y,          0,
+                pos_x + width, pos_y - height, 0,
+                pos_x,         pos_y,          0,
+                pos_x + width, pos_y,          0,
+            }, {
+                1, 1,   // flip y texcoord since it is inverse of freetype lib..
+                0, 1,
+                0, 0,
+                1, 1,
+                0, 0,
+                1, 0,
+            });
         }
-        m_textures[0] = texture;
     }
+
+    float getFontWidth() {
+        return reinterpret_cast<FontTexture*>(m_textures[0])->getFontAdvance() * m_diff;
+    }
+
+protected:
+    int m_height;
+    vec2 m_pos;
+    float m_diff;
 };

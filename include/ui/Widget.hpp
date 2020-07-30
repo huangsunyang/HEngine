@@ -36,6 +36,8 @@ public:
     void setTouchEnabled(bool enabled) {m_touchEnabled = enabled;}
     void setSwallowTouch(bool swallow) {m_swallowTouch = swallow;}
     void setParent(Widget * parent) {m_parent = parent; if (parent) parent->addChild(this);}
+    void loadTexture(string name) {m_drawer->setTexture(0, name.c_str());}
+    void loadTexture(vector<string> names) {m_drawer->setTexture(names);}
 
     vec2 getPosition() {return m_pos;}
     vec2 getWorldPosition() {_refreshWorldPosition(); return m_worldPos;}

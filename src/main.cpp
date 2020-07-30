@@ -57,19 +57,24 @@ public:
         onResize(info.windowWidth, info.windowHeight);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
     }
 
     void initUI() {
         Scene * scene = new Scene("package/ui/scene_test.xml");
         scene->addTouchEventListener([this](Widget * w, Touch * touch) {
-            switchWireframeMode();
-            INFO("%d\n", w->getChildren().size());
+            auto s = reinterpret_cast<Text *>(w->getChildren()[0])->getFontSize();
+            reinterpret_cast<Text *>(w->getChildren()[0])->setFontSize(s + 2);
         });
         scene->setCurrentScene();
 
-        Text * text = new Text({0, 0}, {1, 1}, "text", scene);
+        Text * text = new Text({0, 0}, {0.05f, 0.05f}, "text", scene);
         text->setParent(scene);
-        text->setText("a");
+        text->setText("Hello World! Hello Huang Sunyang!");
+        text->setFont("package/font/consolab.ttf");
+        text->setColor({0, 0, 1});
+        text->setFontSize(100);
     }
 
     void initEvent() {
@@ -83,7 +88,11 @@ public:
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
-        // drawCommands.push_back(triangle);
+        // models.push_back(triangle);
+
+        // auto m_drawer = new UIRectangle({0, 0}, {1, 1});
+        // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
+        // models.push_back(m_drawer);
 
         Model * obj = new Model();
         obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});

@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+
+using std::string;
 
 class Scene;
 struct Touch;
@@ -17,6 +20,7 @@ public:
     void setScene(Scene * scene) {m_scene = scene;}
     Scene* getScene() {return m_scene;}
 
+    string getDefaultFont() {return "package/font/arial.ttf";}
     void draw();
     void onTouchEvent(Touch * e);
 

@@ -17,7 +17,7 @@ public:
     friend class FreeTypeFace;
 
     static FreeTypeLibrary * instance();
-    FreeTypeFace * loadFont(string name);
+    FreeTypeFace * loadFont(string name, int size);
 
 protected:
     FreeTypeLibrary() {
@@ -31,19 +31,19 @@ protected:
     static FreeTypeLibrary * m_instance;
 
     FT_Library m_library;
-    map<string, FreeTypeFace *> m_fonts;
+    map<string, map<int, FreeTypeFace *>> m_fonts;
 };
 
 
 class FreeTypeFace {
 public:
-    FreeTypeFace(string name) {
+    FreeTypeFace(string name, int height) {
         auto library = FreeTypeLibrary::instance()->m_library;
         if (FT_New_Face(library, name.c_str(), 0, &m_face)) {
             INFO("init font %s failed!!", name.c_str());
             return;
         }
-        FT_Set_Pixel_Sizes(m_face, 0, 48);
+        FT_Set_Pixel_Sizes(m_face, 0, height);
     }
 
     void loadChar(char c) {
