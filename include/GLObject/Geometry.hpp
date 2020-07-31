@@ -9,7 +9,7 @@ using vmath::vec2;
 
 class Box: public Model {
 public:
-    Box(float length, float width, float height) {
+    Box(float length, float width, float height): Model() {
         // from bottom to up, from first area to fourth area
         loadVertexIndice({
             length / 2, width / 2, -height / 2,
