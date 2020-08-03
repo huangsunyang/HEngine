@@ -12,9 +12,9 @@ public:
 
     // mesh info
     void loadMesh(string fileName);
-    void loadVertex(vector<GLfloat> points);
-    void loadVertexIndice(vector<GLfloat> points, vector<GLuint> indexs);
-    void loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords);
+    void loadVertex(const vector<GLfloat> &points);
+    void loadVertexIndice(const vector<GLfloat> &points, const vector<GLuint> &indexs);
+    void loadVertexCoord(const vector<GLfloat> &points, const vector<GLfloat> &coords);
     
     virtual GLfloat * getPoints() override {return m_mesh->getPoints();}
     virtual GLuint * getIndices() override {return m_mesh->getIndices();}

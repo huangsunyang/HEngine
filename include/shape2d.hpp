@@ -16,7 +16,7 @@ public:
     size_t N;
     size_t m_indiceNum;
 
-    static HPolygon* from_vertex(vector<float> vec) {
+    static HPolygon* from_vertex(const vector<float> &vec) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = vec.size() / 3;
@@ -44,7 +44,7 @@ public:
         return polygon;
     }
 
-    static HPolygon* fromVertexIndice(vector<float> vec, vector<GLuint> index) {
+    static HPolygon* fromVertexIndice(const vector<float> &vec, const vector<GLuint> &index) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = vec.size() / 3;
@@ -72,7 +72,7 @@ public:
         return polygon;
     }
 
-    static HPolygon* fromVertexCoord(vector<float> points, vector<float> coords) {
+    static HPolygon* fromVertexCoord(const vector<float> &points, const vector<float> &coords) {
         HPolygon * polygon = new HPolygon;
 
         size_t N = points.size() / 3;

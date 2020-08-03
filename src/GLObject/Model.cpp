@@ -15,17 +15,17 @@ void Model::loadMesh(string name) {
     initBuffers();
 }
 
-void Model::loadVertex(vector<GLfloat> points) {
+void Model::loadVertex(const vector<GLfloat> &points) {
     m_mesh = HPolygon::from_vertex(points);
     initBuffers();
 }
 
-void Model::loadVertexIndice(vector<GLfloat> points, vector<GLuint> index) {
+void Model::loadVertexIndice(const vector<GLfloat> &points, const vector<GLuint> &index) {
     m_mesh = HPolygon::fromVertexIndice(points, index);
     initBuffers();
 }
 
-void Model::loadVertexCoord(vector<GLfloat> points, vector<GLfloat> coords) {
+void Model::loadVertexCoord(const vector<GLfloat> &points, const vector<GLfloat> &coords) {
     m_mesh = HPolygon::fromVertexCoord(points, coords);
     initBuffers();
 }

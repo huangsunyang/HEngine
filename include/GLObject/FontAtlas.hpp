@@ -4,26 +4,31 @@
 #include <vector>
 #include "GLObject/Texture.hpp"
 #include "Freetype/FreeType.hpp"
+#include "sb7/vmath.h"
 
 using std::map;
 using std::string;
 using std::vector;
+using vmath::vec2;
 
-const int TEXTURE_SIZE = 1024;
+const int TEXTURE_SIZE = 128;
 
-struct Rect {
-    Rect(int x, int y, int w, int h): startx(x), starty(y), width(w), height(h){}
-    int startx;
-    int starty;
+struct CharSizeInfo {
+    // property of the font character
     int width;
     int height;
     int offsetx;
     int offsety;
+    int advancex;
+};
+
+struct CharRectInfo {
+    // pos in the altas
     float startxp;
     float startyp;
     float endxp;
     float endyp;
-    int advancex;
+    int textureIndex;
 };
 
 /* Atlas is a collection of textures on one single large texture */
@@ -38,13 +43,18 @@ public:
         m_texture = new Texture2D;
         m_texture->alloc(1, GL_R8, TEXTURE_SIZE, TEXTURE_SIZE);
     }
-    void loadChar(char);
+    
     Texture2D * getTexture() {return m_texture;}
-    Rect getRectInfo(char ch) {return m_frameInfo.at(ch);}
+    CharSizeInfo getCharSizeInfo(char ch) {return m_fontInfo.at(ch);}
+    CharRectInfo getCharRectInfo(char ch) {return m_fontRectInfo.at(ch);}
+    
+    void loadChar(char);
 
 protected:
     Texture2D * m_texture;
-    map<char, Rect> m_frameInfo;
+    map<char, CharSizeInfo> m_fontInfo;
+    map<char, CharRectInfo> m_fontRectInfo;
+    
     FreeTypeFace * m_face;
     
     int m_ascender;
