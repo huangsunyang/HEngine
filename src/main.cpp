@@ -69,7 +69,7 @@ public:
         });
         scene->setCurrentScene();
 
-        Text * text = new Text({0, 0}, {0.05f, 0.05f}, "text", scene);
+        Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
         text->setParent(scene);
         text->setText("Hello World! Hello Huang Sunyang!");
         text->setFont("package/font/consolab.ttf");

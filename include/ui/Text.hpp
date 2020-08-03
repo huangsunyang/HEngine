@@ -1,8 +1,8 @@
 #pragma once
 #include "ui/Director.hpp"
 #include "ui/Widget.hpp"
-#include "GLObject/FontTexture.hpp"
 #include "GLObject/Geometry.hpp"
+#include "GLObject/FontAtlas.hpp"
 
 class Text: public Widget {
 public:
@@ -25,6 +25,7 @@ public:
 protected:
     string m_text;
     string m_font;
+    FontAtlas * m_fontAtlas;
     int m_fontSize = 20;
     vector<UICharacter *> m_charDrawers;
 };

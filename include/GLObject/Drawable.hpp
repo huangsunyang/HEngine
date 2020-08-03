@@ -12,7 +12,8 @@
 #include "GLObject/Transform.hpp"
 #include "GL/gl3w.h"
 
-using namespace std;
+using std::map;
+using std::vector;
 
 
 class Drawable {
@@ -31,9 +32,6 @@ public:
         delete m_ebo;
         delete m_transform;
         delete m_program;
-        for (auto pair: m_textures) {
-            delete pair.second;
-        }
         m_textures.clear();
     }
 
@@ -47,6 +45,7 @@ public:
 
     // texture relative
     void setTexture(vector<string> textureFiles);
+    void setTexture(vector<Texture2D *> textures);
     void setTexture(int bindingIndex, const char * textureFiles);
 
     // you have to implement these methods to draw something!!

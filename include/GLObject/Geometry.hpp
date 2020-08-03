@@ -1,10 +1,12 @@
 #pragma once
 #include "GLObject/Model.hpp"
 #include "sb7/vmath.h"
-#include "GLObject/FontTexture.hpp"
+#include "GLObject/FontAtlas.hpp"
 
 
 using vmath::vec2;
+using vmath::vec3;
+using vmath::vec4;
 
 
 class Box: public Model {
@@ -63,7 +65,7 @@ public:
             0, 0,
             1, 0,
         });
-        setShader({"Package/shader/ui.vs", "package/shader/ui.fs"});
+        setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
     };
 
 protected:
@@ -74,46 +76,35 @@ protected:
 
 class UICharacter: public Model {
 public:
-    UICharacter(vec2 pos, int height): m_pos(pos), m_height(height), m_diff(1.0f/600.0f), Model() {
+    UICharacter(vec2 pos, vec2 size): m_pos(pos), m_size(size), m_diff(1.0f/600.0f), Model() {
         setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
     }
 
-    void setFontTexture(string font, char ch) {
-        FontTexture * texture = new FontTexture;
-        texture->bindTexture(0);
-        texture->loadFont(font, ch, m_height);
-    
-        // replace old texture with new one
-        if (m_textures.find(0) == m_textures.end()) {
-            m_textures[0] = texture;
-            auto size = texture->getFontRect() * m_diff;
-            auto width = size[0], height = size[1];
-            auto pos = m_pos + texture->getFontOffset() * m_diff;
-            auto pos_x = pos[0], pos_y = pos[1];
-            loadVertexCoord({
-                pos_x + width, pos_y - height, 0,
-                pos_x,         pos_y - height, 0,
-                pos_x,         pos_y,          0,
-                pos_x + width, pos_y - height, 0,
-                pos_x,         pos_y,          0,
-                pos_x + width, pos_y,          0,
-            }, {
-                1, 1,   // flip y texcoord since it is inverse of freetype lib..
-                0, 1,
-                0, 0,
-                1, 1,
-                0, 0,
-                1, 0,
-            });
-        }
-    }
-
-    float getFontWidth() {
-        return reinterpret_cast<FontTexture*>(m_textures[0])->getFontAdvance() * m_diff;
+    void setFontRect(Rect rect) {
+        auto pos_x = m_pos[0], pos_y = m_pos[1];
+        auto width = m_size[0], height = m_size[1];
+        auto startxp = rect.startxp, startyp = rect.startyp;
+        auto endxp = rect.endxp, endyp = rect.endyp;
+        loadVertexCoord({
+            pos_x + width, pos_y - height, 0,
+            pos_x,         pos_y - height, 0,
+            pos_x,         pos_y,          0,
+            pos_x + width, pos_y - height, 0,
+            pos_x,         pos_y,          0,
+            pos_x + width, pos_y,          0,
+        }, {
+            endxp,      endyp,   // flip y texcoord since it is inverse of freetype lib..
+            startxp,    endyp,
+            startxp,    startyp,
+            endxp,      endyp,
+            startxp,    startyp,
+            endxp,      startyp,
+        });
     }
 
 protected:
-    int m_height;
     vec2 m_pos;
+    vec2 m_size;
     float m_diff;
+    UIRectangle * rect;
 };

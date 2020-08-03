@@ -78,6 +78,19 @@ void Drawable::setTexture(int bindingIndex, const char * textureFile) {
     m_textures[bindingIndex] = texture;
 }
 
+void Drawable::setTexture(vector<Texture2D *> textures) {
+    for (size_t i = 0; i < textures.size(); i++) {
+        // replace old texture with new one
+        // if (m_textures.find(i) != m_textures.end()) {
+        //     Texture2D * oldTexture = m_textures[i];
+        //     if (oldTexture) {
+        //         delete oldTexture;
+        //     }
+        // }
+        m_textures.insert(std::make_pair(i, textures[i]));
+    }
+}
+
 void Drawable::setTexture(vector<string> textureFiles) {
     for (size_t i = 0; i < textureFiles.size(); i++) {
         setTexture(i, textureFiles[i].c_str());

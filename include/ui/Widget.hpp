@@ -24,6 +24,7 @@ public:
     Widget(vec2 pos, vec2 size, string name): Widget(pos, size, name, nullptr) {}
     Widget(vec2 pos, vec2 size, string name, Widget * parent): m_pos(pos), m_size(size), m_name(name), m_children({}) {
         m_drawer = new UIRectangle(m_pos, m_size);
+        m_color = {1.0f, 1.0f, 1.0f, 1.0f};
     }
     Widget(string);
     

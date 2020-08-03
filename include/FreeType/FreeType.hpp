@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 #include "LogManager.hpp"
-#include "GLObject/FontTexture.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 

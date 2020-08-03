@@ -6,6 +6,9 @@
 
 
 Widget::Widget(string fileName) {
+    m_drawer = new UIRectangle(m_pos, m_size);
+    m_children = vector<Widget *>{};
+
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(fileName.c_str());
     pugi::xml_node scene = doc.child("Scene");
@@ -18,9 +21,6 @@ Widget::Widget(string fileName) {
     setPosition({pos.attribute("x").as_float(), pos.attribute("y").as_float()});
     setSize({size.attribute("width").as_float(), size.attribute("height").as_float()});
     setColor({color.attribute("r").as_float(), color.attribute("g").as_float(), color.attribute("b").as_float()});
-    
-    m_drawer = new UIRectangle(m_pos, m_size);
-    m_children = vector<Widget *>{};
 }
 
 void Widget::draw() {
