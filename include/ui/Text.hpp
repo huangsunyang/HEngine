@@ -27,5 +27,4 @@ protected:
     string m_font;
     FontAtlas * m_fontAtlas;
     int m_fontSize = 20;
-    vector<UICharacter *> m_charDrawers;
 };

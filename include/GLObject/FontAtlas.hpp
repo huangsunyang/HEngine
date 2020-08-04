@@ -11,7 +11,7 @@ using std::string;
 using std::vector;
 using vmath::vec2;
 
-const int TEXTURE_SIZE = 128;
+const int TEXTURE_SIZE = 512;
 
 struct CharSizeInfo {
     // property of the font character

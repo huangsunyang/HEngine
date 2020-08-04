@@ -30,5 +30,5 @@ void main(void) {
         light += dot(o_normal, normalize(light_info[i].pos.xyz));
     }
     light = clamp(light, 0, 1);
-    color = vec4(light) * texture(s0, o_coord);
+    color = vec4(light, light, light, 1) * texture(s0, o_coord);
 }

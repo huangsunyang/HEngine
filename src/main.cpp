@@ -17,6 +17,7 @@
 #include "Camera.hpp"
 #include "ui/scene.hpp"
 #include "ui/Text.hpp"
+#include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
 
 
@@ -58,7 +59,7 @@ public:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     void initUI() {
@@ -75,6 +76,10 @@ public:
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
         text->setFontSize(100);
+
+        ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
+        p->initWithFile("");
+        p->setParent(scene);
     }
 
     void initEvent() {
@@ -245,6 +250,9 @@ public:
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
         }
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        Director::instance()->update(currentTime - m_lastTickTime);
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
@@ -281,6 +289,8 @@ public:
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
             model->draw();
         }
+
+        glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
     }
 

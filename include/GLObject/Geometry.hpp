@@ -119,3 +119,10 @@ public:
 protected:
     UIRectangle * rect;
 };
+
+class UIParticleDrawer: public UICharacter {
+public:
+    UIParticleDrawer() {
+        setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
+    }
+};
