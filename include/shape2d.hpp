@@ -16,6 +16,13 @@ public:
     size_t N;
     size_t m_indiceNum;
 
+    virtual ~HPolygon() {
+        delete[] verteces;
+        delete[] texcoord;
+        delete[] indices;
+        INFO("-----------------------delete HPolygon\n");
+    };
+
     static HPolygon* from_vertex(const vector<float> &vec) {
         HPolygon * polygon = new HPolygon;
 

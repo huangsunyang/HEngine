@@ -126,6 +126,7 @@ void Program::bindUniformBuffer(GLuint bindingIndex, VertexBuffer * buffer) {
 }
 
 Program::~Program()
-{
+{   
+    deleteProgram();
     m_program = NULL;
 }

@@ -23,6 +23,7 @@ struct VertexInfo {
 
 class iMesh {
 public:
+    virtual ~iMesh() {}
     virtual size_t getPointNum() {return 0;} 
     virtual size_t getIndiceNum() {return 0;}
     virtual GLfloat * getPoints() {return nullptr;}      // point_num * 3

@@ -5,8 +5,8 @@
 #include <random>
 
 void ParticleSystem::initWithFile(string name) {
-    m_maxNum = 20;
-    m_numPerSec = 10;
+    m_maxNum = 2000;
+    m_numPerSec = 20;
 
     m_dir = 135.0f;
     m_dirBias = 30.0f;

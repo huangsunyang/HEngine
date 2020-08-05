@@ -2,6 +2,7 @@
 #define __DRAW_COMMAND__
 
 #include "GLObject/Drawable.hpp"
+#include "LogManager.hpp"
 
 using namespace std;
 
@@ -9,6 +10,7 @@ using namespace std;
 class Model: public Drawable {
 public:
     Model(): Drawable() {}
+    virtual ~Model() {delete m_mesh; INFO("-------------- delete mesh\n");}
 
     // mesh info
     void loadMesh(string fileName);
