@@ -38,5 +38,5 @@ protected:
 
     vector<ScheduleFunc> m_scheduleFuncs;
     static Director * m_instance;
-    Scene * m_scene;
+    Scene * m_scene = nullptr;
 };

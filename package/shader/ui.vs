@@ -3,8 +3,8 @@
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec2 texCoord;
 
-out vec2 vs_texCoord;
 out vec4 vs_color;
+out vec2 vs_texCoord;
 
 uniform mat4 mvp_matrix;
 uniform mat4 v_matrix;

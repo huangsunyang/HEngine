@@ -78,7 +78,7 @@ protected:
 
 class UICharacter: public Model {
 public:
-    UICharacter() {
+    UICharacter(): Model() {
         setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
     }
 
@@ -123,6 +123,7 @@ protected:
 class UIParticleDrawer: public UICharacter {
 public:
     UIParticleDrawer() {
+        m_program = new Program;
         setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
     }
 };

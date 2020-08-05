@@ -19,6 +19,8 @@ void Program::bindShader(string shader_path) {
         shader_format = GL_VERTEX_SHADER;
     } else if (file_format_str == ".fs") {
         shader_format = GL_FRAGMENT_SHADER;
+    } else {
+        INFO("---------------------------ERROR!!!!!!!!!!\n");
     }
     bindShader(shader_format, shader_path.c_str());
 }

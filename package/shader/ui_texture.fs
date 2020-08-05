@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 in vec4 vs_color;
 in vec2 vs_texCoord;
@@ -10,8 +10,5 @@ uniform sampler2D s0;
 
 void main(void) {
     vec4 c = texture(s0, vs_texCoord);
-    if (c.a < 2.1) {
-        discard;
-    }
     color = c;
 }

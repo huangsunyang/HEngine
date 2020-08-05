@@ -61,7 +61,7 @@ void Texture2D::loadImage(const char *name) {
     int width, height, nrChannels;
     unsigned char *data = stbi_load(name, &width, &height, &nrChannels, 0);
     if (!data || width <= 0 || height <= 0) {  
-        INFO("Failed to load texture\n");
+        INFO("Failed to load texture %s\n", name);
         return;
     }
     INFO("load %s(%d %d %d) success!\n", name, width, height, nrChannels);
