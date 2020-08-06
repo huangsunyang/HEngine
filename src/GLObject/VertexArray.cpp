@@ -4,6 +4,10 @@ VertexArray::VertexArray() {
     glGenVertexArrays(1, &m_vao);
 }
 
+VertexArray::~VertexArray() {
+    glDeleteVertexArrays(1, &m_vao);
+}
+
 void VertexArray::bindVertexArray() {
     glBindVertexArray(m_vao);
 }

@@ -21,6 +21,7 @@ using std::vector;
 class ObjLoader: public iMesh {
 public:
     ObjLoader(const string& filename);
+    virtual ~ObjLoader();
     virtual size_t getPointNum() {return vertex_and_normal.size() / 8;}
     virtual size_t getIndiceNum() {return -1;}
     virtual GLfloat * getPoints() {return &vertex_and_normal[0];}

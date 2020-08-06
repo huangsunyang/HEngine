@@ -20,6 +20,7 @@ public:
         delete[] verteces;
         delete[] texcoord;
         delete[] indices;
+        delete vertexInfo;
         INFO("-----------------------delete HPolygon\n");
     };
 

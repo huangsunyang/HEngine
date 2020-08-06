@@ -25,6 +25,10 @@ ObjLoader::ObjLoader(const string &name) {
     f.close();
 }
 
+ObjLoader::~ObjLoader() {
+    delete m_vertexInfo;
+}
+
 
 void ObjLoader::parse(fstream& f) {
     string line;
@@ -62,6 +66,10 @@ void ObjLoader::parse(fstream& f) {
             break;
         }
     }
+    INFO("OBJ SIZE: %d\n", vertex_and_normal.size() * 4);
+    vertex.clear();
+    tex.clear();
+    normal.clear();
 }
 
 
