@@ -20,6 +20,6 @@ void Text::drawSelf() {
         quads.push_back(quad);
         pos[0] += fontInfo.advancex / 600.0f;
     }
-    temp.setFontQuads(quads);
+    temp.setQuads(quads);
     temp.draw();
 }

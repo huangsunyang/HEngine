@@ -76,13 +76,9 @@ protected:
 };
 
 
-class UICharacter: public Model {
+class BatchDrawer: public Model {
 public:
-    UICharacter(): Model() {
-        setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
-    }
-
-    void setFontQuads(const vector<Quad> &quads) {
+    void setQuads(const vector<Quad> &quads) {
         vector<float> points;
         vector<float> texcoords;
         for (int i = 0; i < quads.size(); i++) {
@@ -115,15 +111,21 @@ public:
         }
         loadVertexCoord(points, texcoords);
     }
+};
+
+class UICharacter: public BatchDrawer {
+public:
+    UICharacter(): BatchDrawer() {
+        setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
+    }
 
 protected:
     UIRectangle * rect;
 };
 
-class UIParticleDrawer: public UICharacter {
+class UIParticleDrawer: public BatchDrawer {
 public:
     UIParticleDrawer() {
-        m_program = new Program;
         setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
     }
 };

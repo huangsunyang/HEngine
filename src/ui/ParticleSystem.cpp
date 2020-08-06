@@ -83,6 +83,6 @@ void ParticleSystem::drawSelf() {
     }
     UIParticleDrawer drawer;
     drawer.setTexture({m_texture});
-    drawer.setFontQuads(m_quads);
+    drawer.setQuads(m_quads);
     drawer.draw();
 }
