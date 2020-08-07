@@ -50,6 +50,8 @@ add_subdirectory(3rd_party/pugixml)
 add_dependencies(engine pugixml)
 target_link_libraries(engine pugixml)
 
+include_directories(PUBLIC ${PROJECT_SOURCE_DIR}/3rd_party/rapidjson/include)
+
 target_link_libraries(engine opengl32)
 
 add_subdirectory(src/test)

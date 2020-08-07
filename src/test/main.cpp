@@ -5,6 +5,8 @@
 #include <string>
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include "rapidjson/document.h"
+#include <fstream>
 
 using namespace Utils;
 using std::string;
@@ -84,10 +86,20 @@ TESTBEGIN(Freetype)
 TESTEND(FreeType)
 
 
+TESTBEGIN(RapidJson)
+    rapidjson::Document d;
+    std::fstream t("package/spine/spineboy/spineboy-pro.json", std::ios::in);
+    std::string ret((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+    d.Parse(ret.c_str());
+    AssertEqual(d["skeleton"]["spine"].GetString(), string("3.8.55"));
+TESTEND(RapidJson)
+
+
 int main() {
     TEST(FileUtils);
     TEST(XmlUtils);
     TEST(Pybind11);
+    TEST(RapidJson);
 
     getchar();
     return 0;

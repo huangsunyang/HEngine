@@ -10,6 +10,7 @@
                 "${workspaceFolder}/3rd_party/stb/include",
                 "${workspaceFolder}/3rd_party/glfw-3.3.2/include",
                 "${workspaceFolder}/3rd_party/freetype-2.10.2/include",
+                "${workspaceFolder}/3rd_party/rapidjson/include",
                 "D:/Python27_x86/include"
             ],
             "defines": [
