@@ -19,6 +19,7 @@
 #include "ui/Text.hpp"
 #include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
+#include "3D/Skeleton.hpp"
 
 
 #include "DbgHelp.h"
@@ -112,7 +113,7 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
-        initUI();
+        // initUI();
         initEvent();
 
         // init camera
@@ -161,6 +162,10 @@ public:
     }
 
     void init_shape() {
+        sk = new Skeleton();
+        sk->loadFromFile("package/res/test.skel.txt");
+        sk->update();
+
         Model * triangle = new Model();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
@@ -174,7 +179,7 @@ public:
         Model * obj = new Model();
         obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
         obj->loadMesh("Package/res/capsule.obj");
-        models.push_back(obj);
+        // models.push_back(obj);
 
         Model * axis = new Model();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -328,7 +333,7 @@ public:
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Black);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Pink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         vmath::mat4 camera_matrix = m_camera->getCameraTransform();
         vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
@@ -340,9 +345,9 @@ public:
 
         float f = (float)m_gameTime * 0.3f;
         vmath::vec3 translate = vmath::vec3(
-            sinf(22.1f * f) * 5,
-            cosf(21.7f * f) * 5,
-            sinf(21.3f * f) * 5
+            sinf(2.1f * f) * 5,
+            cosf(2.7f * f) * 5,
+            sinf(2.3f * f) * 5
         );
         vmath::vec3 translate1 = vmath::vec3(
             cosf(2.9f * f) * 3,
@@ -357,10 +362,13 @@ public:
             vmath::mat4 m_matrix_t = m_matrix.transpose();
             vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
+            model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
+            model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
             model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
             model->draw();
         }
+        sk->draw();
 
         glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
@@ -385,6 +393,7 @@ private:
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
+    Skeleton * sk;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

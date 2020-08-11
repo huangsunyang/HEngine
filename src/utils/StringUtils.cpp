@@ -6,6 +6,21 @@ bool string_starts_with(string str, string prefix) {
     return str.rfind(prefix, 0) == 0;
 }
 
+vector<string> string_space_split(string str) {
+    vector<string> ret;
+
+    for (auto i = 0; i < str.size(); i++) {
+        auto j = i;
+        for (; j < str.size() && str[j] != ' '; j++) {
+        }
+        if (j > i) {
+            ret.push_back(str.substr(i, j - i));
+            i = j;
+        }
+    }
+
+    return ret;
+}
 
 vector<string> string_split(string str, string split) {
     auto split_size = split.size();

@@ -13,17 +13,17 @@ using vmath::vec4;
 
 class Box: public Model {
 public:
-    Box(float length, float width, float height): Model() {
+    Box(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): Model() {
         // from bottom to up, from first area to fourth area
         loadVertexIndice({
-            length / 2, width / 2, -height / 2,
-            -length / 2, width / 2, -height / 2,
-            -length / 2, -width / 2, -height / 2,
-            length / 2, -width / 2, -height / 2,
-             length / 2, width / 2, height / 2,
-            -length / 2, width / 2, height / 2,
-            -length / 2, -width / 2, height / 2,
-            length / 2, -width / 2, height / 2
+            offsetx + length / 2, offsety + width / 2, offsetz - height / 2,
+            offsetx - length / 2, offsety + width / 2, offsetz - height / 2,
+            offsetx - length / 2, offsety - width / 2, offsetz - height / 2,
+            offsetx + length / 2, offsety - width / 2, offsetz - height / 2,
+            offsetx + length / 2, offsety + width / 2, offsetz + height / 2,
+            offsetx - length / 2, offsety + width / 2, offsetz + height / 2,
+            offsetx - length / 2, offsety - width / 2, offsetz + height / 2,
+            offsetx + length / 2, offsety - width / 2, offsetz + height / 2
         }, {
             2, 1, 0,
             0, 3, 2,

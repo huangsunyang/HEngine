@@ -7,6 +7,8 @@
 #include FT_FREETYPE_H
 #include "rapidjson/document.h"
 #include <fstream>
+#include "glm/glm.hpp"
+#include "3D/Skeleton.hpp"
 
 using namespace Utils;
 using std::string;
@@ -25,17 +27,18 @@ static int pass_count = 0;
 
 
 #define TESTBEGIN(name)                 \
-    void test##name() {
+    struct test##name {                 \
+        test##name() {
 
 
 #define TESTEND(name)                       \
-        printf("Test %s Finish: %d/%d pass!\n", #name, pass_count, test_count);  \
-        test_count = 0;                 \
-        pass_count = 0;                 \
-    }
+            printf("------- [Test %s Finish]: %d/%d pass! -------\n", #name, pass_count, test_count);  \
+            test_count = 0;                 \
+            pass_count = 0;                 \
+        }                                   \
+    }                                       \
+    static test##name;
 
-#define TEST(name)                      \
-    test##name()
 
 TESTBEGIN(FileUtils)
     AssertEqual(path_norm("a\\b\\c"), "a/b/c");
@@ -95,12 +98,19 @@ TESTBEGIN(RapidJson)
 TESTEND(RapidJson)
 
 
-int main() {
-    TEST(FileUtils);
-    TEST(XmlUtils);
-    TEST(Pybind11);
-    TEST(RapidJson);
+TESTBEGIN(glm)
+    glm::vec3 a(1.0f, 1.0f, 1.0f);
+    glm::vec3 b(3.0f, 3.0f, 3.0f);
+    a *= b;
+    AssertEqual(a.x, 3.0f);
+    AssertEqual(glm::clamp(1, 2, 3), 2);
+    Skeleton sk;
+    sk.loadFromFile("package/res/test.skel.txt");
+    AssertEqual(sk.getBoneTree()->getName(), "root");
+TESTEND(glm)
 
+
+int main() {
     getchar();
     return 0;
 }

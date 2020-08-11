@@ -9,6 +9,7 @@ using std::string;
 namespace Utils {
 
 bool string_starts_with(string str, string prefix);
+vector<string> string_space_split(string str);
 vector<string> string_split(string str, string split);
 string string_lstrip(string str, string strip);
 string string_rstrip(string str, string strip);

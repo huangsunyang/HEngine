@@ -9,6 +9,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/sb7 ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/model_loader ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/GLObject ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils ALL_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/3D ALL_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/FreeType ALL_SRC)
 
 
@@ -51,6 +52,7 @@ add_dependencies(engine pugixml)
 target_link_libraries(engine pugixml)
 
 include_directories(PUBLIC ${PROJECT_SOURCE_DIR}/3rd_party/rapidjson/include)
+include_directories(PUBLIC ${PROJECT_SOURCE_DIR}/3rd_party/glm-master)
 
 target_link_libraries(engine opengl32)
 

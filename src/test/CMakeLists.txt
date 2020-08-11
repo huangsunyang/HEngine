@@ -1,6 +1,7 @@
 # test.cmake
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/test TEST_SRC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils TEST_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/3D TEST_SRC)
 
 add_executable(test ${TEST_SRC})
 set_target_properties(test PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})

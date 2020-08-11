@@ -10,7 +10,7 @@ using namespace std;
 class Model: public Drawable {
 public:
     Model(): Drawable() {}
-    virtual ~Model() {delete m_mesh; INFO("-------------- delete mesh\n");}
+    virtual ~Model() {delete m_mesh;}
 
     // mesh info
     void loadMesh(string fileName);
