@@ -19,7 +19,7 @@ void Bone::updateSelf() {
         m_matrix = glm::translate(m_localMatrix, m_localPosition + m_offset);
     } else {
         m_worldMatrix = glm::translate(m_parent->m_worldMatrix, m_localPosition) * m_localMatrix;
-        m_matrix = glm::translate(m_parent->m_worldMatrix, m_offset + m_localPosition) * m_localMatrix; 
+        m_matrix = glm::translate(m_parent->m_worldMatrix, m_localPosition) * glm::translate(m_localMatrix, m_offset); 
     }
 }
 

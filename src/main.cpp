@@ -163,7 +163,7 @@ public:
 
     void init_shape() {
         sk = new Skeleton();
-        sk->loadFromFile("package/res/test.skel.txt");
+        sk->loadFromFile("package/res/dragon.skel.txt");
         sk->update();
 
         Model * triangle = new Model();
@@ -266,7 +266,7 @@ public:
     }
 
     void onMouseWheel(int pos) {
-        m_camera->moveCameraBy(0, 0, pos * 0.1f);
+        m_camera->moveCameraBy(0, 0, pos * 0.5f);
     }
 
     void onResize(int w, int h) {

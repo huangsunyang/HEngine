@@ -37,9 +37,12 @@ void Skeleton::loadFromFile(string name) {
         for (auto t: tokens)
             INFO("%s ", t.c_str()); 
         INFO("\n");
+        if (tokens.empty()) {
+            continue;
+        }
         if (tokens[0] == "balljoint") {
             pushBone(tokens[1]);
-        } else if (tokens[0] == "}") {
+        } else if (tokens[0][0] == '}') {
             popBone();
         } else if (tokens[0] == "offset") {
             m_boneTree->m_localPosition.x = stof(tokens[1]);
@@ -66,6 +69,8 @@ void Skeleton::loadFromFile(string name) {
         } else if (tokens[0] == "rotzlimit") {
             m_boneTree->m_dofs[2].min = stof(tokens[1]);
             m_boneTree->m_dofs[2].max = stof(tokens[2]);
+        } else {
+            INFO("----------[%s]\n", tokens[0].c_str());
         }
     }
     file.close();
@@ -79,17 +84,16 @@ void Skeleton::pushBone(string name) {
 void Skeleton::popBone() {
     glm::mat4 trans(1.0f);
     auto dofs = m_boneTree->m_dofs;
-    trans = glm::rotate(trans, dofs[0].getValue(), glm::vec3(1.0f, 0, 0));
-    trans = glm::rotate(trans, dofs[1].getValue(), glm::vec3(0, 1.0f, 0));
     trans = glm::rotate(trans, dofs[2].getValue(), glm::vec3(0, 0, 1.0f));
+    trans = glm::rotate(trans, dofs[1].getValue(), glm::vec3(0, 1.0f, 0));
+    trans = glm::rotate(trans, dofs[0].getValue(), glm::vec3(1.0f, 0, 0));
     m_boneTree->m_localMatrix = trans;
     auto boxSize = (m_boneTree->m_boxmax - m_boneTree->m_boxmin);
     m_boneTree->m_offset = (m_boneTree->m_boxmin + m_boneTree->m_boxmax) / 2.0f;
 
     INFO("%f %f %f\n", boxSize.x, boxSize.y, boxSize.z);
     m_boneTree->m_box = new Box(boxSize.x, boxSize.y, boxSize.z);
-    m_boneTree->m_box->setPolygonMode(GL_LINE);
-    m_boneTree->m_box->setShader({"package/shader/common_light.vs", "package/shader/common_light.fs"});
+    m_boneTree->m_box->setShader({"package/shader/common_light_no_tex.vs", "package/shader/common_light_no_tex.fs"});
     
     if (m_boneTree->m_parent) {
         m_boneTree = m_boneTree->m_parent;
