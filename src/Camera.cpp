@@ -1,5 +1,8 @@
 #include "Camera.hpp"
 #include <math.h>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
+#include "LogManager.hpp"
 
 Camera::Camera(vmath::vec3 pos) {
     m_cameraPos = pos;
@@ -8,7 +11,7 @@ Camera::Camera(vmath::vec3 pos) {
 
     m_near = 0.1f;
     m_far = 100.0f;
-    m_fovy = 30.0f;
+    m_fovy = 30.0f * glm::pi<float>() / 180.0f;
     m_aspect = 1.f;
 }
 
@@ -76,11 +79,14 @@ void Camera::moveCameraBy(vmath::vec3 diff) {
 }
 
 vmath::mat4 Camera::getCameraTransform() {
-    return vmath::lookat(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
+    auto g = glm::lookAtRH(toglm(m_cameraPos), toglm(m_cameraPos + m_cameraFront), toglm(m_cameraUp));
+    return toglm(g);
+    // return vmath::lookat(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 }
 
 vmath::mat4 Camera::getProjectionMatrix() {
-    return vmath::perspective(m_fovy, m_aspect, m_near, m_far);
+    auto a = toglm(glm::perspectiveRH_NO(m_fovy, m_aspect, m_near, m_far));
+    return a;
 }
 
 void Camera::setAspect(float x) {

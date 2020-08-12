@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/euler_angles.hpp"
 #include "LogManager.hpp"
 
 using std::fstream;
@@ -82,17 +83,14 @@ void Skeleton::pushBone(string name) {
 }
 
 void Skeleton::popBone() {
-    glm::mat4 trans(1.0f);
     auto dofs = m_boneTree->m_dofs;
-    trans = glm::rotate(trans, dofs[2].getValue(), glm::vec3(0, 0, 1.0f));
-    trans = glm::rotate(trans, dofs[1].getValue(), glm::vec3(0, 1.0f, 0));
-    trans = glm::rotate(trans, dofs[0].getValue(), glm::vec3(1.0f, 0, 0));
-    m_boneTree->m_localMatrix = trans;
+    m_boneTree->m_localMatrix = glm::eulerAngleZYX(dofs[2].getValue(), dofs[1].getValue(), dofs[0].getValue());
     auto boxSize = (m_boneTree->m_boxmax - m_boneTree->m_boxmin);
     m_boneTree->m_offset = (m_boneTree->m_boxmin + m_boneTree->m_boxmax) / 2.0f;
 
     INFO("%f %f %f\n", boxSize.x, boxSize.y, boxSize.z);
     m_boneTree->m_box = new Box(boxSize.x, boxSize.y, boxSize.z);
+    m_boneTree->m_box->setPolygonMode(GL_LINE);
     m_boneTree->m_box->setShader({"package/shader/common_light_no_tex.vs", "package/shader/common_light_no_tex.fs"});
     
     if (m_boneTree->m_parent) {

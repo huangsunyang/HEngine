@@ -2,6 +2,7 @@
 #define __CAMERA__
 
 #include "sb7/vmath.h"
+#include "glm/glm.hpp"
 
 
 class Camera {
@@ -23,6 +24,17 @@ public:
     void setCameraYaw(float);
     void setCameraPitch(float);
     void setCameraRotation(float yaw, float pitch);
+
+    glm::vec3 toglm(vmath::vec3 v) {return glm::vec3(v[0], v[1], v[2]);}
+    vmath::mat4 toglm(glm::mat4 v) {
+        vmath::mat4 ret;
+        for (int i = 0; i < 4; i ++) {
+            for (int j = 0; j < 4; j++) {
+                ret[i][j] = v[i][j];
+            }
+        }
+        return ret;
+    }
 
     float getCameraYaw();
     float getCameraPitch();

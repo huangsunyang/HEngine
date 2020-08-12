@@ -8,7 +8,7 @@
 #include "rapidjson/document.h"
 #include <fstream>
 #include "glm/glm.hpp"
-#include "3D/Skeleton.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 using namespace Utils;
 using std::string;
@@ -104,9 +104,11 @@ TESTBEGIN(glm)
     a *= b;
     AssertEqual(a.x, 3.0f);
     AssertEqual(glm::clamp(1, 2, 3), 2);
-    Skeleton sk;
-    sk.loadFromFile("package/res/test.skel.txt");
-    AssertEqual(sk.getBoneTree()->getName(), "root");
+    glm::mat4 mat(1.0f);
+    auto trans = glm::vec3(0.3f, 0.5f, 2.51f);
+    auto mat1 = glm::rotate(mat, 3.0f, trans) * glm::translate(mat, trans);
+    auto mat2 = glm::translate(glm::rotate(mat, 3.0f, trans), trans);
+    std::cout << (mat1 == mat2) << std::endl;
 TESTEND(glm)
 
 
