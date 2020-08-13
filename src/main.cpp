@@ -20,6 +20,7 @@
 #include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
 #include "3D/Skeleton.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 
 #include "DbgHelp.h"
@@ -179,7 +180,7 @@ public:
         Model * obj = new Model();
         obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
         obj->loadMesh("Package/res/capsule.obj");
-        // models.push_back(obj);
+        models.push_back(obj);
 
         Model * axis = new Model();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -196,8 +197,8 @@ public:
 
         Light * light = m_lightMgr->createLight();
         light->getTransform()->setPosition({0, 5, 0});
-        vmath::vec3 dir = light->getTransform()->getForward();
-        DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
+        auto dir = light->getTransform()->getForward();
+        //DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
         models.push_back(light);
         models.push_back(m_lightMgr->createLight());
 
@@ -249,8 +250,8 @@ public:
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
-                float diff_x = float(x - mouse_pos_x) / -100.0f;
-                float diff_y = float(y - mouse_pos_y) / 100.0f;
+                float diff_x = float(x - mouse_pos_x) / -50.0f;
+                float diff_y = float(y - mouse_pos_y) / 50.0f;
                 m_camera->moveCameraBy(diff_x, diff_y, 0);
             }
         }
@@ -335,37 +336,37 @@ public:
         python_module.attr("logic")(currentTime);
         glClearBufferfv(GL_COLOR, 0, sb7::color::Pink);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        vmath::mat4 camera_matrix = m_camera->getCameraTransform();
-        vmath::mat4 proj_matrix = m_camera->getProjectionMatrix();
-        UniformBlock::instance()->setUniformBlockMember("view_matrix", camera_matrix);
-        UniformBlock::instance()->setUniformBlockMember("proj_matrix", proj_matrix);
+        auto camera_matrix = m_camera->getCameraTransform();
+        auto proj_matrix = m_camera->getProjectionMatrix();
+        UniformBlock::instance()->setUniformBlockMember("view_matrix", glm::value_ptr(camera_matrix));
+        UniformBlock::instance()->setUniformBlockMember("proj_matrix",glm::value_ptr(proj_matrix));
         vmath::uvec4 light_num = m_lightMgr->getLightNum();
         UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
         UniformBlock::instance()->setUniformBlockMember("light_info", m_lightMgr->getLightInfo().data());
 
         float f = (float)m_gameTime * 0.3f;
-        vmath::vec3 translate = vmath::vec3(
+        glm::vec3 translate = glm::vec3(
             sinf(2.1f * f) * 5,
             cosf(2.7f * f) * 5,
             sinf(2.3f * f) * 5
         );
-        vmath::vec3 translate1 = vmath::vec3(
+        glm::vec3 translate1 = glm::vec3(
             cosf(2.9f * f) * 3,
             sinf(1.0f * f) * 3,
             sinf(1.5f * f) * 3
         );
-        vmath::vec3 rotate = translate * 50;
+        glm::vec3 rotate = translate * 50.0f;
         m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
         m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
         for (auto model: models) {
-            vmath::mat4 m_matrix = model->getTransformMatrix();
-            vmath::mat4 m_matrix_t = m_matrix.transpose();
-            vmath::mat4 mvp_matrix = proj_matrix * camera_matrix * m_matrix;
-            model->getProgram()->setMatrix4fvUniform("m_matrix", m_matrix);
-            model->getProgram()->setMatrix4fvUniform("v_matrix", camera_matrix);
-            model->getProgram()->setMatrix4fvUniform("p_matrix", proj_matrix);
-            model->getProgram()->setMatrix4fvUniform("mvp_matrix", mvp_matrix);
-            model->getProgram()->setMatrix4fvUniform("m_matrix_it", m_matrix);
+            auto m_matrix = model->getTransformMatrix();
+            auto m_matrix_t = glm::transpose(m_matrix);
+            auto mvp_matrix = proj_matrix * camera_matrix * m_matrix;
+            model->getProgram()->setMatrix4fvUniform("m_matrix",glm::value_ptr(m_matrix));
+            model->getProgram()->setMatrix4fvUniform("v_matrix", glm::value_ptr(camera_matrix));
+            model->getProgram()->setMatrix4fvUniform("p_matrix", glm::value_ptr(proj_matrix));
+            model->getProgram()->setMatrix4fvUniform("mvp_matrix", glm::value_ptr(mvp_matrix));
+            model->getProgram()->setMatrix4fvUniform("m_matrix_it", glm::value_ptr(m_matrix));
             model->draw();
         }
         sk->draw();

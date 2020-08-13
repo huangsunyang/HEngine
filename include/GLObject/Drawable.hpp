@@ -62,7 +62,7 @@ public:
 
     // transform relative
     Transform * getTransform() {return m_transform;}
-    vmath::mat4 getTransformMatrix() {return m_transform->getMatrix();}
+    glm::mat4 getTransformMatrix() {return m_transform->getMatrix();}
 
     // draw
     virtual void draw();

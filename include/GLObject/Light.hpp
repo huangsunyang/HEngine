@@ -4,8 +4,8 @@
 #include <map>
 #include <vector>
 #include "GLObject/Geometry.hpp"
-#include "sb7/vmath.h"
 #include "LogManager.hpp"
+#include "glm/glm.hpp"
 
 using std::map;
 using std::vector;
@@ -19,9 +19,9 @@ enum class LightType {
 
 
 struct LightInfo {
-    vmath::vec4 pos;
-    vmath::vec4 dir;
-    vmath::vec4 color;
+    glm::vec4 pos;
+    glm::vec4 dir;
+    glm::vec4 color;
 };
 
 
@@ -31,17 +31,18 @@ public:
         setShader({"package/shader/light.vs", "package/shader/common.fs"});
     }
     LightInfo getLightInfo() {
-        vmath::vec3 pos = getTransform()->getPosition();
+        auto pos = getTransform()->getPosition();
+        auto forward = getTransform()->getForward();
         // DEBUG("lights info pos: %f %f %f\n", pos[0], pos[1], pos[2]);
         return {
-            {pos, 0},
-            {getTransform()->getForward(), 0},
+            glm::vec4(pos, 0),
+            glm::vec4(forward, 0),
             m_color
         };
     }
 
 protected:
-    vmath::vec4 m_color;
+    glm::vec4 m_color;
 };
 
 
