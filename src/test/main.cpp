@@ -9,6 +9,7 @@
 #include <fstream>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <sstream>
 
 using namespace Utils;
 using std::string;
@@ -110,6 +111,14 @@ TESTBEGIN(glm)
     auto mat2 = glm::translate(glm::rotate(mat, 3.0f, trans), trans);
     std::cout << (mat1 == mat2) << std::endl;
 TESTEND(glm)
+
+
+TESTBEGIN(sstream)
+    std::stringstream ss("\n\t hello world");
+    string s;
+    ss >> s;
+    AssertEqual(s, "hello");
+TESTEND(sstream)
 
 
 int main() {

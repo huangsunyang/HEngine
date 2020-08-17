@@ -6,6 +6,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/euler_angles.hpp"
 #include "LogManager.hpp"
+#include "Utils/Parser.hpp"
 
 using std::fstream;
 using std::string;
@@ -28,50 +29,44 @@ void Skeleton::update() {
 }
 
 void Skeleton::loadFromFile(string name) {
-    fstream file;
-    file.open(name, std::ios::in);
+    fstream file(name, std::ios::in);
+    Parser p(file);
     string line;
     while (getline(file, line)) {
-        line = string_lstrip(line, " ");
-        line = string_lstrip(line, "\t");
-        auto tokens = string_space_split(line);
-        for (auto t: tokens)
-            INFO("%s ", t.c_str()); 
-        INFO("\n");
-        if (tokens.empty()) {
-            continue;
-        }
-        if (tokens[0] == "balljoint") {
-            pushBone(tokens[1]);
-        } else if (tokens[0][0] == '}') {
+        auto p = Parser(line);
+        string token;
+        p.parse(token);
+        if (token == "balljoint") {
+            pushBone(p.parse<string>());
+        } else if (token[0] == '}') {
             popBone();
-        } else if (tokens[0] == "offset") {
-            m_boneTree->m_localPosition.x = stof(tokens[1]);
-            m_boneTree->m_localPosition.y = stof(tokens[2]);
-            m_boneTree->m_localPosition.z = stof(tokens[3]);
-        } else if (tokens[0] == "boxmin") {
-            m_boneTree->m_boxmin.x = stof(tokens[1]);
-            m_boneTree->m_boxmin.y = stof(tokens[2]);
-            m_boneTree->m_boxmin.z = stof(tokens[3]); 
-        } else if (tokens[0] == "boxmax") {
-            m_boneTree->m_boxmax.x = stof(tokens[1]);
-            m_boneTree->m_boxmax.y = stof(tokens[2]);
-            m_boneTree->m_boxmax.z = stof(tokens[3]);
-        } else if (tokens[0] == "pose") {
+        } else if (token == "offset") {
+            m_boneTree->m_localPosition.x = p.parse<float>();
+            m_boneTree->m_localPosition.y = p.parse<float>();
+            m_boneTree->m_localPosition.z = p.parse<float>();
+        } else if (token == "boxmin") {
+            m_boneTree->m_boxmin.x = p.parse<float>();
+            m_boneTree->m_boxmin.y = p.parse<float>();
+            m_boneTree->m_boxmin.z = p.parse<float>(); 
+        } else if (token == "boxmax") {
+            m_boneTree->m_boxmax.x = p.parse<float>();
+            m_boneTree->m_boxmax.y = p.parse<float>();
+            m_boneTree->m_boxmax.z = p.parse<float>();
+        } else if (token == "pose") {
             for (int i = 0; i < 3; i++) {
-                m_boneTree->m_dofs[i].value = stof(tokens[i + 1]);
+                m_boneTree->m_dofs[i].value = p.parse<float>();
             }
-        } else if (tokens[0] == "rotxlimit") {
-            m_boneTree->m_dofs[0].min = stof(tokens[1]);
-            m_boneTree->m_dofs[0].max = stof(tokens[2]);
-        } else if (tokens[0] == "rotylimit") {
-            m_boneTree->m_dofs[1].min = stof(tokens[1]);
-            m_boneTree->m_dofs[1].max = stof(tokens[2]);
-        } else if (tokens[0] == "rotzlimit") {
-            m_boneTree->m_dofs[2].min = stof(tokens[1]);
-            m_boneTree->m_dofs[2].max = stof(tokens[2]);
+        } else if (token == "rotxlimit") {
+            m_boneTree->m_dofs[0].min = p.parse<float>();
+            m_boneTree->m_dofs[0].max = p.parse<float>();
+        } else if (token == "rotylimit") {
+            m_boneTree->m_dofs[1].min = p.parse<float>();
+            m_boneTree->m_dofs[1].max = p.parse<float>();
+        } else if (token == "rotzlimit") {
+            m_boneTree->m_dofs[2].min = p.parse<float>();
+            m_boneTree->m_dofs[2].max = p.parse<float>();
         } else {
-            INFO("----------[%s]\n", tokens[0].c_str());
+            INFO("----------[%s]\n", token.c_str());
         }
     }
     file.close();
