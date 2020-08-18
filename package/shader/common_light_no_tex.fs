@@ -26,6 +26,6 @@ void main(void) {
     for (int i = 0; i < LIGHT_NUM; i++) {
         light += dot(o_normal, normalize(light_info[i].pos.xyz));
     }
-    light = clamp(light, 0.5, 0.5);
+    light = clamp(light, 0.1, 0.8);
     color = vec4(light, light, light, 1);
 }

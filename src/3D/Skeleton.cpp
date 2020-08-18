@@ -75,6 +75,7 @@ void Skeleton::loadFromFile(string name) {
 void Skeleton::pushBone(string name) {
     Bone * newBone = new Bone(name, m_boneTree);
     m_boneTree = newBone;
+    m_bones.push_back(newBone);
 }
 
 void Skeleton::popBone() {

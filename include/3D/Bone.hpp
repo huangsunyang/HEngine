@@ -53,6 +53,8 @@ public:
     void draw();
     void drawSelf();
 
+    glm::mat4 getWorldMatrix() {return m_worldMatrix;}
+
     string getName() {return m_name;}
     vector<Bone *> getChildren() { return m_children;}
 
@@ -60,10 +62,10 @@ protected:
     Bone * m_parent;
     string m_name;
     vector<Bone *> m_children;
-    glm::mat4x4 m_localMatrix;
-    glm::mat4x4 m_worldMatrix;
+    glm::mat4 m_localMatrix;
+    glm::mat4 m_worldMatrix;
     glm::vec3 m_localPosition;
-    glm::mat4x4 m_matrix;
+    glm::mat4 m_matrix;
     glm::vec3 m_offset;
     glm::vec3 m_boxmin;
     glm::vec3 m_boxmax;

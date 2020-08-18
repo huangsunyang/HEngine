@@ -19,7 +19,7 @@
 #include "ui/Text.hpp"
 #include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
-#include "3D/Skeleton.hpp"
+#include "3D/SkModel.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 
@@ -163,8 +163,8 @@ public:
     }
 
     void init_shape() {
-        sk = new Skeleton();
-        sk->loadFromFile("package/res/dragon.skel.txt");
+        sk = new SkModel();
+        sk->load("package/res/wasp.skel.txt", "package/res/wasp.skin");
         sk->update();
 
         Model * triangle = new Model();
@@ -177,10 +177,10 @@ public:
         // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         // models.push_back(m_drawer);
 
-        Model * obj = new Model();
-        obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        obj->loadMesh("Package/res/capsule.obj");
-        models.push_back(obj);
+        // Model * obj = new Model();
+        // obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
+        // obj->loadMesh("Package/res/capsule.obj");
+        // models.push_back(obj);
 
         Model * axis = new Model();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -309,6 +309,7 @@ public:
         for (auto model: models) {
             model->setPolygonMode(m_polygonMode);
         }
+        sk->getSkin()->setPolygonMode(m_polygonMode);
     }
 
     void shutdown()
@@ -334,7 +335,7 @@ public:
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Pink);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Black);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         auto camera_matrix = m_camera->getCameraTransform();
         auto proj_matrix = m_camera->getProjectionMatrix();
@@ -394,7 +395,7 @@ private:
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
-    Skeleton * sk;
+    SkModel * sk;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
