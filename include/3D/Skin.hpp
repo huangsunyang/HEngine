@@ -28,7 +28,7 @@ public:
     // you have to implement these methods to draw something!!
     virtual GLfloat * getPoints() override { return m_positions.data(); }
     virtual GLuint * getIndices() override { return m_triangles.data(); }
-    virtual size_t getPointNum() override { return m_positions.size() / 6; }
+    virtual size_t getPointNum() override { return m_weights.size(); }
     virtual size_t getIndiceNum() override { return m_triangles.size(); }
     virtual VertexInfo * getVertexInfo() override { return m_vertexInfo; }
 
@@ -47,4 +47,5 @@ protected:
     glm::mat4 m_matrix;
 
     int m_curRow;
+    string m_filePath;
 };

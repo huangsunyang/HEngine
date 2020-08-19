@@ -164,7 +164,7 @@ public:
 
     void init_shape() {
         sk = new SkModel();
-        sk->load("package/res/wasp.skel.txt", "package/res/wasp.skin");
+        sk->load("package/res/head/head.skel", "package/res/head/head_tex.skin");
         sk->update();
 
         Model * triangle = new Model();
