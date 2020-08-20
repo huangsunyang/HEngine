@@ -24,6 +24,8 @@ public:
     virtual void draw();
     void update();
     void loadFromFile(string);
+    void loadMorph(vector<string>);
+    void loadMorph(string);
 
     // you have to implement these methods to draw something!!
     virtual GLfloat * getPoints() override { return m_positions.data(); }

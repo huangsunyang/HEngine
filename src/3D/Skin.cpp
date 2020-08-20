@@ -96,6 +96,33 @@ void Skin::loadFromFile(string name) {
     f.close();
 }
 
+void Skin::loadMorph(vector<string> files) {
+    for (auto file: files) {
+        loadMorph(file);
+    }
+}
+
+void Skin::loadMorph(string file) {
+    fstream f(file, std::ios::in);
+    string line;
+    auto parsingState = -1;
+    while (std::getline(f, line)) {
+        line = string_lstrip(line, " ");
+        line = string_lstrip(line, "\t");
+        auto tokens = string_space_split(line);
+        if (tokens[0] == "positions") {
+            parsingState = 0;
+        } else if (tokens[0] == "normals") {
+            parsingState = 1;
+        } else if (tokens.size() >= 2) {
+            if (parsingState == 0) {
+                // positions.push_back(glm::vec3(stof(tokens[1]), stof(tokens[2]), stof(tokens[3])));
+            } else if (parsingState == 1) {
+            }
+        }
+    }
+}
+
 void Skin::pushMatrix() {
     m_curRow = 0;
     m_bindingMatrixs.push_back(glm::mat4(0.0f));
