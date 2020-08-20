@@ -10,6 +10,14 @@ using std::vector;
 using std::numeric_limits;
 using std::string;
 
+#ifdef max
+    #undef max
+#endif
+
+#ifdef min
+    #undef min
+#endif
+
 struct Dof {
     Dof():
         min(numeric_limits<float>::lowest()),

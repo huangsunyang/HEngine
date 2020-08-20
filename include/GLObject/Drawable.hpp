@@ -8,13 +8,22 @@
 #include "GLObject/VertexArray.hpp"
 #include "GLObject/VertexBuffer.hpp"
 #include "GLObject/Texture.hpp"
-#include "GLObject/iMesh.hpp"
 #include "GLObject/Transform.hpp"
 #include "GL/gl3w.h"
 
 using std::map;
 using std::vector;
 
+struct VertexAttrInfo {
+    int num;
+    GLenum type;   // type is an enum，GL_FLOAT but not GLfloat
+    size_t size;   // equal to num * sizeof(Type)
+};
+
+struct VertexInfo {
+    bool useIndice;                     // 是否使用索引绘制，即使用drawElements而不是drawArray
+    vector<VertexAttrInfo> attrInfos;   // 每个属性的信息
+};
 
 class Drawable {
 public:
@@ -79,4 +88,4 @@ protected:
     bool m_useIndice;               //是否使用索引绘制
     
     Transform * m_transform;
-};;
+};

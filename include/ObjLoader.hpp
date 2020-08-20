@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "GLObject/iMesh.hpp"
+#include "GLObject/Drawable.hpp"
 #include "MtlLoader.hpp"
 
 using std::string;
@@ -18,7 +18,7 @@ using std::stringstream;
 using std::vector;
 
 
-class ObjLoader: public iMesh {
+class ObjLoader: public Drawable {
 public:
     ObjLoader(const string& filename);
     virtual ~ObjLoader();

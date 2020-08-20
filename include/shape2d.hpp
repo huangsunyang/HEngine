@@ -2,12 +2,12 @@
 #define __SHAPE_2D__
 #include "sb7/sb7.h"
 #include "sb7/vmath.h"
-#include "GLObject/iMesh.hpp"
 #include "logger.hpp"
+#include "GLObject/Drawable.hpp"
 
 using std::initializer_list;
 
-class HPolygon: public iMesh {
+class HPolygon: public Drawable {
 public:
     GLfloat * verteces;
     GLfloat * texcoord;
@@ -21,11 +21,10 @@ public:
         delete[] texcoord;
         delete[] indices;
         delete vertexInfo;
-        INFO("-----------------------delete HPolygon\n");
     };
 
-    static HPolygon* from_vertex(const vector<float> &vec) {
-        HPolygon * polygon = new HPolygon;
+    HPolygon* loadVertex(const vector<float> &vec) {
+        HPolygon * polygon = this;
 
         size_t N = vec.size() / 3;
         polygon->N = N;
@@ -49,11 +48,12 @@ public:
             polygon->indices[i] = i;
         }
 
+        polygon->initBuffers();
         return polygon;
     }
 
-    static HPolygon* fromVertexIndice(const vector<float> &vec, const vector<GLuint> &index) {
-        HPolygon * polygon = new HPolygon;
+    HPolygon* loadVertexIndice(const vector<float> &vec, const vector<GLuint> &index) {
+        HPolygon * polygon = this;
 
         size_t N = vec.size() / 3;
         polygon->N = N;
@@ -77,11 +77,12 @@ public:
             polygon->indices[i] = index[i];
         }
 
+        polygon->initBuffers();
         return polygon;
     }
 
-    static HPolygon* fromVertexCoord(const vector<float> &points, const vector<float> &coords) {
-        HPolygon * polygon = new HPolygon;
+    HPolygon* loadVertexCoord(const vector<float> &points, const vector<float> &coords) {
+        HPolygon * polygon = this;
 
         size_t N = points.size() / 3;
         polygon->N = N;
@@ -110,6 +111,7 @@ public:
             polygon->indices[i] = i;
         }
 
+        polygon->initBuffers();
         return polygon;
     }
 

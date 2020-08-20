@@ -1,9 +1,9 @@
 #pragma once
 #include <algorithm>
-#include "GLObject/Model.hpp"
 #include "ui/Common.hpp"
 #include "sb7/vmath.h"
 #include "GLObject/FontAtlas.hpp"
+#include "shape2d.hpp"
 
 
 using vmath::vec2;
@@ -11,9 +11,9 @@ using vmath::vec3;
 using vmath::vec4;
 
 
-class Box: public Model {
+class Box: public HPolygon {
 public:
-    Box(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): Model() {
+    Box(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): HPolygon() {
         // from bottom to up, from first area to fourth area
         loadVertexIndice({
             offsetx + length / 2, offsety + width / 2, offsetz - height / 2,
@@ -48,9 +48,9 @@ protected:
 };
 
 
-class UIRectangle: public Model {
+class UIRectangle: public HPolygon {
 public:
-    UIRectangle(vec2 pos, vec2 size): m_pos(pos), m_size(size), Model() {
+    UIRectangle(vec2 pos, vec2 size): m_pos(pos), m_size(size), HPolygon() {
         auto length = m_size[0], width = m_size[1];
         auto pos_x = m_pos[0], pos_y = m_pos[1];
         loadVertexCoord({
@@ -77,7 +77,7 @@ protected:
 };
 
 
-class BatchDrawer: public Model {
+class BatchDrawer: public HPolygon {
 public:
     void setQuads(const vector<Quad> &quads) {
         vector<float> points;

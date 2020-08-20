@@ -23,6 +23,8 @@ ObjLoader::ObjLoader(const string &name) {
     f.open(name.c_str(), ios::in);
     parse(f);
     f.close();
+    setTexture(getTextures());
+    initBuffers();
 }
 
 ObjLoader::~ObjLoader() {

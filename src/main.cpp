@@ -11,7 +11,6 @@
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
-#include "GLObject/Model.hpp"
 #include "GLObject/Light.hpp"
 #include "GLObject/UniformBlock.hpp"
 #include "Camera.hpp"
@@ -21,6 +20,7 @@
 #include "base/EventDispatcher.hpp"
 #include "3D/SkModel.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "ObjLoader.hpp"
 
 
 #include "DbgHelp.h"
@@ -114,7 +114,7 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
-        // initUI();
+        initUI();
         initEvent();
 
         // init camera
@@ -167,7 +167,7 @@ public:
         sk->load("package/res/head/head.skel", "package/res/head/head_tex.skin");
         sk->update();
 
-        Model * triangle = new Model();
+        HPolygon * triangle = new HPolygon();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
@@ -177,12 +177,11 @@ public:
         // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         // models.push_back(m_drawer);
 
-        // Model * obj = new Model();
-        // obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        // obj->loadMesh("Package/res/capsule.obj");
-        // models.push_back(obj);
+        ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
+        obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
+        models.push_back(obj);
 
-        Model * axis = new Model();
+        HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
         axis->setDrawMode(GL_LINES);
         axis->loadVertex({
@@ -202,7 +201,7 @@ public:
         models.push_back(light);
         models.push_back(m_lightMgr->createLight());
 
-        Model * polygon = new Model();
+        HPolygon * polygon = new HPolygon();
         polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
         polygon->setDrawMode(GL_TRIANGLE_FAN);
         polygon->loadVertex({
@@ -370,7 +369,9 @@ public:
             model->getProgram()->setMatrix4fvUniform("m_matrix_it", glm::value_ptr(m_matrix));
             model->draw();
         }
-        sk->draw();
+        if (sk) {
+            sk->draw();
+        }
 
         glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
@@ -379,7 +380,7 @@ public:
 private:
     GLuint vao;
     float aspect;
-    vector<Model *> models;
+    vector<Drawable *> models;
     LightMgr * m_lightMgr;
     Texture2D * texture;
     Texture2D * texture1;
@@ -395,7 +396,7 @@ private:
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
-    SkModel * sk;
+    SkModel * sk = nullptr;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
