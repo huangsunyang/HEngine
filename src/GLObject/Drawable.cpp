@@ -15,31 +15,30 @@ void Drawable::setShader(vector<string> shaders) {
     m_program->linkProgram();
 }
 
+size_t Drawable::getPointSize() {
+    // calculate all attr size together, as stride
+    size_t stride = 0;
+    for (auto attr: getVertexInfo()->attrInfos) {
+        stride += attr.size;
+    }
+    return stride;
+}
+
 void Drawable::initBuffers() {
     auto vertexInfo = getVertexInfo();
     size_t pointNum = getPointNum();
     GLfloat * points = getPoints();
+    auto stride = getPointSize();
 
     // init vao and vbos
     m_vao = new VertexArray;
     m_vao->bindVertexArray();
-
-    // calculate all attr size together, as stride
-    size_t stride = 0;
-    for (auto attr: vertexInfo->attrInfos) {
-        stride += attr.size;
-    }
 
     // init vbo and sub data
     m_vbo = new VertexBuffer;
     m_vao->setVertexBuffer(0, m_vbo, stride);
     m_vbo->alloc(pointNum * stride, GL_DYNAMIC_STORAGE_BIT);
     m_vbo->subData(points);
-
-    for (size_t i = 0; i < pointNum * stride / sizeof(GLfloat); i++) {
-        // INFO("%d %f\n", i, points[i]);
-    }
-    INFO("\n");
 
     // init attributes
     int attrNum = vertexInfo->attrInfos.size();

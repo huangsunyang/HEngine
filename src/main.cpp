@@ -114,7 +114,7 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
-        initUI();
+        // initUI();
         initEvent();
 
         // init camera
@@ -160,11 +160,21 @@ public:
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_F, [this](){switchFullScreen();});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_W, [this](){switchWireframeMode();});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_SPACE, [this](){m_pause = !m_pause;});
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [this](){
+            sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") - 0.05f);
+            sk->update();
+        });
+
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [this](){
+            sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
+            sk->update();
+        });
     }
 
     void init_shape() {
         sk = new SkModel();
         sk->load("package/res/head/head.skel", "package/res/head/head_tex.skin");
+        sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
         sk->update();
 
         HPolygon * triangle = new HPolygon();
@@ -177,9 +187,9 @@ public:
         // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         // models.push_back(m_drawer);
 
-        ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
-        obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        models.push_back(obj);
+        // ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
+        // obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
+        // models.push_back(obj);
 
         HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});

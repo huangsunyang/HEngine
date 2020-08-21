@@ -64,6 +64,9 @@ public:
     virtual size_t getIndiceNum() = 0;
     virtual VertexInfo * getVertexInfo() = 0;
 
+    // helper functions
+    size_t getPointSize();
+
     // mode relative
     void setDrawMode(GLenum mode) {m_drawMode = mode;}
     void setPolygonMode(GLenum mode) {m_polygonMode = mode;}
