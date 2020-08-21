@@ -9,11 +9,11 @@ out vec2 vs_texCoord;
 uniform mat4 mvp_matrix;
 uniform mat4 v_matrix;
 uniform mat4 p_matrix;
-uniform mat4 m_matrix_it;
+uniform mat4 m_matrix;
 uniform vec4 color;
 
 void main(void) {
-    gl_Position = position;
+    gl_Position = m_matrix * position;
     vs_color = color;
     vs_texCoord = texCoord;
 }

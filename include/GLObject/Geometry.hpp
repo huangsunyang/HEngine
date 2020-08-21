@@ -1,14 +1,14 @@
 #pragma once
 #include <algorithm>
 #include "ui/Common.hpp"
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 #include "GLObject/FontAtlas.hpp"
 #include "shape2d.hpp"
 
 
-using vmath::vec2;
-using vmath::vec3;
-using vmath::vec4;
+using glm::vec2;
+using glm::vec3;
+using glm::vec4;
 
 
 class Box: public HPolygon {
@@ -68,7 +68,7 @@ public:
             0, 0,
             1, 0,
         });
-        setShader({"Package/shader/ui.vs", "package/shader/ui_text.fs"});
+        setShader({"Package/shader/ui.vs", "package/shader/ui.fs"});
     };
 
 protected:

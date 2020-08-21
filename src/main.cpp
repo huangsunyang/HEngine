@@ -114,7 +114,7 @@ public:
         LOG::LogManager::init();
         LOG::LogManager::showAllLogger();
 
-        // initUI();
+        initUI();
         initEvent();
 
         // init camera
@@ -139,21 +139,20 @@ public:
     void initUI() {
         Scene * scene = new Scene("package/ui/scene_test.xml");
         scene->addTouchEventListener([this](Widget * w, Touch * touch) {
-            auto s = reinterpret_cast<Text *>(w->getChildren()[0])->getFontSize();
-            reinterpret_cast<Text *>(w->getChildren()[0])->setFontSize(s + 2);
+            INFO("---------------------\n");
         });
         scene->setCurrentScene();
 
         Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
         text->setParent(scene);
-        text->setText("Hello World! Hello Huang Sunyang!");
+        text->setText("Hello World!");
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
         text->setFontSize(100);
 
-        ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
-        p->initWithFile("");
-        p->setParent(scene);
+        // ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
+        // p->initWithFile("");
+        // p->setParent(scene);
     }
 
     void initEvent() {

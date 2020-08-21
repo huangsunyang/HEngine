@@ -1,5 +1,6 @@
 #include "ui/Text.hpp"
 #include "ui/Common.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 void Text::drawSelf() {
     // this->Widget::drawSelf();
@@ -21,5 +22,11 @@ void Text::drawSelf() {
         pos[0] += fontInfo.advancex / 600.0f;
     }
     temp.setQuads(quads);
+    auto color = m_color;
+    if (m_clickedDown) {
+        color *= glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    }
+    temp.getProgram()->setVec4Uniform("color", glm::value_ptr(m_color));
+    temp.getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
     temp.draw();
 }

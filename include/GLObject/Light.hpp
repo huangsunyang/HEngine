@@ -6,6 +6,7 @@
 #include "GLObject/Geometry.hpp"
 #include "LogManager.hpp"
 #include "glm/glm.hpp"
+#include "sb7/vmath.h"
 
 using std::map;
 using std::vector;

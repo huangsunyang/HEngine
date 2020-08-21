@@ -10,5 +10,5 @@ uniform sampler2D s0;
 
 void main(void) {
     float alpha = texture(s0, vs_texCoord).r;
-    color = vec4(1, 1, 1, alpha);
+    color = vec4(1, 1, 1, alpha) * vs_color;
 }

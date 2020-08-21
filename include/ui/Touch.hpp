@@ -1,12 +1,12 @@
 #ifndef __TOUCH_HPP__
 #define __TOUCH_HPP__
 
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 #include <string>
 #include <vector>
 
 
-using vmath::vec2;
+using glm::vec2;
 using std::string;
 using std::vector;
 

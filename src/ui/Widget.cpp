@@ -3,10 +3,11 @@
 #include "LogManager.hpp"
 #include "ui/Touch.hpp"
 #include "pugixml.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 
 Widget::Widget(string fileName) {
-    m_drawer = new UIRectangle(m_pos, m_size);
+    m_drawer = new UIRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
     m_children = vector<Widget *>{};
 
     pugi::xml_document doc;
@@ -38,7 +39,13 @@ void Widget::drawSelf() {
     if (m_clickedDown) {
         color *= vec4{0.8f, 0.8f, 0.8f, 1.0f};
     }
-    m_drawer->getProgram()->setVec4Uniform("color", color);
+    glm::mat4 matrix(1.0f);
+    matrix[0][0] = m_size.x;
+    matrix[1][1] = m_size.y;
+    matrix[3][0] = m_pos.x;
+    matrix[3][1] = m_pos.y;
+    m_drawer->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(matrix));
+    m_drawer->getProgram()->setVec4Uniform("color", glm::value_ptr(color));
     m_drawer->draw();
 }
 
@@ -82,7 +89,7 @@ bool Widget::_canReceiveTouch(Touch * touch) {
 }
 
 
-bool Widget::_inTouchArea(vec2 pos) {
+bool Widget::_inTouchArea(glm::vec2 pos) {
     auto x_min = m_pos[0] - m_size[0] / 2, x_max = m_pos[0] + m_size[0] / 2;
     auto y_min = m_pos[1] - m_size[1] / 2, y_max = m_pos[1] + m_size[1] / 2;
     return pos[0] >= x_min && pos[0] <= x_max && pos[1] >= y_min && pos[1] <= y_max;

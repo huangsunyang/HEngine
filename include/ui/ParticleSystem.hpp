@@ -1,13 +1,12 @@
 #pragma once
 #include "ui/widget.hpp"
 #include "ui/Common.hpp"
-#include "sb7/vmath.h"
 #include "GLObject/Texture.hpp"
 #include <string>
 #include <vector>
 
-using vmath::vec2;
-using vmath::vec3;
+using glm::vec2;
+using glm::vec3;
 using std::string;
 using std::vector;
 

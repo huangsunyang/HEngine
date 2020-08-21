@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <fstream>
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 
 using std::map;
 using std::string;
@@ -11,9 +11,9 @@ using std::fstream;
 
 
 struct Material {
-    vmath::vec3 ka;
-    vmath::vec3 kd;
-    vmath::vec3 ks;
+    glm::vec3 ka;
+    glm::vec3 kd;
+    glm::vec3 ks;
     float Tr;
     float Ns;
     string map_Kd;

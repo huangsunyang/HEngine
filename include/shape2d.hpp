@@ -1,7 +1,7 @@
 #ifndef __SHAPE_2D__
 #define __SHAPE_2D__
 #include "sb7/sb7.h"
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 #include "logger.hpp"
 #include "GLObject/Drawable.hpp"
 

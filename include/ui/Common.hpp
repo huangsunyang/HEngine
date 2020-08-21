@@ -1,7 +1,7 @@
 #pragma once
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 
-using vmath::vec2;
+using glm::vec2;
 
 struct Quad {
     vec2 size;

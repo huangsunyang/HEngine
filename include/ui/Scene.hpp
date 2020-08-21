@@ -2,7 +2,7 @@
 #include "ui/Widget.hpp"
 #include "ui/Director.hpp"
 
-using vmath::vec2;
+using glm::vec2;
 
 class Scene: public Widget {
 public:

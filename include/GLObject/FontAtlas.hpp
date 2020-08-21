@@ -4,12 +4,12 @@
 #include <vector>
 #include "GLObject/Texture.hpp"
 #include "Freetype/FreeType.hpp"
-#include "sb7/vmath.h"
+#include "glm/glm.hpp"
 
 using std::map;
 using std::string;
 using std::vector;
-using vmath::vec2;
+using glm::vec2;
 
 const int TEXTURE_SIZE = 512;
 
