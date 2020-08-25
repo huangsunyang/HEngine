@@ -14,6 +14,7 @@ void Bone::update() {
 }
 
 void Bone::updateSelf() {
+    m_localMatrix = glm::eulerAngleZYX(m_dofs[2].getValue(), m_dofs[1].getValue(), m_dofs[0].getValue());
     if (!m_parent) {
         m_worldMatrix = glm::translate(m_localMatrix, m_localPosition);
         m_matrix = glm::translate(m_localMatrix, m_localPosition + m_offset);
@@ -21,6 +22,13 @@ void Bone::updateSelf() {
         m_worldMatrix = glm::translate(m_parent->m_worldMatrix, m_localPosition) * m_localMatrix;
         m_matrix = glm::translate(m_parent->m_worldMatrix, m_localPosition) * glm::translate(m_localMatrix, m_offset); 
     }
+}
+
+void Bone::updateDof(float x, float y, float z) {
+    INFO("+++++++++++++++++++++++++++++++++ %f %f %f \n", x, y, z);
+    m_dofs[0].value = x;
+    m_dofs[1].value = y;
+    m_dofs[2].value = z;
 }
 
 void Bone::draw() {

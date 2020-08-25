@@ -10,6 +10,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <sstream>
+#include "utils/Parser.hpp"
 
 using namespace Utils;
 using std::string;
@@ -118,6 +119,16 @@ TESTBEGIN(sstream)
     string s;
     ss >> s;
     AssertEqual(s, "hello");
+
+    std::fstream f("package/res/wasp/wasp_walk.anim", std::ios::in);
+    auto p = Parser(f);
+    string str1, str2;
+    while (p.parse(str1, str2)) {
+        printf("[%s]\n", str1.c_str());
+        printf("[%s]\n", str2.c_str());
+        str1.clear();
+        str2.clear();
+    }
 TESTEND(sstream)
 
 

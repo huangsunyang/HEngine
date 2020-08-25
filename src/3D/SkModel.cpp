@@ -13,6 +13,6 @@ void SkModel::draw() {
 }
 
 void SkModel::update() {
-    m_skeleton->update();
+    m_skeleton->update(0.03f);
     m_skin->update();
 }

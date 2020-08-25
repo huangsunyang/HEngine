@@ -20,14 +20,30 @@ public:
     Parser * parseLine();
 
     template <typename T, typename... Q>
-    void parse(T& ret, Q&... other) {
-        *m_istream >> ret;
-        parser(other...);
+    bool parse(T& ret, Q&... other) {
+        if (!parse(ret)) {
+            return false;
+        }
+        return parse(other...);
     }
 
     template <typename T, typename... Q>
-    void parse(T& ret) {
+    bool parse(T& ret) {
+        if (m_istream->eof()) {
+            return false;
+        }
         *m_istream >> ret;
+        return true;
+    }
+
+    void skip(int n) {
+        string ret;
+        while (n--) {
+            if (m_istream->eof()) {
+                return;
+            }
+            *m_istream >> ret;
+        }
     }
 
     template <typename T>
