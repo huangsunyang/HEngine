@@ -72,7 +72,12 @@
         "xloctime": "cpp",
         "xmemory": "cpp",
         "xmemory0": "cpp",
-        "xstddef": "cpp"
+        "xstddef": "cpp",
+        "stack": "cpp",
+        "cctype": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "queue": "cpp"
     },
     "cmake.configureOnOpen": true,
     "vim.normalModeKeyBindings": [
@@ -80,5 +85,6 @@
             "before": ["<Space>"],
             "after": [ "a", "_", "<Esc>", "r"]
         }
-   ]
+],
+"svn.ignoreMissingSvnWarning": true
 }

@@ -8,6 +8,10 @@
 
 
 void Drawable::setShader(vector<string> shaders) {
+    if (m_program) {
+        delete m_program;
+        m_program = new Program;
+    }
     for (const string& shader: shaders) {
         INFO("%s\n", shader.c_str());
         m_program->bindShader(shader);

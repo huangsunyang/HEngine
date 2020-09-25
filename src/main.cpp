@@ -21,6 +21,7 @@
 #include "3D/SkModel.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "ObjLoader.hpp"
+#include "3D/Terrain.hpp"
 
 
 #include "DbgHelp.h"
@@ -144,11 +145,21 @@ public:
         scene->setCurrentScene();
 
         Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        text->setParent(scene);
+        // text->setParent(scene);
         text->setText("Hello World!");
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
         text->setFontSize(100);
+
+        Widget * widget = new Widget;
+        widget->setParent(scene);
+        widget->setShader({"Package/shader/ui.vs", "Package/shader/ui/ui_blink.fs"});
+        widget->loadTexture("Package/res/sword.png");
+        Director::instance()->addSchedule(
+            [this, widget](float dt) {
+                widget->getProgram()->setFloatUniform("sys_time", float(m_gameTime)); 
+            }
+        );
 
         // ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
         // p->initWithFile("");
@@ -171,6 +182,9 @@ public:
     }
 
     void init_shape() {
+        auto terrain = new Terrain;
+        models.push_back(terrain);
+
         sk = new SkModel();
         sk->load("package/res/head/head.skel", "package/res/head/head_tex.skin");
         sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);

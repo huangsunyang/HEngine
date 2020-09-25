@@ -144,7 +144,6 @@ void Skin::update() {
             pos1 += bone->getWorldMatrix() * glm::inverse(m_bindingMatrixs[weight.index]) * pos * weight.weight;
             normal1 += bone->getWorldMatrix() * glm::inverse(m_bindingMatrixs[weight.index]) * normal * weight.weight;
         }
-        normal1 = glm::normalize(normal1);
         m_data[i * stride + 0] = pos1.x;
         m_data[i * stride + 1] = pos1.y;
         m_data[i * stride + 2] = pos1.z;
