@@ -22,9 +22,33 @@ void Skeleton::draw() {
     }
 }
 
-void Skeleton::update() {
+void Skeleton::update(float dt) {
+    updateAnimation(dt);
     if (m_boneTree) {
         m_boneTree->update();
+    }
+}
+
+void Skeleton::updateAnimation(float dt) {
+    if (m_curAnimation.empty()) {
+        return;
+    }
+
+    if (m_animations.find(m_curAnimation) == m_animations.end()) {
+        return;
+    }
+
+    m_curAnimationTime += dt;
+    auto animation = m_animations.at(m_curAnimation);
+    auto pose = animation->getPose(m_curAnimationTime);
+    updatePose(pose);
+}
+
+void Skeleton::updatePose(std::shared_ptr<Pose> pose) {
+    auto i = 0;
+    for (auto bone: m_bones) {
+        bone->updateDof(pose->m_dofs[i], pose->m_dofs[i+1], pose->m_dofs[i+2]);
+        i += 3;
     }
 }
 
@@ -79,8 +103,6 @@ void Skeleton::pushBone(string name) {
 }
 
 void Skeleton::popBone() {
-    auto dofs = m_boneTree->m_dofs;
-    m_boneTree->m_localMatrix = glm::eulerAngleZYX(dofs[2].getValue(), dofs[1].getValue(), dofs[0].getValue());
     auto boxSize = (m_boneTree->m_boxmax - m_boneTree->m_boxmin);
     m_boneTree->m_offset = (m_boneTree->m_boxmin + m_boneTree->m_boxmax) / 2.0f;
 
@@ -92,4 +114,18 @@ void Skeleton::popBone() {
     if (m_boneTree->m_parent) {
         m_boneTree = m_boneTree->m_parent;
     }
+}
+
+void Skeleton::playAnimation(string file) {
+    if (m_animations.find(file) == m_animations.end()) {
+        loadAnimation(file);
+    }
+    m_curAnimation = file;
+    m_curAnimationTime = 0.0f;
+}
+
+void Skeleton::loadAnimation(string file) {
+    Animation * animation = new Animation;
+    animation->loadFromFile(file);
+    m_animations[file] = animation;
 }

@@ -186,8 +186,9 @@ public:
         models.push_back(terrain);
 
         sk = new SkModel();
-        sk->load("package/res/head/head.skel", "package/res/head/head_tex.skin");
-        sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
+        sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
+        // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
+        sk->getSkeleton()->playAnimation("package/res/wasp/wasp_walk.anim");
         sk->update();
 
         HPolygon * triangle = new HPolygon();
@@ -350,6 +351,7 @@ public:
         if (!gl3wIsSupported(4, 3)) return;
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
+            sk->update();
         }
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);

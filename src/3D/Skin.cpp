@@ -87,8 +87,10 @@ void Skin::loadFromFile(string name) {
     };
     if (has_texcoord) {
         m_vertexInfo->attrInfos.push_back({2, GL_FLOAT, 8});
+        setShader({"package/shader/common_light.vs", "package/shader/common_light.fs"});
+    } else {
+        setShader({"package/shader/common_light_no_tex.vs", "package/shader/common_light_no_tex.fs"});
     }
-    setShader({"package/shader/common_light.vs", "package/shader/common_light.fs"});
 
     initBuffers();
     f.close();

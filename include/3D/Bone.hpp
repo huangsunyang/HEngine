@@ -19,10 +19,10 @@ using std::string;
 #endif
 
 struct Dof {
-    Dof():
+    Dof(float v=0.0f):
         min(numeric_limits<float>::lowest()),
         max(numeric_limits<float>::max()),
-        value(0) {}
+        value(v) {}
 
     float getValue() {
         return glm::clamp(value, min, max);
@@ -57,6 +57,7 @@ public:
     void addChild(Bone *); 
     void update();
     void updateSelf();
+    void updateDof(float x, float y, float z);
     
     void draw();
     void drawSelf();
