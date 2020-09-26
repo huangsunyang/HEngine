@@ -82,7 +82,7 @@ public:
     void setQuads(const vector<Quad> &quads) {
         vector<float> points;
         vector<float> texcoords;
-        for (int i = 0; i < quads.size(); i++) {
+        for (auto i = 0; i < quads.size(); i++) {
             auto quad = quads[i];
             auto pos_x = quad.pos[0], pos_y = quad.pos[1];
             auto width = quad.size[0], height = quad.size[1];

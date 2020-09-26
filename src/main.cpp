@@ -18,7 +18,8 @@
 #include "ui/Text.hpp"
 #include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
-#include "3D/SkModel.hpp"
+#include "3D/Skeleton.hpp"
+#include "3D/Skin.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "ObjLoader.hpp"
 #include "3D/Terrain.hpp"
@@ -172,12 +173,12 @@ public:
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_SPACE, [this](){m_pause = !m_pause;});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [this](){
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") - 0.05f);
-            sk->update();
+            sk->update(0.03f);
         });
 
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [this](){
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
-            sk->update();
+            sk->update(0.03f);
         });
     }
 
@@ -185,11 +186,11 @@ public:
         auto terrain = new Terrain;
         models.push_back(terrain);
 
-        sk = new SkModel();
+        sk = new Skeleton();
         sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
         // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
-        sk->getSkeleton()->playAnimation("package/res/wasp/wasp_walk.anim");
-        sk->update();
+        sk->playAnimation("package/res/wasp/wasp_walk.anim");
+        sk->update(0.03f);
 
         HPolygon * triangle = new HPolygon();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
@@ -351,11 +352,11 @@ public:
         if (!gl3wIsSupported(4, 3)) return;
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
-            sk->update();
+            sk->update(0.03f);
         }
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        Director::instance()->update(currentTime - m_lastTickTime);
+        Director::instance()->update(float(currentTime - m_lastTickTime));
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
@@ -421,7 +422,7 @@ private:
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
-    SkModel * sk = nullptr;
+    Skeleton * sk = nullptr;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

@@ -9,9 +9,12 @@ using std::string;
 using std::vector;
 using std::map;
 
+class Skin;
+
 class Skeleton {
 public:
-    Skeleton(): m_boneTree(nullptr), m_bones() {}
+    Skeleton(): m_boneTree(nullptr), m_bones(), m_skin(nullptr) {}
+    void load(string skeleton_file, string skin_file);
     void loadFromFile(string file);
     void playAnimation(string file);
     void draw();
@@ -20,6 +23,7 @@ public:
 
     Bone * getBoneTree() {return m_boneTree;}
     Bone * getBone(int n) {return m_bones[n];}
+    Skin * getSkin() {return m_skin;}
 
 protected:
     void loadAnimation(string file);
@@ -33,4 +37,6 @@ protected:
     map<string, Animation *> m_animations;
     float m_curAnimationTime;
     string m_curAnimation;
+
+    Skin * m_skin;
 };

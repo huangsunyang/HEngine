@@ -4,7 +4,7 @@
 #include <fstream>
 #include "LogManager.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "3D/SkModel.hpp"
+#include "3D/Skeleton.hpp"
 
 using Utils::string_space_split;
 using Utils::string_lstrip;
@@ -67,7 +67,7 @@ void Skin::loadFromFile(string name) {
             }
         }
     }
-    for (int i = 0; i < m_points.size(); i++) {
+    for (auto i = 0; i < m_points.size(); i++) {
         m_data.push_back(m_points[i].pos.x);
         m_data.push_back(m_points[i].pos.y);
         m_data.push_back(m_points[i].pos.z);
@@ -135,14 +135,13 @@ void Skin::pushMatrix() {
 }
 
 void Skin::update() {
-    Skeleton * skeleton = m_model->getSkeleton();
     auto stride = getPointSize() / 4;
-    for (int i = 0; i < m_points.size(); i++) {
+    for (auto i = 0; i < m_points.size(); i++) {
         glm::vec4 pos = getMorphPosition(i);
         glm::vec4 normal = glm::vec4(m_points[i].normal, 0.0f);
         glm::vec4 pos1{ 0.0f, 0.0f, 0.0f, 0.0f }, normal1{ 0.0f, 0.0f, 0.0f, 0.0f };
         for (auto weight: m_points[i].weights) {
-            auto bone = skeleton->getBone(weight.index);
+            auto bone = m_skeleton->getBone(weight.index);
             pos1 += bone->getWorldMatrix() * glm::inverse(m_bindingMatrixs[weight.index]) * pos * weight.weight;
             normal1 += bone->getWorldMatrix() * glm::inverse(m_bindingMatrixs[weight.index]) * normal * weight.weight;
         }
