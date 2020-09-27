@@ -1,21 +1,54 @@
 #include "GLObject/Drawable.hpp"
 #include "shape2d.hpp"
+#include "GLFW/glfw3.h"
 
 class Terrain: public HPolygon {
 public:
     Terrain() {
         loadVertex({
-            -1, 0, +1,
-            -1, 0, -1,
-            +1, 0, +1,
-            +1, 0, +1,
-            -1, 0, -1,
-            +1, 0, -1,
+            -0.5, 0, +0.5,
+            -0.5, 0, -0.5,
+            +0.5, 0, +0.5,
+            +0.5, 0, -0.5,
         });
         setShader({
-            "Package/shader/common_light_no_tex.vs",
-            // "Package/shader/terrain.tesc",
-            "Package/shader/common_light_no_tex.fs",
+            "Package/shader/terrain/terrain.vs",
+            "Package/shader/terrain/terrain.tesc",
+            "Package/shader/terrain/terrain.tese",
+            "Package/shader/terrain/terrain.fs",
         });
+        auto len = 64;
+        getProgram()->setIntUniform("len", len);
+        getProgram()->setFloatUniform("dmap_depth", m_height);
+        getProgram()->setFloatUniform("diff", m_diff);
+
+        setTexture(0, "package/res/terrain_height_map.jpg");
+
+        glPatchParameteri(GL_PATCH_VERTICES, 4);
+        setDrawMode(GL_PATCHES);
+        setInstanceCount(len * len);
     }
+
+    void addWidth(float x) {
+        INFO("add_width\n");
+        verteces[0] -= x;
+        verteces[3] -= x;
+        verteces[6] += x;
+        verteces[9] += x;
+        m_vbo->subData(getPoints());
+    }
+
+    void addHeight(float x) {
+        m_height += x;
+        getProgram()->setFloatUniform("dmap_depth", m_height);
+    }
+
+    void addDiff(float x) {
+        if (x > 0) m_diff *= x;
+        else m_diff /= -x;
+        getProgram()->setFloatUniform("diff", m_diff);
+    }
+
+    float m_height = 50.0f;
+    float m_diff = 0.001f;
 };

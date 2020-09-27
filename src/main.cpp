@@ -139,28 +139,28 @@ public:
     }
 
     void initUI() {
-        Scene * scene = new Scene("package/ui/scene_test.xml");
-        scene->addTouchEventListener([this](Widget * w, Touch * touch) {
-            INFO("---------------------\n");
-        });
-        scene->setCurrentScene();
+        // Scene * scene = new Scene("package/ui/scene_test.xml");
+        // scene->addTouchEventListener([this](Widget * w, Touch * touch) {
+        //     INFO("---------------------\n");
+        // });
+        // scene->setCurrentScene();
 
-        Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        // text->setParent(scene);
-        text->setText("Hello World!");
-        text->setFont("package/font/consolab.ttf");
-        text->setColor({0, 0, 1});
-        text->setFontSize(100);
+        // Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
+        // // text->setParent(scene);
+        // text->setText("Hello World!");
+        // text->setFont("package/font/consolab.ttf");
+        // text->setColor({0, 0, 1});
+        // text->setFontSize(100);
 
-        Widget * widget = new Widget;
-        widget->setParent(scene);
-        widget->setShader({"Package/shader/ui.vs", "Package/shader/ui/ui_blink.fs"});
-        widget->loadTexture("Package/res/sword.png");
-        Director::instance()->addSchedule(
-            [this, widget](float dt) {
-                widget->getProgram()->setFloatUniform("sys_time", float(m_gameTime)); 
-            }
-        );
+        // Widget * widget = new Widget;
+        // widget->setParent(scene);
+        // widget->setShader({"Package/shader/ui.vs", "Package/shader/ui/ui_blink.fs"});
+        // widget->loadTexture("Package/res/sword.png");
+        // Director::instance()->addSchedule(
+        //     [this, widget](float dt) {
+        //         widget->getProgram()->setFloatUniform("sys_time", float(m_gameTime)); 
+        //     }
+        // );
 
         // ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
         // p->initWithFile("");
@@ -185,6 +185,18 @@ public:
     void init_shape() {
         auto terrain = new Terrain;
         models.push_back(terrain);
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
+            terrain->addHeight(5.0f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [terrain]() {
+            terrain->addHeight(-5.0f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_LEFT, [terrain]() {
+            terrain->addDiff(1.5f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_RIGHT, [terrain]() {
+            terrain->addDiff(-1.5f);
+        });
 
         sk = new Skeleton();
         sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
@@ -360,7 +372,7 @@ public:
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Black);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         auto camera_matrix = m_camera->getCameraTransform();
         auto proj_matrix = m_camera->getProjectionMatrix();
