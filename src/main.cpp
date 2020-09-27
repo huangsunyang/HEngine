@@ -23,6 +23,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "ObjLoader.hpp"
 #include "3D/Terrain.hpp"
+#include "GLObject/FrameBuffer.hpp"
 
 
 #include "DbgHelp.h"
@@ -132,6 +133,7 @@ public:
         */
         init_shape();
         onResize(info.windowWidth, info.windowHeight);
+        init_framebuffer();
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_BLEND);
@@ -139,18 +141,18 @@ public:
     }
 
     void initUI() {
-        // Scene * scene = new Scene("package/ui/scene_test.xml");
-        // scene->addTouchEventListener([this](Widget * w, Touch * touch) {
-        //     INFO("---------------------\n");
-        // });
-        // scene->setCurrentScene();
+        Scene * scene = new Scene("package/ui/scene_test.xml");
+        scene->addTouchEventListener([this](Widget * w, Touch * touch) {
+            INFO("---------------------\n");
+        });
+        scene->setCurrentScene();
 
-        // Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        // // text->setParent(scene);
-        // text->setText("Hello World!");
-        // text->setFont("package/font/consolab.ttf");
-        // text->setColor({0, 0, 1});
-        // text->setFontSize(100);
+        Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
+        // text->setParent(scene);
+        text->setText("Hello World!");
+        text->setFont("package/font/consolab.ttf");
+        text->setColor({0, 0, 1});
+        text->setFontSize(100);
 
         // Widget * widget = new Widget;
         // widget->setParent(scene);
@@ -250,6 +252,39 @@ public:
             .0, .5, .0
         });
         // models.push_back(polygon);
+
+        m_screen = new HPolygon();
+        m_screen->setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
+        m_screen->setDrawMode(GL_TRIANGLE_STRIP);
+        m_screen->loadVertexCoord({
+            -0.5, +0.5, 0,
+            -0.5, -0.5, 0,
+            +0.5, +0.5, 0,
+            +0.5, -0.5, 0,
+            +1.5, +0.5, 0,
+        }, {
+            0, 1,
+            0, 0,
+            1, 1,
+            1, 0,
+            0, 0,
+        });
+        
+    }
+
+    void init_framebuffer() {
+        frameBuffer = new FrameBuffer;
+        // must bind framebuffer here!!, don't know why
+        frameBuffer->bind(GL_FRAMEBUFFER);
+
+        Texture2D * texture = new Texture2D;
+        texture->alloc(1, GL_RGBA8, info.windowWidth, info.windowHeight);
+        texture->bindTexture(0);
+        m_screen->setTexture({texture});
+        // m_screen->setTexture({ "Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg" });
+
+        frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
+        frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
     }
 
     void onMouseButton(int button, int action) {
@@ -366,6 +401,7 @@ public:
             m_gameTime += currentTime - m_lastTickTime;
             sk->update(0.03f);
         }
+        frameBuffer->bind(GL_FRAMEBUFFER);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         Director::instance()->update(float(currentTime - m_lastTickTime));
@@ -401,18 +437,24 @@ public:
             auto m_matrix_t = glm::transpose(m_matrix);
             auto mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             model->getProgram()->setMatrix4fvUniform("m_matrix",glm::value_ptr(m_matrix));
-            model->getProgram()->setMatrix4fvUniform("v_matrix", glm::value_ptr(camera_matrix));
-            model->getProgram()->setMatrix4fvUniform("p_matrix", glm::value_ptr(proj_matrix));
             model->getProgram()->setMatrix4fvUniform("mvp_matrix", glm::value_ptr(mvp_matrix));
-            model->getProgram()->setMatrix4fvUniform("m_matrix_it", glm::value_ptr(m_matrix));
             model->draw();
         }
+
         if (sk) {
             sk->draw();
         }
 
         glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
+        
+        frameBuffer->unbind(GL_FRAMEBUFFER);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::White);
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+        m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
+        m_screen->draw();
     }
 
 private:
@@ -435,6 +477,8 @@ private:
     double m_gameTime;
     double m_lastTickTime;
     Skeleton * sk = nullptr;
+    FrameBuffer * frameBuffer;
+    HPolygon * m_screen;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
