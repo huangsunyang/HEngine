@@ -1,5 +1,5 @@
 #include "ui/ParticleSystem.hpp"
-#include "ui/Director.hpp"
+#include "base/Director.hpp"
 #include "GLObject/Geometry.hpp"
 #include <math.h>
 #include <random>

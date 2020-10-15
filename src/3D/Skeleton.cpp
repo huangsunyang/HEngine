@@ -44,8 +44,12 @@ void Skeleton::updateAnimation(float dt) {
     updatePose(pose);
 }
 
+void Skeleton::resetAnimation() {
+    m_curAnimationTime = 0.0f;
+}
+
 void Skeleton::updatePose(std::shared_ptr<Pose> pose) {
-    auto i = 0;
+    auto i = 3;
     for (auto bone: m_bones) {
         bone->updateDof(pose->m_dofs[i], pose->m_dofs[i+1], pose->m_dofs[i+2]);
         i += 3;

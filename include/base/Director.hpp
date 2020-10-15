@@ -8,6 +8,7 @@ using std::vector;
 using std::function;
 
 class Scene;
+class Drawable;
 struct Touch;
 enum class TouchEvent;
 
@@ -33,10 +34,18 @@ public:
     void addSchedule(ScheduleFunc func) {m_scheduleFuncs.push_back(func);}
     void update(float dt) {for (auto &s: m_scheduleFuncs) {s(dt);}}
 
+    void addObject(Drawable * obj) {models.push_back(obj);}
+    vector<Drawable*>& getObjects() {return models;}
+    // void removeObject(Drawable * obj) {models.erase(obj);}
+
 protected:
     Director() {}
 
-    vector<ScheduleFunc> m_scheduleFuncs;
     static Director * m_instance;
+
+    vector<ScheduleFunc> m_scheduleFuncs;
+
     Scene * m_scene = nullptr;
+
+    vector<Drawable *> models;
 };

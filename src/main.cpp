@@ -168,9 +168,11 @@ public:
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
             sk->update();
         });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->getSkeleton()->resetAnimation();});
     }
 
     void init_shape() {
+        auto director = Director::instance();
         sk = new SkModel();
         sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
         // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
@@ -181,15 +183,15 @@ public:
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
-        // models.push_back(triangle);
+        // director.addObject(triangle);
 
         // auto m_drawer = new UIRectangle({0, 0}, {1, 1});
         // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
-        // models.push_back(m_drawer);
+        // director->addObject(m_drawer);
 
         // ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
         // obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        // models.push_back(obj);
+        // director->addObject(obj);
 
         HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -202,14 +204,14 @@ public:
             .0, 10.0, 0.,
             .0, .0, .0
         });
-        models.push_back(axis);
+        director->addObject(axis);
 
         Light * light = m_lightMgr->createLight();
         light->getTransform()->setPosition({0, 5, 0});
         auto dir = light->getTransform()->getForward();
         //DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
-        models.push_back(light);
-        models.push_back(m_lightMgr->createLight());
+        director->addObject(light);
+        director->addObject(m_lightMgr->createLight());
 
         HPolygon * polygon = new HPolygon();
         polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
@@ -222,7 +224,7 @@ public:
             0.25, 1.0, .0,
             .0, .5, .0
         });
-        // models.push_back(polygon);
+        // director->addObject(polygon);
     }
 
     void onMouseButton(int button, int action) {
@@ -315,7 +317,7 @@ public:
         } else {
             m_polygonMode = GL_LINE;
         }
-        for (auto model: models) {
+        for (auto model: Director::instance()->getObjects()) {
             model->setPolygonMode(m_polygonMode);
         }
         sk->getSkin()->setPolygonMode(m_polygonMode);
@@ -369,7 +371,7 @@ public:
         glm::vec3 rotate = translate * 50.0f;
         m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
         m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
-        for (auto model: models) {
+        for (auto model: Director::instance()->getObjects()) {
             auto m_matrix = model->getTransformMatrix();
             auto m_matrix_t = glm::transpose(m_matrix);
             auto mvp_matrix = proj_matrix * camera_matrix * m_matrix;
@@ -391,7 +393,6 @@ public:
 private:
     GLuint vao;
     float aspect;
-    vector<Drawable *> models;
     LightMgr * m_lightMgr;
     Texture2D * texture;
     Texture2D * texture1;

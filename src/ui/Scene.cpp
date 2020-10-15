@@ -1,5 +1,5 @@
 #include "ui/Scene.hpp"
-#include "ui/Director.hpp"
+#include "base/Director.hpp"
 
 void Scene::setCurrentScene() {
     Director::instance()->setScene(this);

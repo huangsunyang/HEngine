@@ -14,6 +14,7 @@ public:
     Skeleton(): m_boneTree(nullptr), m_bones() {}
     void loadFromFile(string file);
     void playAnimation(string file);
+    void resetAnimation();
     void draw();
     void update(float dt);
     void updatePose(std::shared_ptr<Pose> p);
