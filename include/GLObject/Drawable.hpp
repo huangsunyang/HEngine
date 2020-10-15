@@ -33,6 +33,7 @@ public:
     {
         m_program = new Program;
         m_transform = new Transform;
+        m_instanceCount = 1;
     }
 
     virtual ~Drawable() {
@@ -71,6 +72,7 @@ public:
     void setDrawMode(GLenum mode) {m_drawMode = mode;}
     void setPolygonMode(GLenum mode) {m_polygonMode = mode;}
     void setUseIndice(bool enable) {m_useIndice = enable;}
+    void setInstanceCount(int count) {m_instanceCount = count;}
 
     // transform relative
     Transform * getTransform() {return m_transform;}
@@ -89,6 +91,7 @@ protected:
     GLenum m_drawMode;              //绘制模式
     GLenum m_polygonMode;           //线框/填充？
     bool m_useIndice;               //是否使用索引绘制
+    int m_instanceCount;            //是否启用instance
     
     Transform * m_transform;
 };

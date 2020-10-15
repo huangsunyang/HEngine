@@ -1,4 +1,5 @@
 #include "3D/Skeleton.hpp"
+#include "3D/Skin.hpp"
 #include "utils/StringUtils.hpp"
 #include <fstream>
 #include <string>
@@ -20,6 +21,9 @@ void Skeleton::draw() {
     if (m_boneTree) {
         m_boneTree->draw();
     }
+    if (m_skin) {
+        m_skin->draw();
+    }
 }
 
 void Skeleton::update(float dt) {
@@ -27,6 +31,7 @@ void Skeleton::update(float dt) {
     if (m_boneTree) {
         m_boneTree->update();
     }
+    m_skin->update();
 }
 
 void Skeleton::updateAnimation(float dt) {
@@ -54,6 +59,12 @@ void Skeleton::updatePose(std::shared_ptr<Pose> pose) {
         bone->updateDof(pose->m_dofs[i], pose->m_dofs[i+1], pose->m_dofs[i+2]);
         i += 3;
     }
+}
+
+void Skeleton::load(string skeleton_file, string skin_file) {
+    loadFromFile(skeleton_file);
+    if (!m_skin) m_skin = new Skin(this);
+    m_skin->loadFromFile(skin_file);
 }
 
 void Skeleton::loadFromFile(string name) {

@@ -7,7 +7,7 @@ void Text::drawSelf() {
     static FontAtlas * fontAtlas = new FontAtlas(getFont(), m_fontSize);
     UICharacter temp;
     temp.setTexture({fontAtlas->getTexture()});
-    vec2 pos = m_pos, size;
+    vec2 pos = m_pos;
     vector<Quad> quads;
     for (auto ch: m_text) {
         fontAtlas->loadChar(ch);

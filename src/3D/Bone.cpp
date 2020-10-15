@@ -25,7 +25,6 @@ void Bone::updateSelf() {
 }
 
 void Bone::updateDof(float x, float y, float z) {
-    INFO("+++++++++++++++++++++++++++++++++ %f %f %f \n", x, y, z);
     m_dofs[0].value = x;
     m_dofs[1].value = y;
     m_dofs[2].value = z;

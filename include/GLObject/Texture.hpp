@@ -7,6 +7,7 @@ class Texture2D {
 public:
     Texture2D();
     ~Texture2D();
+    GLuint getHandle() { return m_texture; }
     void alloc(GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height);
     virtual void bindTexture(int textureBinding=0);
     void setTexParami(GLenum, GLenum);

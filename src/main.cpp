@@ -18,9 +18,12 @@
 #include "ui/Text.hpp"
 #include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
-#include "3D/SkModel.hpp"
+#include "3D/Skeleton.hpp"
+#include "3D/Skin.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "ObjLoader.hpp"
+#include "3D/Terrain.hpp"
+#include "GLObject/FrameBuffer.hpp"
 
 
 #include "DbgHelp.h"
@@ -130,6 +133,7 @@ public:
         */
         init_shape();
         onResize(info.windowWidth, info.windowHeight);
+        init_framebuffer();
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_BLEND);
@@ -144,11 +148,21 @@ public:
         scene->setCurrentScene();
 
         Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        text->setParent(scene);
+        // text->setParent(scene);
         text->setText("Hello World!");
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
         text->setFontSize(100);
+
+        // Widget * widget = new Widget;
+        // widget->setParent(scene);
+        // widget->setShader({"Package/shader/ui.vs", "Package/shader/ui/ui_blink.fs"});
+        // widget->loadTexture("Package/res/sword.png");
+        // Director::instance()->addSchedule(
+        //     [this, widget](float dt) {
+        //         widget->getProgram()->setFloatUniform("sys_time", float(m_gameTime)); 
+        //     }
+        // );
 
         // ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
         // p->initWithFile("");
@@ -161,23 +175,39 @@ public:
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_SPACE, [this](){m_pause = !m_pause;});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [this](){
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") - 0.05f);
-            sk->update();
+            sk->update(0.03f);
         });
 
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [this](){
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
-            sk->update();
+            sk->update(0.03f);
         });
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->getSkeleton()->resetAnimation();});
     }
 
     void init_shape() {
         auto director = Director::instance();
-        sk = new SkModel();
+
+        auto terrain = new Terrain;
+        director->addObject(terrain);
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
+            terrain->addHeight(5.0f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [terrain]() {
+            terrain->addHeight(-5.0f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_LEFT, [terrain]() {
+            terrain->addDiff(1.5f);
+        });
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_RIGHT, [terrain]() {
+            terrain->addDiff(-1.5f);
+        });
+
+        sk = new Skeleton();
         sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
         // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
-        sk->getSkeleton()->playAnimation("package/res/wasp/wasp_walk.anim");
-        sk->update();
+        sk->playAnimation("package/res/wasp/wasp_walk.anim");
+        sk->update(0.03f);
 
         HPolygon * triangle = new HPolygon();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
@@ -225,6 +255,39 @@ public:
             .0, .5, .0
         });
         // director->addObject(polygon);
+
+        m_screen = new HPolygon();
+        m_screen->setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
+        m_screen->setDrawMode(GL_TRIANGLE_STRIP);
+        m_screen->loadVertexCoord({
+            -0.5, +0.5, 0,
+            -0.5, -0.5, 0,
+            +0.5, +0.5, 0,
+            +0.5, -0.5, 0,
+            +1.5, +0.5, 0,
+        }, {
+            0, 1,
+            0, 0,
+            1, 1,
+            1, 0,
+            0, 0,
+        });
+        
+    }
+
+    void init_framebuffer() {
+        frameBuffer = new FrameBuffer;
+        // must bind framebuffer here!!, don't know why
+        frameBuffer->bind(GL_FRAMEBUFFER);
+
+        Texture2D * texture = new Texture2D;
+        texture->alloc(1, GL_RGBA8, info.windowWidth, info.windowHeight);
+        texture->bindTexture(0);
+        m_screen->setTexture({texture});
+        // m_screen->setTexture({ "Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg" });
+
+        frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
+        frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
     }
 
     void onMouseButton(int button, int action) {
@@ -339,15 +402,16 @@ public:
         if (!gl3wIsSupported(4, 3)) return;
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
-            sk->update();
+            sk->update(0.03f);
         }
+        frameBuffer->bind(GL_FRAMEBUFFER);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        Director::instance()->update(currentTime - m_lastTickTime);
+        Director::instance()->update(float(currentTime - m_lastTickTime));
         m_lastTickTime = currentTime;
         auto python_module = pybind11::module::import("python");
         python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Black);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         auto camera_matrix = m_camera->getCameraTransform();
         auto proj_matrix = m_camera->getProjectionMatrix();
@@ -376,18 +440,24 @@ public:
             auto m_matrix_t = glm::transpose(m_matrix);
             auto mvp_matrix = proj_matrix * camera_matrix * m_matrix;
             model->getProgram()->setMatrix4fvUniform("m_matrix",glm::value_ptr(m_matrix));
-            model->getProgram()->setMatrix4fvUniform("v_matrix", glm::value_ptr(camera_matrix));
-            model->getProgram()->setMatrix4fvUniform("p_matrix", glm::value_ptr(proj_matrix));
             model->getProgram()->setMatrix4fvUniform("mvp_matrix", glm::value_ptr(mvp_matrix));
-            model->getProgram()->setMatrix4fvUniform("m_matrix_it", glm::value_ptr(m_matrix));
             model->draw();
         }
+
         if (sk) {
             sk->draw();
         }
 
         glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
+        
+        frameBuffer->unbind(GL_FRAMEBUFFER);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::White);
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+        m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
+        m_screen->draw();
     }
 
 private:
@@ -408,7 +478,9 @@ private:
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
-    SkModel * sk = nullptr;
+    Skeleton * sk = nullptr;
+    FrameBuffer * frameBuffer;
+    HPolygon * m_screen;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

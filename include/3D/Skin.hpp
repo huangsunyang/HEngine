@@ -10,7 +10,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-class SkModel;
+class Skeleton;
 
 struct Weight {
     Weight(int i, float w): index(i), weight(w) {}
@@ -27,7 +27,7 @@ struct Point {
 
 class Skin: public Drawable {
 public:
-    Skin(SkModel * m): m_model(m), m_data(), m_points(), m_indices(), Drawable() {}
+    Skin(Skeleton * m): m_skeleton(m), m_data(), m_points(), m_indices(), Drawable() {}
     virtual ~Skin() {}
     
     virtual void draw();
@@ -52,7 +52,7 @@ protected:
     glm::vec4 getMorphNormal(int);
 
 protected:
-    SkModel * m_model;
+    Skeleton * m_skeleton;
     vector<float> m_data;
     vector<Point> m_points;
     vector<unsigned int> m_indices;

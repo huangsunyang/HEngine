@@ -8,6 +8,10 @@
 
 
 void Drawable::setShader(vector<string> shaders) {
+    if (m_program) {
+        delete m_program;
+        m_program = new Program;
+    }
     for (const string& shader: shaders) {
         INFO("%s\n", shader.c_str());
         m_program->bindShader(shader);
@@ -113,8 +117,8 @@ void Drawable::draw() {
 
     glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
     if (!getVertexInfo()->useIndice) {
-        glDrawArrays(m_drawMode, 0, point_num);
+        glDrawArraysInstanced(m_drawMode, 0, point_num, m_instanceCount);
     } else {
-        glDrawElements(m_drawMode, indice_num, GL_UNSIGNED_INT, 0);
+        glDrawElementsInstanced(m_drawMode, indice_num, GL_UNSIGNED_INT, 0, m_instanceCount);
     }
 }

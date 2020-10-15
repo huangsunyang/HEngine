@@ -32,7 +32,7 @@ void ParticleSystem::update(float dt) {
 
     int newParticleNum = 0;
     if (m_timeCounter > 0) { 
-        newParticleNum = m_timeCounter / timePerParticle;
+        newParticleNum = int(m_timeCounter / timePerParticle);
         m_timeCounter -= newParticleNum * timePerParticle;
         newParticleNum = min(newParticleNum, m_maxNum - m_emittedNum);
         m_emittedNum += newParticleNum;
@@ -62,7 +62,7 @@ void ParticleSystem::update(float dt) {
 
     // remove dead particles
     curParticleNum = m_particles.size();
-    for (int i = 0; i < curParticleNum; i++) {
+    for (auto i = 0; i < curParticleNum; i++) {
         while (i < curParticleNum && m_particles[i].lifeTime < m_particles[i].livedTime) {
             swap(m_particles[i], m_particles[--curParticleNum]);
         }
@@ -72,7 +72,7 @@ void ParticleSystem::update(float dt) {
 
 void ParticleSystem::drawSelf() {
     m_quads.resize(m_particles.size());
-    for (int i = 0; i < m_quads.size(); i++) {
+    for (auto i = 0; i < m_quads.size(); i++) {
         m_quads[i].pos = m_particles[i].pos;
         m_quads[i].size = m_particles[i].size;
         m_quads[i].startxp = m_quads[i].startyp = 0.0f;

@@ -9,7 +9,7 @@ Light * LightMgr::createLight(LightType type) {
 
 vector<LightInfo> LightMgr::getLightInfo() {
     vector<LightInfo> lightInfo(10);
-    for (int i = 0; i < m_lights.size(); i++) {
+    for (auto i = 0; i < m_lights.size(); i++) {
         lightInfo[i] = m_lights[i]->getLightInfo();
     }
     return lightInfo;

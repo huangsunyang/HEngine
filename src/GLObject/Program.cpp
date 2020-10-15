@@ -19,6 +19,10 @@ void Program::bindShader(string shader_path) {
         shader_format = GL_VERTEX_SHADER;
     } else if (file_format_str == ".fs") {
         shader_format = GL_FRAGMENT_SHADER;
+    } else if (file_format_str == ".tesc") {
+        shader_format = GL_TESS_CONTROL_SHADER;
+    } else if (file_format_str == ".tese") {
+        shader_format = GL_TESS_EVALUATION_SHADER;
     } else {
         INFO("---------------------------ERROR!!!!!!!!!!\n");
     }
