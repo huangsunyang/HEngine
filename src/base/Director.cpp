@@ -20,3 +20,18 @@ void Director::onTouchEvent(Touch * e) {
         }
     }
 }
+
+void Director::setGlobalShader(vector<string> shaders) {
+    if (m_program) {
+        delete m_program;
+        m_program = new Program;
+    }
+    m_program->bindShader(shaders);
+    m_program->linkProgram();
+}
+
+void Director::useGlobalShader() {
+    if (isOverrideShader()) {
+        m_program->useProgram();
+    }
+}

@@ -182,7 +182,7 @@ public:
             sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
             sk->update(0.03f);
         });
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->getSkeleton()->resetAnimation();});
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->resetAnimation();});
     }
 
     void init_shape() {
@@ -435,6 +435,10 @@ public:
         glm::vec3 rotate = translate * 50.0f;
         m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
         m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
+
+        Director::instance()->setOverrideShader(true);
+        Director::instance()->useGlobalShader();
+
         for (auto model: Director::instance()->getObjects()) {
             auto m_matrix = model->getTransformMatrix();
             auto m_matrix_t = glm::transpose(m_matrix);
@@ -448,6 +452,7 @@ public:
             sk->draw();
         }
 
+        Director::instance()->setOverrideShader(false);
         glDisable(GL_DEPTH_TEST);
         Director::instance()->draw();
         

@@ -3,6 +3,7 @@
 #include "ObjLoader.hpp"
 #include "shape2d.hpp"
 #include "LogManager.hpp"
+#include "base/Director.hpp"
 
 #define VBO_SIZE 1024 * 1024 * 4
 
@@ -12,10 +13,7 @@ void Drawable::setShader(vector<string> shaders) {
         delete m_program;
         m_program = new Program;
     }
-    for (const string& shader: shaders) {
-        INFO("%s\n", shader.c_str());
-        m_program->bindShader(shader);
-    }
+    m_program->bindShader(shaders);
     m_program->linkProgram();
 }
 
@@ -102,7 +100,10 @@ void Drawable::setTexture(vector<string> textureFiles) {
 
 void Drawable::draw() {
     m_vao->bindVertexArray();
-    m_program->useProgram();
+    
+    if (!Director::instance()->isOverrideShader()) {
+        m_program->useProgram();
+    }
 
     /* by default, we use sampler name s0, s1, s2, s3, s4... */
     char sampler_name[5];

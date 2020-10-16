@@ -9,6 +9,7 @@ using std::function;
 
 class Scene;
 class Drawable;
+class Program;
 struct Touch;
 enum class TouchEvent;
 
@@ -36,7 +37,12 @@ public:
 
     void addObject(Drawable * obj) {models.push_back(obj);}
     vector<Drawable*>& getObjects() {return models;}
-    // void removeObject(Drawable * obj) {models.erase(obj);}
+    
+    void setOverrideShader(bool b) {m_overrideShader = b;}
+    bool isOverrideShader() {return m_overrideShader && m_program != nullptr;}
+
+    void setGlobalShader(vector<string> shaders);
+    void useGlobalShader();
 
 protected:
     Director() {}
@@ -48,4 +54,7 @@ protected:
     Scene * m_scene = nullptr;
 
     vector<Drawable *> models;
+
+    Program * m_program = nullptr;
+    bool m_overrideShader = false;
 };

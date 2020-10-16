@@ -15,6 +15,7 @@ public:
     ~Program();
     inline GLuint getProgram() { return m_program; }
     void bindShader(string shader_path);
+    void bindShader(vector<string> shader_paths);
     void bindShader(GLenum shader_type, const char * file_name);
     void linkProgram();
     void deleteProgram();

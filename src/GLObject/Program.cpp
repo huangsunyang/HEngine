@@ -12,6 +12,12 @@ Program::Program()
     m_program = glCreateProgram();
 }
 
+void Program::bindShader(vector<string> shader_paths) {
+    for (auto shader: shader_paths) {
+        bindShader(shader);
+    }
+}
+
 void Program::bindShader(string shader_path) {
     string file_format_str = Utils::file_format(shader_path);
     GLenum shader_format;
