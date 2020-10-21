@@ -32,16 +32,16 @@ layout (std140) uniform ConstantBlock {
 float shadow_calculation(vec4 lightSpaceFragPos) {
     vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;
     projCoords = projCoords * 0.5 + 0.5;
-    float closest_depth = texture(shadow_map, projCoords.xy);
-    return projCoords.z > closest_depth ? 1.0 : 0.0;
+    float closest_depth = texture(shadow_map, projCoords.xy).r;
+    return projCoords.z < closest_depth + 0.003 ? 0.0 : 1.0;
 }
 
 
 void main(void) {
-    float light = 0;
-    for (int i = 0; i < LIGHT_NUM; i++) {
-        light += dot(o_normal, normalize(light_info[i].pos.xyz));
-    }
+    float light = 1.0;
+    // for (int i = 0; i < LIGHT_NUM; i++) {
+        // light += dot(o_normal, normalize(light_info[i].pos.xyz));
+    // }
 
     float shadow = shadow_calculation(o_lightSpaceScreenPos);
     light = clamp(light, 0, 1) * (1.0 - shadow);

@@ -30,7 +30,7 @@ uniform mat4 m_matrix;
 
 void main(void) {
     gl_Position = proj_matrix * view_matrix * m_matrix * position;
-    o_lightSpaceScreenPos = light_proj_matrix * light_view_matrix *m_matrix * position;
+    o_lightSpaceScreenPos = light_proj_matrix * light_view_matrix * m_matrix * position;
     o_normal = normalize((transpose(m_matrix) * normal).xyz);
     o_position = position;
     o_coord = coord;
