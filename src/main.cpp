@@ -485,6 +485,10 @@ public:
         
         // draw shadowmap
         m_lightCamera->setActive();
+        auto camera_matrix = m_lightCamera->getCameraTransform();
+        auto proj_matrix = m_lightCamera->getProjectionMatrix();
+        UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
+        UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
         Director::instance()->draw3D();
         if (sk) sk->draw();
 

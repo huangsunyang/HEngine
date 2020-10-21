@@ -33,6 +33,7 @@ float shadow_calculation(vec4 lightSpaceFragPos) {
     vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;
     projCoords = projCoords * 0.5 + 0.5;
     float closest_depth = texture(shadow_map, projCoords.xy);
+    return projCoords.z > closest_depth ? 1.0 : 0.0;
 }
 
 
