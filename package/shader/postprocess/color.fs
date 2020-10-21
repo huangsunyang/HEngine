@@ -10,5 +10,3 @@ uniform sampler2D s0;
 void main(void) {
     color = texture(s0, vs_texCoord);
 }
-
-

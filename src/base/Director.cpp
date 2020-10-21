@@ -1,6 +1,7 @@
 #include "base/Director.hpp"
 #include "ui/Scene.hpp"
 #include "LogManager.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 Director * Director::m_instance = nullptr;
 
@@ -11,6 +12,14 @@ void Director::draw() {
     }
 }
 
+void Director::draw3D() {
+    for (auto model: Director::instance()->getObjects()) {
+        auto m_matrix = model->getTransformMatrix();
+        model->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(m_matrix));
+        model->draw();
+    }
+}
+
 void Director::onTouchEvent(Touch * e) {
     if (m_scene) {
         m_scene->onTouchEvent(e);
@@ -18,20 +27,5 @@ void Director::onTouchEvent(Touch * e) {
             e->event = TouchEvent::CANCEl;
             m_scene->onTouchEvent(e);
         }
-    }
-}
-
-void Director::setGlobalShader(vector<string> shaders) {
-    if (m_program) {
-        delete m_program;
-        m_program = new Program;
-    }
-    m_program->bindShader(shaders);
-    m_program->linkProgram();
-}
-
-void Director::useGlobalShader() {
-    if (isOverrideShader()) {
-        m_program->useProgram();
     }
 }

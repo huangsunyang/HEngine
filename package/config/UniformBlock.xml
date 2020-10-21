@@ -3,6 +3,8 @@
 	<ConstantBlock>
         <member name="view_matrix" size="64" />
         <member name="proj_matrix" size="64" />
+        <member name="light_view_matrix" size="64" />
+        <member name="light_proj_matrix" size="64" />
         <member name="light_num_info" size="16" />
         <member name="light_info" size="480" />
     </ConstantBlock>

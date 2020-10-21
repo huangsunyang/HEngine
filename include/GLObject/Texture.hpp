@@ -3,6 +3,8 @@
 
 #include <GL/gl3w.h>
 
+const int TEXTURE_SHADOW_MAP = 5;
+
 class Texture2D {
 public:
     Texture2D();

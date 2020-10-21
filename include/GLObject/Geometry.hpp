@@ -11,11 +11,11 @@ using glm::vec3;
 using glm::vec4;
 
 
-class Box: public HPolygon {
+class BoxWire: public HPolygon {
 public:
-    Box(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): HPolygon() {
+    BoxWire(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): HPolygon() {
         // from bottom to up, from first area to fourth area
-        loadVertexIndice({
+        loadVertexCoord({
             offsetx + length / 2, offsety + width / 2, offsetz - height / 2,
             offsetx - length / 2, offsety + width / 2, offsetz - height / 2,
             offsetx - length / 2, offsety - width / 2, offsetz - height / 2,
@@ -24,6 +24,8 @@ public:
             offsetx - length / 2, offsety + width / 2, offsetz + height / 2,
             offsetx - length / 2, offsety - width / 2, offsetz + height / 2,
             offsetx + length / 2, offsety - width / 2, offsetz + height / 2
+        }, {
+            
         }, {
             2, 1, 1, 0,
             0, 3, 3, 2,
@@ -39,6 +41,51 @@ public:
             6, 7, 7, 4
         });
         setDrawMode(GL_LINES);
+    };
+
+protected:
+    float length;
+    float width;
+    float height;
+};
+
+
+class BoxSolid: public HPolygon {
+public:
+    BoxSolid(float length, float width, float height, float offsetx=0, float offsety=0, float offsetz=0): HPolygon() {
+        // from bottom to up, from first area to fourth area
+        loadVertexCoord({
+            offsetx + length / 2, offsety + width / 2, offsetz - height / 2,
+            offsetx - length / 2, offsety + width / 2, offsetz - height / 2,
+            offsetx - length / 2, offsety - width / 2, offsetz - height / 2,
+            offsetx + length / 2, offsety - width / 2, offsetz - height / 2,
+            offsetx + length / 2, offsety + width / 2, offsetz + height / 2,
+            offsetx - length / 2, offsety + width / 2, offsetz + height / 2,
+            offsetx - length / 2, offsety - width / 2, offsetz + height / 2,
+            offsetx + length / 2, offsety - width / 2, offsetz + height / 2
+        }, {
+            1, 1,
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+            0, 0,
+            1, 0,  
+        }, {
+            2, 1, 0,
+            0, 3, 2,
+            0, 4, 7,
+            7, 3, 0,
+            6, 5, 1,
+            1, 2, 6,
+            6, 7, 3,
+            3, 2, 6,
+            5, 4, 0,
+            0, 1, 5,
+            4, 5, 6,
+            6, 7, 4
+        });
     };
 
 protected:
@@ -67,7 +114,7 @@ public:
             1, 1,
             0, 0,
             1, 0,
-        });
+        }, {});
         setShader({"Package/shader/ui.vs", "package/shader/ui.fs"});
     };
 
@@ -110,7 +157,7 @@ public:
             };
             texcoords.insert(texcoords.end(), temp1.begin(), temp1.end());
         }
-        loadVertexCoord(points, texcoords);
+        loadVertexCoord(points, texcoords, {});
     }
 };
 

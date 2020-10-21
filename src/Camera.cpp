@@ -1,8 +1,10 @@
 #include "Camera.hpp"
 #include <math.h>
 #include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 #include "LogManager.hpp"
+#include "GLObject/UniformBlock.hpp"
 
 Camera::Camera(glm::vec3 pos) {
     m_cameraPos = pos;
@@ -19,6 +21,13 @@ Camera::Camera(): Camera(glm::vec3(-5, 0, 0)) {}
 
 Camera::~Camera() {
 
+}
+
+void Camera::setActive() {
+    auto camera_matrix = getCameraTransform();
+    auto proj_matrix = getProjectionMatrix();
+    UniformBlock::instance()->setUniformBlockMember("view_matrix", glm::value_ptr(camera_matrix));
+    UniformBlock::instance()->setUniformBlockMember("proj_matrix", glm::value_ptr(proj_matrix));
 }
 
 void Camera::setCameraPos(glm::vec3 pos) {
@@ -84,8 +93,11 @@ glm::mat4 Camera::getCameraTransform() {
 }
 
 glm::mat4 Camera::getProjectionMatrix() {
-    auto a = glm::perspectiveRH_NO(m_fovy, m_aspect, m_near, m_far);
-    return a;
+    if (m_isPerspective) {
+        return glm::perspectiveRH_NO(m_fovy, m_aspect, m_near, m_far);
+    } else {
+        return glm::orthoRH_NO(-20.0f, 20.0f, -20.0f, 20.0f, m_near, m_far);
+    }
 }
 
 void Camera::setAspect(float x) {

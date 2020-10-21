@@ -30,6 +30,7 @@ public:
 
     string getDefaultFont() {return "package/font/arial.ttf";}
     void draw();
+    void draw3D();
     void onTouchEvent(Touch * e);
 
     void addSchedule(ScheduleFunc func) {m_scheduleFuncs.push_back(func);}
@@ -39,10 +40,8 @@ public:
     vector<Drawable*>& getObjects() {return models;}
     
     void setOverrideShader(bool b) {m_overrideShader = b;}
-    bool isOverrideShader() {return m_overrideShader && m_program != nullptr;}
+    bool isOverrideShader() {return m_overrideShader;}
 
-    void setGlobalShader(vector<string> shaders);
-    void useGlobalShader();
 
 protected:
     Director() {}
@@ -55,6 +54,5 @@ protected:
 
     vector<Drawable *> models;
 
-    Program * m_program = nullptr;
     bool m_overrideShader = false;
 };

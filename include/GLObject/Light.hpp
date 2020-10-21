@@ -26,9 +26,9 @@ struct LightInfo {
 };
 
 
-class Light: public Box {
+class Light: public BoxWire {
 public:
-    Light(): Box(2, 2, 2) {
+    Light(): BoxWire(2, 2, 2) {
         setShader({"package/shader/light.vs", "package/shader/common.fs"});
     }
     LightInfo getLightInfo() {

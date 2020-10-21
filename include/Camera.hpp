@@ -10,6 +10,8 @@ public:
     Camera(glm::vec3 pos);
     ~Camera();
 
+    void setActive();
+
     void setCameraPos(glm::vec3);
     void moveCameraBy(glm::vec3);
     void moveCameraBy(float x, float y, float z);
@@ -51,6 +53,7 @@ protected:
     float m_aspect;
     float m_near;
     float m_far;
+    float m_isPerspective;
 };
 
 #endif

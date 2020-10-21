@@ -80,5 +80,5 @@ protected:
     glm::vec3 m_boxmax;
     vector<Dof> m_dofs;
 
-    Box * m_box;
+    BoxWire * m_box;
 };

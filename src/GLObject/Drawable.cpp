@@ -103,15 +103,17 @@ void Drawable::draw() {
     
     if (!Director::instance()->isOverrideShader()) {
         m_program->useProgram();
+
+        /* by default, we use sampler name s0, s1, s2, s3, s4... */
+        char sampler_name[5];
+        for (auto pair: m_textures) {
+            pair.second->bindTexture(pair.first);
+            sprintf_s(sampler_name, 5, "s%d", pair.first);
+            m_program->setIntUniform(sampler_name, pair.first);
+        }
     }
 
-    /* by default, we use sampler name s0, s1, s2, s3, s4... */
-    char sampler_name[5];
-    for (auto pair: m_textures) {
-        pair.second->bindTexture(pair.first);
-        sprintf_s(sampler_name, 5, "s%d", pair.first);
-        m_program->setIntUniform(sampler_name, pair.first);
-    }
+    m_program->setIntUniform("shadow_map", TEXTURE_SHADOW_MAP);
 
     size_t point_num = getPointNum();
     size_t indice_num = getIndiceNum();

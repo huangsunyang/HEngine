@@ -122,7 +122,7 @@ void Skeleton::popBone() {
     m_boneTree->m_offset = (m_boneTree->m_boxmin + m_boneTree->m_boxmax) / 2.0f;
 
     INFO("%f %f %f\n", boxSize.x, boxSize.y, boxSize.z);
-    m_boneTree->m_box = new Box(boxSize.x, boxSize.y, boxSize.z);
+    m_boneTree->m_box = new BoxWire(boxSize.x, boxSize.y, boxSize.z);
     m_boneTree->m_box->setPolygonMode(GL_LINE);
     m_boneTree->m_box->setShader({"package/shader/common_light_no_tex.vs", "package/shader/common_light_no_tex.fs"});
     

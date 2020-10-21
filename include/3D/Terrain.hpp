@@ -49,6 +49,6 @@ public:
         getProgram()->setFloatUniform("diff", m_diff);
     }
 
-    float m_height = 50.0f;
+    float m_height = 10.0f;
     float m_diff = 0.001f;
 };

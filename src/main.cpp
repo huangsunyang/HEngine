@@ -122,6 +122,7 @@ public:
 
         // init camera
         m_camera = new Camera;
+        m_lightCamera = new Camera;
 
         // init lights
         m_lightMgr = new LightMgr;
@@ -183,6 +184,8 @@ public:
             sk->update(0.03f);
         });
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->resetAnimation();});
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_T, [this](){m_controlLightCamera = !m_controlLightCamera;});
+
     }
 
     void init_shape() {
@@ -212,16 +215,16 @@ public:
         HPolygon * triangle = new HPolygon();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
         triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
-        triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1});
+        triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1}, {});
         // director.addObject(triangle);
 
         // auto m_drawer = new UIRectangle({0, 0}, {1, 1});
         // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
         // director->addObject(m_drawer);
 
-        // ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
-        // obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        // director->addObject(obj);
+        ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
+        obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
+        director->addObject(obj);
 
         HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -257,22 +260,39 @@ public:
         // director->addObject(polygon);
 
         m_screen = new HPolygon();
-        m_screen->setShader({"Package/shader/ui.vs", "package/shader/ui_texture.fs"});
+        m_screen->setShader({"Package/shader/ui.vs", "package/shader/postprocess/color.fs"});
         m_screen->setDrawMode(GL_TRIANGLE_STRIP);
         m_screen->loadVertexCoord({
-            -0.5, +0.5, 0,
-            -0.5, -0.5, 0,
-            +0.5, +0.5, 0,
-            +0.5, -0.5, 0,
-            +1.5, +0.5, 0,
+            -1, +1, 0,
+            -1, -1, 0,
+            +1, +1, 0,
+            +1, -1, 0,
         }, {
             0, 1,
             0, 0,
             1, 1,
             1, 0,
+        }, {});
+
+        m_depth = new HPolygon();
+        m_depth->setShader({"Package/shader/ui.vs", "package/shader/postprocess/depth.fs"});
+        m_depth->setDrawMode(GL_TRIANGLE_STRIP);
+        m_depth->loadVertexCoord({
+            -0.9f, +0.9f, 0,
+            -0.9f, +0.4f, 0,
+            -0.4f, +0.9f, 0,
+            -0.4f, +0.4f, 0,
+        }, {
+            0, 1,
             0, 0,
-        });
-        
+            1, 1,
+            1, 0,
+        }, {});
+
+        BoxSolid * box = new BoxSolid(2, 2, 2);
+        box->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
+        box->setTexture({"Package/res/wall.jpg"});
+        // Director::instance()->addObject(box);
     }
 
     void init_framebuffer() {
@@ -284,10 +304,24 @@ public:
         texture->alloc(1, GL_RGBA8, info.windowWidth, info.windowHeight);
         texture->bindTexture(0);
         m_screen->setTexture({texture});
-        // m_screen->setTexture({ "Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg" });
+
+        Texture2D * depth_texture = new Texture2D;
+        depth_texture->alloc(1, GL_DEPTH_COMPONENT32F, info.windowWidth, info.windowHeight);
+        depth_texture->bindTexture(0);
 
         frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
+        frameBuffer->bindTexture(GL_DEPTH_ATTACHMENT, depth_texture, 0);
         frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
+
+        Texture2D * shadow_map_depth = new Texture2D;
+        shadow_map_depth->alloc(1, GL_DEPTH_COMPONENT32F, 1024, 1024);
+        shadow_map_depth->bindTexture(0);
+        m_depth->setTexture({shadow_map_depth});
+
+        shadowMap = new FrameBuffer;
+        shadowMap->bind(GL_FRAMEBUFFER);
+        shadowMap->bindTexture(GL_DEPTH_ATTACHMENT, shadow_map_depth, 0);
+        shadowMap->drawBuffer(GL_DEPTH_ATTACHMENT);
     }
 
     void onMouseButton(int button, int action) {
@@ -315,18 +349,19 @@ public:
     }
 
     void onMouseMove(int x, int y) {
+        auto camera = getControlCamera();
         if (left_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
                 float diff_x = float(x - mouse_pos_x) / 1000.0f; 
                 float diff_y = float(y - mouse_pos_y) / -1000.0f;
-                m_camera->rotateCameraBy(diff_x, diff_y);
+                camera->rotateCameraBy(diff_x, diff_y);
             }
         }
         if (middle_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
                 float diff_x = float(x - mouse_pos_x) / -50.0f;
                 float diff_y = float(y - mouse_pos_y) / 50.0f;
-                m_camera->moveCameraBy(diff_x, diff_y, 0);
+                camera->moveCameraBy(diff_x, diff_y, 0);
             }
         }
         mouse_pos_x = x, mouse_pos_y = y;
@@ -340,8 +375,13 @@ public:
         }
     }
 
+    Camera * getControlCamera() {
+        return m_controlLightCamera ? m_lightCamera : m_camera;
+    }
+
     void onMouseWheel(int pos) {
-        m_camera->moveCameraBy(0, 0, pos * 0.5f);
+        auto camera = getControlCamera();
+        camera->moveCameraBy(0, 0, pos * 0.5f);
     }
 
     void onResize(int w, int h) {
@@ -357,7 +397,7 @@ public:
 
     void switchFullScreen() {
         if (!isFullscreen()) {
-            // backup windwo position and window size
+            // backup window position and window size
             glfwGetWindowPos(window, &_wndPos[0], &_wndPos[1]);
             glfwGetWindowSize(window, &_wndSize[0], &_wndSize[1]);
 
@@ -396,31 +436,7 @@ public:
         this->application::run(this);
     }
 
-    // Our rendering function
-    void render(double currentTime)
-    {
-        if (!gl3wIsSupported(4, 3)) return;
-        if (!m_pause) {
-            m_gameTime += currentTime - m_lastTickTime;
-            sk->update(0.03f);
-        }
-        frameBuffer->bind(GL_FRAMEBUFFER);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        Director::instance()->update(float(currentTime - m_lastTickTime));
-        m_lastTickTime = currentTime;
-        auto python_module = pybind11::module::import("python");
-        python_module.attr("logic")(currentTime);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
-        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        auto camera_matrix = m_camera->getCameraTransform();
-        auto proj_matrix = m_camera->getProjectionMatrix();
-        UniformBlock::instance()->setUniformBlockMember("view_matrix", glm::value_ptr(camera_matrix));
-        UniformBlock::instance()->setUniformBlockMember("proj_matrix",glm::value_ptr(proj_matrix));
-        vmath::uvec4 light_num = m_lightMgr->getLightNum();
-        UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
-        UniformBlock::instance()->setUniformBlockMember("light_info", m_lightMgr->getLightInfo().data());
-
+    void logic() {
         float f = (float)m_gameTime * 0.3f;
         glm::vec3 translate = glm::vec3(
             sinf(2.1f * f) * 5,
@@ -435,34 +451,70 @@ public:
         glm::vec3 rotate = translate * 50.0f;
         m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
         m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
+    }
 
-        Director::instance()->setOverrideShader(true);
-        Director::instance()->useGlobalShader();
-
-        for (auto model: Director::instance()->getObjects()) {
-            auto m_matrix = model->getTransformMatrix();
-            auto m_matrix_t = glm::transpose(m_matrix);
-            auto mvp_matrix = proj_matrix * camera_matrix * m_matrix;
-            model->getProgram()->setMatrix4fvUniform("m_matrix",glm::value_ptr(m_matrix));
-            model->getProgram()->setMatrix4fvUniform("mvp_matrix", glm::value_ptr(mvp_matrix));
-            model->draw();
+    // Our rendering function
+    void render(double currentTime)
+    {
+        if (!gl3wIsSupported(4, 3)) return;
+        if (!m_pause) {
+            m_gameTime += currentTime - m_lastTickTime;
+            sk->update(0.03f);
         }
-
-        if (sk) {
-            sk->draw();
-        }
-
-        Director::instance()->setOverrideShader(false);
-        glDisable(GL_DEPTH_TEST);
-        Director::instance()->draw();
         
-        frameBuffer->unbind(GL_FRAMEBUFFER);
+        // logic stuff
+        Director::instance()->update(float(currentTime - m_lastTickTime));
+        auto python_module = pybind11::module::import("python");
+        python_module.attr("logic")(currentTime);
+        logic();
+        m_lastTickTime = currentTime;
+
+        // light info
+        vmath::uvec4 light_num = m_lightMgr->getLightNum();
+        UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
+        UniformBlock::instance()->setUniformBlockMember("light_info", m_lightMgr->getLightInfo().data());
+
+        // shadowmap
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+
+        // draw depth buffer from light view
+        shadowMap->bind(GL_FRAMEBUFFER);
+        glViewport(0, 0, 1024, 1024);
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+        
+        // draw shadowmap
+        m_lightCamera->setActive();
+        Director::instance()->draw3D();
+        if (sk) sk->draw();
+
+        // draw regular buffers
+        frameBuffer->bind(GL_FRAMEBUFFER);
+        glViewport(0, 0, info.windowWidth, info.windowHeight);
+        glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+
+        auto texture = shadowMap->getTexture();
+        texture->bindTexture(TEXTURE_SHADOW_MAP);
+
+        m_camera->setActive();
+        Director::instance()->draw3D();
+        if (sk) sk->draw();
+        
+        // texture to screen
+        glDisable(GL_DEPTH_TEST);
+        frameBuffer->unbind(GL_FRAMEBUFFER);
         glClearBufferfv(GL_COLOR, 0, sb7::color::White);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
         m_screen->draw();
+
+        // depth view port
+        m_depth->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
+        m_depth->draw();
+        
+        // ui
+        Director::instance()->draw();
     }
 
 private:
@@ -478,6 +530,9 @@ private:
     int mouse_pos_x = -1;
     int mouse_pos_y = -1;
     Camera * m_camera;
+    Camera * m_lightCamera;
+    bool m_controlLightCamera = false;
+
     GLenum m_polygonMode;
 
     bool m_pause;
@@ -485,7 +540,9 @@ private:
     double m_lastTickTime;
     Skeleton * sk = nullptr;
     FrameBuffer * frameBuffer;
+    FrameBuffer * shadowMap;
     HPolygon * m_screen;
+    HPolygon * m_depth;
 };
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);
