@@ -122,7 +122,12 @@ public:
 
         // init camera
         m_camera = new Camera;
+        m_camera->setCameraPos(0, 2, 0);
+
         m_lightCamera = new Camera;
+        m_lightCamera->setPerspective(false);
+        m_lightCamera->setCameraPos(0, 5, 5);
+        m_lightCamera->lookAt(0, 0, 0);
 
         // init lights
         m_lightMgr = new LightMgr;
@@ -192,7 +197,7 @@ public:
         auto director = Director::instance();
 
         auto terrain = new Terrain;
-        director->addObject(terrain);
+        // director->addObject(terrain);
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
             terrain->addHeight(5.0f);
         });
@@ -224,7 +229,7 @@ public:
 
         ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
         obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        director->addObject(obj);
+        // director->addObject(obj);
 
         HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
@@ -295,10 +300,17 @@ public:
         Director::instance()->addObject(box);
 
         BoxSolid * box1 = new BoxSolid(2, 2, 2);
-        box1->getTransform()->setPosition(1, 1, 1);
+        box1->getTransform()->setPosition(4, 4, 4);
         box1->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box1->setTexture({"Package/res/wall.jpg"});
         Director::instance()->addObject(box1);
+
+        BoxSolid * box2 = new BoxSolid(50, 0.1, 50);
+        box2->getTransform()->setPosition(0, 0, -1);
+        box2->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
+        box2->setTexture({"Package/res/wall.jpg"});
+        Director::instance()->addObject(box2);
+
     }
 
     void init_framebuffer() {
@@ -493,8 +505,7 @@ public:
         m_lightCamera->setActive();
         auto camera_matrix = m_lightCamera->getCameraTransform();
         auto proj_matrix = m_lightCamera->getProjectionMatrix();
-        UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
-        UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
+
         Director::instance()->draw3D();
         if (sk) sk->draw();
 
@@ -508,6 +519,8 @@ public:
         texture->bindTexture(TEXTURE_SHADOW_MAP);
 
         m_camera->setActive();
+        UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
+        UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
         Director::instance()->draw3D();
         if (sk) sk->draw();
         

@@ -30,6 +30,10 @@ void Camera::setActive() {
     UniformBlock::instance()->setUniformBlockMember("proj_matrix", glm::value_ptr(proj_matrix));
 }
 
+void Camera::setCameraPos(float x, float y, float z) {
+    m_cameraPos = glm::vec3(x, y, z);
+}
+
 void Camera::setCameraPos(glm::vec3 pos) {
     m_cameraPos = pos;
 }
@@ -86,6 +90,16 @@ glm::vec3 Camera::getCameraFront() {
 
 void Camera::moveCameraBy(glm::vec3 diff) {
     moveCameraBy(diff[0], diff[1], diff[2]);
+}
+
+void Camera::lookAt(glm::vec3 pos) {
+    m_cameraFront = pos - m_cameraPos;
+    updateCameraFront();
+}
+
+void Camera::lookAt(float x, float y, float z) {
+    m_cameraFront = glm::vec3(x, y, z) - m_cameraPos;
+    updateCameraFront();
 }
 
 glm::mat4 Camera::getCameraTransform() {

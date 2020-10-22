@@ -39,11 +39,11 @@ float shadow_calculation(vec4 lightSpaceFragPos) {
 
 void main(void) {
     float light = 1.0;
-    // for (int i = 0; i < LIGHT_NUM; i++) {
-        // light += dot(o_normal, normalize(light_info[i].pos.xyz));
-    // }
+    for (int i = 0; i < LIGHT_NUM; i++) {
+        light += dot(o_normal, normalize(light_info[i].pos.xyz));
+    }
 
     float shadow = shadow_calculation(o_lightSpaceScreenPos);
-    light = clamp(light, 0, 1) * (1.0 - shadow);
+    light = (1.0 - shadow);
     color = (vec4(light, light, light, 1) + vec4(0.2, 0.2, 0.2, 0)) * texture(s0, o_coord);
 }

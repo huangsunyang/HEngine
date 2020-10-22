@@ -1,8 +1,8 @@
 #version 430 core
 
 layout (location = 0) in vec4 position;
-layout (location = 1) in vec4 normal;
-layout (location = 2) in vec2 coord;
+layout (location = 1) in vec2 coord;
+layout (location = 2) in vec4 normal;
 
 out vec4 o_position;
 out vec4 o_lightSpaceScreenPos;

@@ -12,6 +12,7 @@ public:
 
     void setActive();
 
+    void setCameraPos(float, float, float);
     void setCameraPos(glm::vec3);
     void moveCameraBy(glm::vec3);
     void moveCameraBy(float x, float y, float z);
@@ -36,6 +37,8 @@ public:
     void setAspect(float);
     void setNear(float);
     void setFar(float);
+
+    void setPerspective(bool val) {m_isPerspective = val;}
 
 protected:
     void updateCameraFront();
