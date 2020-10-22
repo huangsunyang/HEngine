@@ -206,11 +206,11 @@ public:
             terrain->addDiff(-1.5f);
         });
 
-        sk = new Skeleton();
-        sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
-        // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
-        sk->playAnimation("package/res/wasp/wasp_walk.anim");
-        sk->update(0.03f);
+        // sk = new Skeleton();
+        // sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
+        // // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
+        // sk->playAnimation("package/res/wasp/wasp_walk.anim");
+        // sk->update(0.03f);
 
         HPolygon * triangle = new HPolygon();
         triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
@@ -229,14 +229,14 @@ public:
         HPolygon * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
         axis->setDrawMode(GL_LINES);
-        axis->loadVertex({
+        axis->loadVertexCoord({
             10., .0, .0, 
             .0, .0, .0, 
             .0, .0, 10.0,
             .0, .0, .0,
             .0, 10.0, 0.,
             .0, .0, .0
-        });
+        }, {}, {});
         director->addObject(axis);
 
         Light * light = m_lightMgr->createLight();
@@ -249,14 +249,14 @@ public:
         HPolygon * polygon = new HPolygon();
         polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
         polygon->setDrawMode(GL_TRIANGLE_FAN);
-        polygon->loadVertex({
+        polygon->loadVertexCoord({
             .25, .0, .0, 
             .75, .0, .0, 
             1.0, .5, .0,
             0.75, 1.0, .0,
             0.25, 1.0, .0,
             .0, .5, .0
-        });
+        }, {}, {});
         // director->addObject(polygon);
 
         m_screen = new HPolygon();
@@ -292,7 +292,13 @@ public:
         BoxSolid * box = new BoxSolid(2, 2, 2);
         box->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box->setTexture({"Package/res/wall.jpg"});
-        // Director::instance()->addObject(box);
+        Director::instance()->addObject(box);
+
+        BoxSolid * box1 = new BoxSolid(2, 2, 2);
+        box1->getTransform()->setPosition(1, 1, 1);
+        box1->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
+        box1->setTexture({"Package/res/wall.jpg"});
+        Director::instance()->addObject(box1);
     }
 
     void init_framebuffer() {
@@ -459,7 +465,7 @@ public:
         if (!gl3wIsSupported(4, 3)) return;
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
-            sk->update(0.03f);
+            if(sk) sk->update(0.03f);
         }
         
         // logic stuff

@@ -5,12 +5,12 @@
 class Terrain: public HPolygon {
 public:
     Terrain() {
-        loadVertex({
+        loadVertexCoord({
             -0.5, 0, +0.5,
             -0.5, 0, -0.5,
             +0.5, 0, +0.5,
             +0.5, 0, -0.5,
-        });
+        }, {}, {});
         setShader({
             "Package/shader/terrain/terrain.vs",
             "Package/shader/terrain/terrain.tesc",
@@ -31,10 +31,10 @@ public:
 
     void addWidth(float x) {
         INFO("add_width\n");
-        verteces[0] -= x;
-        verteces[3] -= x;
-        verteces[6] += x;
-        verteces[9] += x;
+        m_verteces[0] -= x;
+        m_verteces[3] -= x;
+        m_verteces[6] += x;
+        m_verteces[9] += x;
         m_vbo->subData(getPoints());
     }
 
