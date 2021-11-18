@@ -44,6 +44,6 @@ void main(void) {
     }
 
     float shadow = shadow_calculation(o_lightSpaceScreenPos);
-    light = (1.0 - shadow);
-    color = (vec4(light, light, light, 1) + vec4(0.2, 0.2, 0.2, 0)) * texture(s0, o_coord);
+    light = (max(light, 1.0) - shadow);
+    color = (vec4(light, light, light, 1) + vec4(0.5, 0.5, 0.5, 0)) * texture(s0, o_coord);
 }

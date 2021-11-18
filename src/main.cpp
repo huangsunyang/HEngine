@@ -122,12 +122,13 @@ public:
 
         // init camera
         m_camera = new Camera;
-        m_camera->setCameraPos(0, 2, 0);
+        m_camera->setCameraPos(10, 40, 40);
+        m_camera->lookAt(0, 0, 0);
 
         m_lightCamera = new Camera;
         m_lightCamera->setPerspective(false);
-        m_lightCamera->setCameraPos(0, 5, 5);
-        m_lightCamera->lookAt(0, 0, 0);
+        m_lightCamera->setCameraPos(5, 5, 5);
+        m_lightCamera->lookAt(1, 0, 2);
 
         // init lights
         m_lightMgr = new LightMgr;
@@ -154,7 +155,7 @@ public:
         scene->setCurrentScene();
 
         Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        // text->setParent(scene);
+        //text->setParent(scene);
         text->setText("Hello World!");
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
@@ -306,7 +307,7 @@ public:
         Director::instance()->addObject(box1);
 
         BoxSolid * box2 = new BoxSolid(50, 0.1, 50);
-        box2->getTransform()->setPosition(0, 0, -1);
+        box2->getTransform()->setPosition(0, -1, 0);
         box2->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box2->setTexture({"Package/res/wall.jpg"});
         Director::instance()->addObject(box2);
@@ -441,7 +442,9 @@ public:
         for (auto model: Director::instance()->getObjects()) {
             model->setPolygonMode(m_polygonMode);
         }
-        sk->getSkin()->setPolygonMode(m_polygonMode);
+        if (sk) {
+            sk->getSkin()->setPolygonMode(m_polygonMode);
+        }
     }
 
     void shutdown()

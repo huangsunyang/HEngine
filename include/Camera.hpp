@@ -14,6 +14,7 @@ public:
 
     void setCameraPos(float, float, float);
     void setCameraPos(glm::vec3);
+    glm::vec3 getCameraPos() { return m_cameraPos; }
     void moveCameraBy(glm::vec3);
     void moveCameraBy(float x, float y, float z);
     void rotateCameraBy(float x, float y);

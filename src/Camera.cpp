@@ -93,13 +93,16 @@ void Camera::moveCameraBy(glm::vec3 diff) {
 }
 
 void Camera::lookAt(glm::vec3 pos) {
-    m_cameraFront = pos - m_cameraPos;
+    m_cameraFront = glm::normalize(pos - m_cameraPos);
+    m_cameraPitch = asinf(m_cameraFront[1]);
+    m_cameraYaw = acosf(m_cameraFront[0] / cosf(m_cameraPitch));
+    auto yawSign = asinf(m_cameraFront[2] / cosf(m_cameraPitch));
+    if (yawSign < 0) m_cameraYaw = 2 * glm::pi<float>() - m_cameraYaw;
     updateCameraFront();
 }
 
 void Camera::lookAt(float x, float y, float z) {
-    m_cameraFront = glm::vec3(x, y, z) - m_cameraPos;
-    updateCameraFront();
+    lookAt(glm::vec3(x, y, z));
 }
 
 glm::mat4 Camera::getCameraTransform() {
