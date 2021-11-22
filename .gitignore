@@ -7,4 +7,5 @@
 log/*
 *.compile
 build/*
-
+cmake-build-debug/*
+.idea/*

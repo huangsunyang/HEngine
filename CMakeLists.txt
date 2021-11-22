@@ -19,7 +19,7 @@ add_custom_command(TARGET engine POST_BUILD
 set_target_properties(engine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT engine)
 
-target_include_directories(engine PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(engine PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 # add python lib/include dir
 find_package(Python2 COMPONENTS Interpreter Development)

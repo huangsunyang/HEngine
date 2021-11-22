@@ -17,7 +17,7 @@ public:
             "Package/shader/terrain/terrain.tese",
             "Package/shader/terrain/terrain.fs",
         });
-        auto len = 64;
+        auto len = 16;
         getProgram()->setIntUniform("len", len);
         getProgram()->setFloatUniform("dmap_depth", m_height);
         getProgram()->setFloatUniform("diff", m_diff);

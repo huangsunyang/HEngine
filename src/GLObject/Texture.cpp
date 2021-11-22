@@ -19,6 +19,8 @@ void Texture2D::alloc(GLsizei levels, GLenum internalFormat, GLsizei width, GLsi
 }
 
 void Texture2D::bindTexture(int textureBinding) {
+    // good explanation there
+    // https://stackoverflow.com/questions/8866904/differences-and-relationship-between-glactivetexture-and-glbindtexture
     glActiveTexture(GL_TEXTURE0 + textureBinding);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     

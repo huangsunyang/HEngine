@@ -48,6 +48,7 @@ class FileLogger: public ILogger {
 public:
     FileLogger(const char * filename): ILogger(filename) {
         m_file = std::fopen(filename, "w");
+        printf("%b", m_file==NULL);
     }
 
     FileLogger(string filename): FileLogger(filename.c_str()) {}
@@ -59,6 +60,9 @@ public:
     }
 
     virtual void write(const char * log_string) {
+        if (!m_file) {
+            return;
+        }
         std::fprintf(m_file, "%s", log_string);
     }
 

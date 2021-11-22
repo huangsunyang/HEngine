@@ -198,7 +198,7 @@ public:
         auto director = Director::instance();
 
         auto terrain = new Terrain;
-        // director->addObject(terrain);
+        director->addObject(terrain);
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
             terrain->addHeight(5.0f);
         });
@@ -321,7 +321,6 @@ public:
 
         Texture2D * texture = new Texture2D;
         texture->alloc(1, GL_RGBA8, info.windowWidth, info.windowHeight);
-        texture->bindTexture(0);
         m_screen->setTexture({texture});
 
         Texture2D * depth_texture = new Texture2D;
@@ -334,7 +333,6 @@ public:
 
         Texture2D * shadow_map_depth = new Texture2D;
         shadow_map_depth->alloc(1, GL_DEPTH_COMPONENT32F, 1024, 1024);
-        shadow_map_depth->bindTexture(0);
         m_depth->setTexture({shadow_map_depth});
 
         shadowMap = new FrameBuffer;
@@ -499,37 +497,23 @@ public:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
-        // draw depth buffer from light view
-        shadowMap->bind(GL_FRAMEBUFFER);
-        glViewport(0, 0, 1024, 1024);
-        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        
         // draw shadowmap
-        m_lightCamera->setActive();
+        m_lightCamera->drawToFrameBuffer(shadowMap);
         auto camera_matrix = m_lightCamera->getCameraTransform();
         auto proj_matrix = m_lightCamera->getProjectionMatrix();
-
-        Director::instance()->draw3D();
-        if (sk) sk->draw();
-
-        // draw regular buffers
-        frameBuffer->bind(GL_FRAMEBUFFER);
-        glViewport(0, 0, info.windowWidth, info.windowHeight);
-        glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
-        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+        UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
+        UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
 
         auto texture = shadowMap->getTexture();
         texture->bindTexture(TEXTURE_SHADOW_MAP);
 
-        m_camera->setActive();
-        UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
-        UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
-        Director::instance()->draw3D();
-        if (sk) sk->draw();
+        // draw regular buffers
+        m_camera->drawToFrameBuffer(frameBuffer);
         
         // texture to screen
+        glViewport(0, 0, info.windowWidth, info.windowHeight);
         glDisable(GL_DEPTH_TEST);
-        frameBuffer->unbind(GL_FRAMEBUFFER);
+        
         glClearBufferfv(GL_COLOR, 0, sb7::color::White);
         glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
         m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));

@@ -1,10 +1,13 @@
 #include "Camera.hpp"
 #include <math.h>
+#include "sb7/sb7color.h"
+#include "base/Director.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 #include "LogManager.hpp"
 #include "GLObject/UniformBlock.hpp"
+#include "GLObject/FrameBuffer.hpp"
 
 Camera::Camera(glm::vec3 pos) {
     m_cameraPos = pos;
@@ -21,6 +24,24 @@ Camera::Camera(): Camera(glm::vec3(-5, 0, 0)) {}
 
 Camera::~Camera() {
 
+}
+
+void Camera::draw() {
+    setActive();
+    Director::instance()->draw3D();
+}
+
+void Camera::drawToFrameBuffer(FrameBuffer * frameBuffer) {
+    frameBuffer->bind(GL_FRAMEBUFFER);
+    auto texture = frameBuffer->getTexture();
+
+    glViewport(0, 0, texture->getWidth(), texture->getHeight());
+    glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+
+    draw();
+
+    frameBuffer->unbind(GL_FRAMEBUFFER);
 }
 
 void Camera::setActive() {
@@ -59,7 +80,6 @@ void Camera::setCameraPitch(float pitch) {
 
 void Camera::setCameraRotation(float yaw, float pitch) {
     m_cameraYaw = yaw;
-    auto M_PI_2 = glm::half_pi<float>();
     if (pitch > M_PI_2 - 0.3f) {
         pitch = float(M_PI_2 - 0.3f);
     } else if (pitch < 0.3f - M_PI_2) {

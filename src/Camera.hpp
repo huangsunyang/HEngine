@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 
+class FrameBuffer;
 
 class Camera {
 public:
@@ -10,6 +11,8 @@ public:
     Camera(glm::vec3 pos);
     ~Camera();
 
+    void draw();
+    void drawToFrameBuffer(FrameBuffer *);
     void setActive();
 
     void setCameraPos(float, float, float);
