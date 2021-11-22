@@ -1,7 +1,7 @@
 #include "ObjLoader.hpp"
 #include "utils/StringUtils.hpp"
 #include "utils/FileUtils.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 
 
 using namespace Utils;

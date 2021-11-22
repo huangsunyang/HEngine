@@ -1,7 +1,7 @@
 #include "MtlLoader.hpp"
 #include "Utils/StringUtils.hpp"
 #include "Utils/FileUtils.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include <sstream>
 
 using std::stringstream;

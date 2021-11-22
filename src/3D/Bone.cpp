@@ -1,5 +1,5 @@
 #include "3D/Bone.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 void Bone::addChild(Bone * bone) {

@@ -6,7 +6,7 @@
 #include <iostream>
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/euler_angles.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "Utils/Parser.hpp"
 
 using std::fstream;

@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "GLObject/UniformBlock.hpp"
 #include "GLObject/FrameBuffer.hpp"
 

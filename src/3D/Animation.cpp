@@ -2,7 +2,7 @@
 #include "utils/StringUtils.hpp"
 #include "utils/Parser.hpp"
 #include <fstream>
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 
 using namespace Utils;
 

@@ -1,6 +1,6 @@
 #include "base/Director.hpp"
 #include "ui/Scene.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 Director * Director::m_instance = nullptr;

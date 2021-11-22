@@ -2,7 +2,7 @@
 #include "GLObject/UniformBlock.hpp"
 #include <string>
 #include <fstream>
-#include "logger.hpp"
+#include "utils/Logger.hpp"
 #include "utils/FileUtils.hpp"
 
 using namespace std;

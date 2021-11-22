@@ -7,7 +7,7 @@
 #include "sb7/sb7.h"
 #include "sb7/sb7color.h"
 #include "shape2d.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
@@ -528,11 +528,9 @@ public:
     }
 
 private:
-    GLuint vao;
     float aspect;
     LightMgr * m_lightMgr;
     Texture2D * texture;
-    Texture2D * texture1;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
     int _wndPos[2];

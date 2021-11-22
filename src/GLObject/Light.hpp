@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 #include "GLObject/Geometry.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "glm/glm.hpp"
 #include "sb7/vmath.h"
 

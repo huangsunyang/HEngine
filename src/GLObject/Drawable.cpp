@@ -2,7 +2,7 @@
 #include "utils/FileUtils.hpp"
 #include "ObjLoader.hpp"
 #include "shape2d.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "base/Director.hpp"
 
 #define VBO_SIZE 1024 * 1024 * 4

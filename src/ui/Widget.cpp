@@ -1,6 +1,6 @@
 #include "ui/Widget.hpp"
 #include "GLObject/Geometry.hpp"
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "ui/Touch.hpp"
 #include "pugixml.hpp"
 #include "glm/gtc/type_ptr.hpp"

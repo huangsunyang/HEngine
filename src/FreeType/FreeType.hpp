@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 

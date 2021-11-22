@@ -2,16 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(HEngine)
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/src ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/ui ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/base ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/sb7 ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/model_loader ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/GLObject ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/3D ALL_SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/FreeType ALL_SRC)
-
+file(GLOB_RECURSE ALL_SRC RELATIVE ${PROJECT_SOURCE_DIR} "src/*.cpp")
 
 add_executable(engine WIN32 ${ALL_SRC})
 add_custom_command(TARGET engine POST_BUILD

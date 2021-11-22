@@ -2,7 +2,7 @@
 #include "utils/StringUtils.hpp"
 #include "utils/FileUtils.hpp"
 #include <fstream>
-#include "LogManager.hpp"
+#include "utils/LogManager.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "3D/Skeleton.hpp"
 

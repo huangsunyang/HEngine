@@ -2,7 +2,7 @@
 #define __SHAPE_2D__
 #include "sb7/sb7.h"
 #include "glm/glm.hpp"
-#include "logger.hpp"
+#include "utils/Logger.hpp"
 #include "GLObject/Drawable.hpp"
 #include <vector>
 
