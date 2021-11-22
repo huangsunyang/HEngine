@@ -2,10 +2,7 @@
 #include <math.h>
 #include "sb7/sb7color.h"
 #include "base/Director.hpp"
-#include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/transform.hpp"
-#include "utils/LogManager.hpp"
 #include "GLObject/UniformBlock.hpp"
 #include "GLObject/FrameBuffer.hpp"
 
@@ -18,30 +15,86 @@ Camera::Camera(glm::vec3 pos) {
     m_far = 100.0f;
     m_fovy = glm::radians(30.0f);
     m_aspect = 1.f;
+
+    m_viewportPos = glm::vec2(0, 0);
+    m_viewportSize = glm::vec2(1, 1);
+
+    m_depth = 0;
+    Director::getCameraManager()->addCamera(this);
+
+    _initFrameBuffer();
+    _initScreenDrawer();
+}
+
+void Camera::_initFrameBuffer() {
+    m_frameBuffer = new FrameBuffer;
+    // must bind framebuffer here!!, don't know why
+    m_frameBuffer->bind(GL_FRAMEBUFFER);
+
+    auto * texture = new Texture2D;
+    auto designedSize = Director::instance()->getDesignScreenSize();
+    texture->alloc(1, GL_RGBA8, designedSize.x, designedSize.y);
+
+    auto * depth_texture = new Texture2D;
+    depth_texture->alloc(1, GL_DEPTH_COMPONENT32F, designedSize.x, designedSize.y);
+    depth_texture->bindTexture(0);
+
+    m_frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
+    m_frameBuffer->bindTexture(GL_DEPTH_ATTACHMENT, depth_texture, 0);
+    m_frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
+}
+
+void Camera::_initScreenDrawer() {
+    m_screen = new HPolygon();
+    m_screen->setShader({"Package/shader/ui.vs", "package/shader/postprocess/color.fs"});
+    m_screen->setDrawMode(GL_TRIANGLE_STRIP);
+
+    auto x = 2 * m_viewportPos.x - 1;
+    auto y = 1 - 2 * m_viewportPos.y;
+    auto w = 2 * m_viewportSize.x;
+    auto h = 2 * m_viewportSize.y;
+
+    m_screen->loadVertexCoord({
+        x, y, 0,
+        x, y - h, 0,
+        x + w, y, 0,
+        x + w, y - h, 0,
+    }, {
+        0, 1,
+        0, 0,
+        1, 1,
+        1, 0,
+    }, {});
 }
 
 Camera::Camera(): Camera(glm::vec3(-5, 0, 0)) {}
 
 Camera::~Camera() {
-
+    if (m_frameBuffer) {
+        delete m_frameBuffer;
+    }
 }
 
-void Camera::draw() {
+void Camera::_draw() {
     setActive();
     Director::instance()->draw3D();
 }
 
-void Camera::drawToFrameBuffer(FrameBuffer * frameBuffer) {
-    frameBuffer->bind(GL_FRAMEBUFFER);
-    auto texture = frameBuffer->getTexture();
-
+void Camera::draw() {
+    m_frameBuffer->bind(GL_FRAMEBUFFER);
+    auto texture = m_frameBuffer->getTexture();
     glViewport(0, 0, texture->getWidth(), texture->getHeight());
     glClearBufferfv(GL_COLOR, 0, sb7::color::Gray);
     glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
 
-    draw();
+    _draw();
+    FrameBuffer::unbind(GL_FRAMEBUFFER);
+}
 
-    frameBuffer->unbind(GL_FRAMEBUFFER);
+void Camera::drawToScreen() {
+    m_screen->setTexture({getTexture()});
+    m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
+    m_screen->draw();
 }
 
 void Camera::setActive() {
@@ -49,14 +102,6 @@ void Camera::setActive() {
     auto proj_matrix = getProjectionMatrix();
     UniformBlock::instance()->setUniformBlockMember("view_matrix", glm::value_ptr(camera_matrix));
     UniformBlock::instance()->setUniformBlockMember("proj_matrix", glm::value_ptr(proj_matrix));
-}
-
-void Camera::setCameraPos(float x, float y, float z) {
-    m_cameraPos = glm::vec3(x, y, z);
-}
-
-void Camera::setCameraPos(glm::vec3 pos) {
-    m_cameraPos = pos;
 }
 
 void Camera::moveCameraBy(float x, float y, float z) {
@@ -86,10 +131,10 @@ void Camera::setCameraRotation(float yaw, float pitch) {
         pitch = float(0.3f - M_PI_2);
     }
     m_cameraPitch = pitch;
-    updateCameraFront();
+    _updateCameraFront();
 }
 
-void Camera::updateCameraFront() {
+void Camera::_updateCameraFront() {
     m_cameraFront[0] = cosf(m_cameraPitch) * cosf(m_cameraYaw);
     m_cameraFront[1] = sinf(m_cameraPitch);
     m_cameraFront[2] = cosf(m_cameraPitch) * sinf(m_cameraYaw);
@@ -118,7 +163,7 @@ void Camera::lookAt(glm::vec3 pos) {
     m_cameraYaw = acosf(m_cameraFront[0] / cosf(m_cameraPitch));
     auto yawSign = asinf(m_cameraFront[2] / cosf(m_cameraPitch));
     if (yawSign < 0) m_cameraYaw = 2 * glm::pi<float>() - m_cameraYaw;
-    updateCameraFront();
+    _updateCameraFront();
 }
 
 void Camera::lookAt(float x, float y, float z) {

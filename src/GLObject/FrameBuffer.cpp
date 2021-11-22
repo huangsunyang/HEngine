@@ -21,7 +21,11 @@ void FrameBuffer::bind(GLenum target) {
 void FrameBuffer::bindTexture(GLenum attachment, Texture2D * texture, GLuint level) {
     // GL_COLOR_ATTACHMENT0, GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT 
     glNamedFramebufferTexture(m_fbo, attachment, texture->getHandle(), level);
-    m_texture = texture;
+    if (attachment == GL_COLOR_ATTACHMENT0) {
+        m_texture = texture;
+    } else if (attachment == GL_DEPTH_ATTACHMENT) {
+        m_depthTexture = texture;
+    }
 }
 
 void FrameBuffer::drawBuffer(GLenum mode) {

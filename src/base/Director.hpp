@@ -3,6 +3,8 @@
 #include <vector>
 #include <functional>
 
+#include "camera/CameraManager.h"
+
 using std::string;
 using std::vector;
 using std::function;
@@ -18,19 +20,16 @@ class Director {
 public:
     using ScheduleFunc = function<void(float)>;
 
-    static Director * instance() {
-        if (!Director::m_instance) {
-            Director::m_instance = new Director();
-        }
-        return m_instance;
-    }
+    static Director * instance();
+    static CameraManager * getCameraManager();
 
     void setScene(Scene * scene) {m_scene = scene;}
     Scene* getScene() {return m_scene;}
 
     string getDefaultFont() {return "package/font/arial.ttf";}
-    void draw();
+    void draw2D();
     void draw3D();
+    void render();
     void onTouchEvent(Touch * e);
 
     void addSchedule(ScheduleFunc func) {m_scheduleFuncs.push_back(func);}
@@ -40,11 +39,20 @@ public:
     vector<Drawable*>& getObjects() {return models;}
     
     void setOverrideShader(bool b) {m_overrideShader = b;}
-    bool isOverrideShader() {return m_overrideShader;}
+    bool isOverrideShader() const {return m_overrideShader;}
+
+    float getScreenWidth() const {return m_screenSize.x;}
+    float getScreenHeight() const {return m_screenSize.y;}
+    glm::vec2 getScreenSize() {return m_screenSize;}
+    float getAspect() const {return m_aspect;}
+    void setScreenSize(int x, int y);
+
+    glm::vec2 getDesignScreenSize() {return glm::vec2(1280, 720);}
 
 
 protected:
     Director() {}
+    void _renderOneCamera(Camera *);
 
     static Director * m_instance;
 
@@ -55,4 +63,7 @@ protected:
     vector<Drawable *> models;
 
     bool m_overrideShader = false;
+
+    glm::vec2 m_screenSize;
+    float m_aspect;
 };

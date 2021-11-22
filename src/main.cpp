@@ -129,6 +129,8 @@ public:
         m_lightCamera->setPerspective(false);
         m_lightCamera->setCameraPos(5, 5, 5);
         m_lightCamera->lookAt(1, 0, 2);
+        m_lightCamera->setViewSize(0.2, 0.2);
+        m_lightCamera->setViewPos(0.1, 0.1);
 
         // init lights
         m_lightMgr = new LightMgr;
@@ -140,7 +142,6 @@ public:
         */
         init_shape();
         onResize(info.windowWidth, info.windowHeight);
-        init_framebuffer();
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_BLEND);
@@ -198,7 +199,7 @@ public:
         auto director = Director::instance();
 
         auto terrain = new Terrain;
-        director->addObject(terrain);
+//        director->addObject(terrain);
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
             terrain->addHeight(5.0f);
         });
@@ -314,33 +315,6 @@ public:
 
     }
 
-    void init_framebuffer() {
-        frameBuffer = new FrameBuffer;
-        // must bind framebuffer here!!, don't know why
-        frameBuffer->bind(GL_FRAMEBUFFER);
-
-        Texture2D * texture = new Texture2D;
-        texture->alloc(1, GL_RGBA8, info.windowWidth, info.windowHeight);
-        m_screen->setTexture({texture});
-
-        Texture2D * depth_texture = new Texture2D;
-        depth_texture->alloc(1, GL_DEPTH_COMPONENT32F, info.windowWidth, info.windowHeight);
-        depth_texture->bindTexture(0);
-
-        frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
-        frameBuffer->bindTexture(GL_DEPTH_ATTACHMENT, depth_texture, 0);
-        frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
-
-        Texture2D * shadow_map_depth = new Texture2D;
-        shadow_map_depth->alloc(1, GL_DEPTH_COMPONENT32F, 1024, 1024);
-        m_depth->setTexture({shadow_map_depth});
-
-        shadowMap = new FrameBuffer;
-        shadowMap->bind(GL_FRAMEBUFFER);
-        shadowMap->bindTexture(GL_DEPTH_ATTACHMENT, shadow_map_depth, 0);
-        shadowMap->drawBuffer(GL_DEPTH_ATTACHMENT);
-    }
-
     void onMouseButton(int button, int action) {
         auto touch = new Touch;
         auto width = info.windowWidth, height = info.windowHeight;
@@ -404,8 +378,7 @@ public:
     void onResize(int w, int h) {
         sb7::application::onResize(w, h);
         glViewport(0, 0, w, h);
-        aspect = (float)info.windowWidth / (float)info.windowHeight;
-        m_camera->setAspect(aspect);
+        Director::instance()->setScreenSize(w, h);
     }
 
     bool isFullscreen() {
@@ -498,33 +471,19 @@ public:
         glDepthFunc(GL_LESS);
 
         // draw shadowmap
-        m_lightCamera->drawToFrameBuffer(shadowMap);
         auto camera_matrix = m_lightCamera->getCameraTransform();
         auto proj_matrix = m_lightCamera->getProjectionMatrix();
         UniformBlock::instance()->setUniformBlockMember("light_view_matrix", glm::value_ptr(camera_matrix));
         UniformBlock::instance()->setUniformBlockMember("light_proj_matrix", glm::value_ptr(proj_matrix));
 
-        auto texture = shadowMap->getTexture();
+        auto texture = m_lightCamera->getDepthTexture();
         texture->bindTexture(TEXTURE_SHADOW_MAP);
 
-        // draw regular buffers
-        m_camera->drawToFrameBuffer(frameBuffer);
-        
-        // texture to screen
-        glViewport(0, 0, info.windowWidth, info.windowHeight);
-        glDisable(GL_DEPTH_TEST);
-        
-        glClearBufferfv(GL_COLOR, 0, sb7::color::White);
-        glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-        m_screen->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
-        m_screen->draw();
+        Director::instance()->render();
 
-        // depth view port
-        m_depth->getProgram()->setMatrix4fvUniform("m_matrix", glm::value_ptr(glm::mat4(1.0f)));
-        m_depth->draw();
-        
+
         // ui
-        Director::instance()->draw();
+        Director::instance()->draw2D();
     }
 
 private:

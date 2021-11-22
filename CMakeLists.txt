@@ -4,7 +4,7 @@ project(HEngine)
 
 file(GLOB_RECURSE ALL_SRC RELATIVE ${PROJECT_SOURCE_DIR} "src/*.cpp")
 
-add_executable(engine WIN32 ${ALL_SRC})
+add_executable(engine WIN32 ${ALL_SRC} src/camera/CameraManager.cpp src/camera/CameraManager.h)
 add_custom_command(TARGET engine POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:engine> ${PROJECT_SOURCE_DIR})
 set_target_properties(engine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
