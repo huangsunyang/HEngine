@@ -1,4 +1,4 @@
-#include "MtlLoader.hpp"
+#include "3D/MtlLoader.hpp"
 #include "Utils/StringUtils.hpp"
 #include "Utils/FileUtils.hpp"
 #include "utils/LogManager.hpp"

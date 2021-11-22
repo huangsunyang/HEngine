@@ -1,7 +1,7 @@
 #include "GLObject/Drawable.hpp"
 #include "utils/FileUtils.hpp"
-#include "ObjLoader.hpp"
-#include "shape2d.hpp"
+#include "3D/ObjLoader.hpp"
+#include "ui/shape2d.hpp"
 #include "utils/LogManager.hpp"
 #include "base/Director.hpp"
 

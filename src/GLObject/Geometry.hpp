@@ -3,7 +3,7 @@
 #include "ui/Common.hpp"
 #include "glm/glm.hpp"
 #include "GLObject/FontAtlas.hpp"
-#include "shape2d.hpp"
+#include "ui/shape2d.hpp"
 
 
 using glm::vec2;

@@ -1,4 +1,4 @@
-#include "ObjLoader.hpp"
+#include "3D/ObjLoader.hpp"
 #include "utils/StringUtils.hpp"
 #include "utils/FileUtils.hpp"
 #include "utils/LogManager.hpp"

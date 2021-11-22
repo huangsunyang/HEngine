@@ -1,5 +1,5 @@
 #include "GLObject/Drawable.hpp"
-#include "shape2d.hpp"
+#include "ui/shape2d.hpp"
 #include "GLFW/glfw3.h"
 
 class Terrain: public HPolygon {

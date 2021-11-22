@@ -3,6 +3,8 @@
 *.ilk
 *.pdb
 *.pyc
+*.rdc
+*.cap
 .vs
 log/*
 *.compile

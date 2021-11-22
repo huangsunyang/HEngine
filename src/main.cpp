@@ -6,14 +6,14 @@
 #include <streambuf>
 #include "sb7/sb7.h"
 #include "sb7/sb7color.h"
-#include "shape2d.hpp"
+#include "ui/shape2d.hpp"
 #include "utils/LogManager.hpp"
 #include <pybind11/embed.h>
 #include "GLObject/Program.hpp"
 #include "GLObject/Texture.hpp"
 #include "GLObject/Light.hpp"
 #include "GLObject/UniformBlock.hpp"
-#include "Camera.hpp"
+#include "camera/Camera.hpp"
 #include "ui/scene.hpp"
 #include "ui/Text.hpp"
 #include "ui/ParticleSystem.hpp"
@@ -21,7 +21,7 @@
 #include "3D/Skeleton.hpp"
 #include "3D/Skin.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "ObjLoader.hpp"
+#include "3D/ObjLoader.hpp"
 #include "3D/Terrain.hpp"
 #include "GLObject/FrameBuffer.hpp"
 
