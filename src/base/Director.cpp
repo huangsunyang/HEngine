@@ -3,9 +3,10 @@
 #include "utils/LogManager.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "sb7/sb7color.h"
+#include "GLObject/Light.hpp"
+#include "GLObject/UniformBlock.hpp"
 
 Director * Director::m_instance = nullptr;
-
 
 Director * Director::instance() {
     if (!Director::m_instance) {
@@ -33,13 +34,14 @@ void Director::draw3D() {
 }
 
 void Director::render() {
+    // light info
+    vmath::uvec4 light_num = LightMgr::instance()->getLightNum();
+    UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
+    UniformBlock::instance()->setUniformBlockMember("light_info", LightMgr::instance()->getLightInfo().data());
+
     auto cameras = getCameraManager()->getCameras();
-    std::sort(cameras.begin(), cameras.end(), [](Camera * a, Camera * b) {
-        if (a->getDepth() == b->getDepth()) {
-            return a > b;
-        } else {
-            return a->getDepth() < b->getDepth();
-        }
+    std::stable_sort(cameras.begin(), cameras.end(), [](Camera * a, Camera * b) {
+        return a->getDepth() < b->getDepth();
     });
     for (auto camera: cameras) {
         _renderOneCamera(camera);

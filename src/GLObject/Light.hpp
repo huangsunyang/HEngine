@@ -49,8 +49,9 @@ protected:
 
 class LightMgr {
 public:
-    LightMgr() {}
-    ~LightMgr() {}
+    ~LightMgr() = default;
+
+    static LightMgr * instance();
 
     Light * getLight(size_t index) {return m_lights[index];}
     vmath::uvec4 getLightNum() {return {m_lights.size(), m_lights.size(), m_lights.size(), m_lights.size()};}
@@ -61,7 +62,9 @@ public:
     void addLight(Light *);
     void removeLight();
 
-private:
+protected:
+    LightMgr() = default;
+    static LightMgr * s_instance;
     vector<Light *> m_lights;
     static const size_t m_maxLightNum = 10;
 };

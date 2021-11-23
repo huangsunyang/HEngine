@@ -1,5 +1,7 @@
 #include "GLObject/Light.hpp"
 
+LightMgr * LightMgr::s_instance = nullptr;
+
 Light * LightMgr::createLight(LightType type) {
     Light * light = new Light;
     m_lights.push_back(light);
@@ -13,4 +15,11 @@ vector<LightInfo> LightMgr::getLightInfo() {
         lightInfo[i] = m_lights[i]->getLightInfo();
     }
     return lightInfo;
+}
+
+LightMgr *LightMgr::instance() {
+    if (s_instance == nullptr) {
+        s_instance = new LightMgr;
+    }
+    return s_instance;
 }

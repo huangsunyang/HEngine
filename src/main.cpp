@@ -1,36 +1,22 @@
-#include <math.h>
+#include <cmath>
 #include <string>
-#include <fstream>
-#include <io.h>
-#include <fcntl.h>
-#include <streambuf>
 #include "sb7/sb7.h"
 #include "sb7/sb7color.h"
 #include "ui/shape2d.hpp"
-#include "utils/LogManager.hpp"
 #include <pybind11/embed.h>
-#include "GLObject/Program.hpp"
-#include "GLObject/Texture.hpp"
 #include "GLObject/Light.hpp"
 #include "GLObject/UniformBlock.hpp"
 #include "camera/Camera.hpp"
-#include "ui/scene.hpp"
+#include "ui/Scene.hpp"
 #include "ui/Text.hpp"
-#include "ui/ParticleSystem.hpp"
 #include "base/EventDispatcher.hpp"
-#include "3D/Skeleton.hpp"
-#include "3D/Skin.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "3D/ObjLoader.hpp"
 #include "3D/Terrain.hpp"
-#include "GLObject/FrameBuffer.hpp"
-
-
 #include "DbgHelp.h"
  
 LONG WINAPI ExceptionFilter(LPEXCEPTION_POINTERS lpExceptionInfo);
- 
- 
+
 // dump
 int GenerateMiniDump(PEXCEPTION_POINTERS pExceptionPointers)
 {
@@ -45,15 +31,15 @@ int GenerateMiniDump(PEXCEPTION_POINTERS pExceptionPointers)
         PMINIDUMP_CALLBACK_INFORMATION
         );
     // 从 "DbgHelp.dll" 库中获取 "MiniDumpWriteDump" 函数
-    MiniDumpWriteDumpT pfnMiniDumpWriteDump = NULL;
+    MiniDumpWriteDumpT pfnMiniDumpWriteDump = nullptr;
     HMODULE hDbgHelp = LoadLibrary("DbgHelp.dll");
-    if (NULL == hDbgHelp)
+    if (nullptr == hDbgHelp)
     {
         return EXCEPTION_CONTINUE_EXECUTION;
     }
     pfnMiniDumpWriteDump = (MiniDumpWriteDumpT)GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
  
-    if (NULL == pfnMiniDumpWriteDump)
+    if (nullptr == pfnMiniDumpWriteDump)
     {
         FreeLibrary(hDbgHelp);
         return EXCEPTION_CONTINUE_EXECUTION;
@@ -96,12 +82,11 @@ LONG WINAPI ExceptionFilter(LPEXCEPTION_POINTERS lpExceptionInfo)
     return GenerateMiniDump(lpExceptionInfo);
 }
 
-
 // Derive my_application from sb7::application
 class my_application : public sb7::application
 {
 public:
-    void startup()
+    void startup() override
     {   
         SetUnhandledExceptionFilter(ExceptionFilter);
         left_mouse_down = false;
@@ -121,9 +106,15 @@ public:
         initEvent();
 
         // init camera
-        m_camera = new Camera;
-        m_camera->setCameraPos(10, 40, 40);
-        m_camera->lookAt(0, 0, 0);
+        auto camera = new Camera;
+        camera->setCameraPos(10, 40, 40);
+        camera->lookAt(0, 0, 0);
+
+        auto c = new Camera;
+        c->setCameraPos(50, 50, 50);
+        c->lookAt(0, 0, 0);
+        c->setViewPos(0.8, 0.8);
+        c->setViewSize(.2, .2);
 
         m_lightCamera = new Camera;
         m_lightCamera->setPerspective(false);
@@ -132,14 +123,6 @@ public:
         m_lightCamera->setViewSize(0.2, 0.2);
         m_lightCamera->setViewPos(0.1, 0.1);
 
-        // init lights
-        m_lightMgr = new LightMgr;
-        
-        /*
-        shader_mgr.bind_shader(GL_TESS_CONTROL_SHADER, "tess_control_shader");
-        shader_mgr.bind_shader(GL_TESS_EVALUATION_SHADER, "tess_evaluation_shader");
-        shader_mgr.bind_shader(GL_GEOMETRY_SHADER, "geometry_shader");
-        */
         init_shape();
         onResize(info.windowWidth, info.windowHeight);
         glEnable(GL_DEPTH_TEST);
@@ -149,91 +132,42 @@ public:
     }
 
     void initUI() {
-        Scene * scene = new Scene("package/ui/scene_test.xml");
+        auto * scene = new Scene("package/ui/scene_test.xml");
         scene->addTouchEventListener([this](Widget * w, Touch * touch) {
             INFO("---------------------\n");
         });
         scene->setCurrentScene();
 
         Text * text = new Text({0, 0}, {1.5f, 1.5f}, "text", scene);
-        //text->setParent(scene);
-        text->setText("Hello World!");
+        text->setParent(scene);
+        text->setText("He");
         text->setFont("package/font/consolab.ttf");
         text->setColor({0, 0, 1});
         text->setFontSize(100);
 
-        // Widget * widget = new Widget;
-        // widget->setParent(scene);
-        // widget->setShader({"Package/shader/ui.vs", "Package/shader/ui/ui_blink.fs"});
-        // widget->loadTexture("Package/res/sword.png");
-        // Director::instance()->addSchedule(
-        //     [this, widget](float dt) {
-        //         widget->getProgram()->setFloatUniform("sys_time", float(m_gameTime)); 
-        //     }
-        // );
-
-        // ParticleSystem * p = new ParticleSystem({0, 0}, {1.5f, 1.5f}, "Particle Emitter", scene);
-        // p->initWithFile("");
-        // p->setParent(scene);
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_A, [text](){
+           text->setText(text->getText() + "A");
+        });
     }
 
     void initEvent() {
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_F, [this](){switchFullScreen();});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_W, [this](){switchWireframeMode();});
         EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_SPACE, [this](){m_pause = !m_pause;});
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [this](){
-            sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") - 0.05f);
-            sk->update(0.03f);
+        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_T, [this](){
+            auto cameras = CameraManager::getInstance()->getCameras();
+            m_controlingCamera = (m_controlingCamera + 1) % cameras.size();
         });
-
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [this](){
-            sk->getSkin()->setMorphBlend("package/res/head/head2.morph", sk->getSkin()->getMorphBlend("package/res/head/head2.morph") + 0.05f);
-            sk->update(0.03f);
-        });
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_R, [this](){sk->resetAnimation();});
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_T, [this](){m_controlLightCamera = !m_controlLightCamera;});
-
     }
 
     void init_shape() {
         auto director = Director::instance();
 
-        auto terrain = new Terrain;
-//        director->addObject(terrain);
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_UP, [terrain]() {
-            terrain->addHeight(5.0f);
-        });
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_DOWN, [terrain]() {
-            terrain->addHeight(-5.0f);
-        });
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_LEFT, [terrain]() {
-            terrain->addDiff(1.5f);
-        });
-        EventDispatcher::instance()->registerKeyDownEvent(GLFW_KEY_RIGHT, [terrain]() {
-            terrain->addDiff(-1.5f);
-        });
-
-        // sk = new Skeleton();
-        // sk->load("package/res/wasp/wasp.skel", "package/res/wasp/wasp.skin");
-        // // sk->getSkin()->loadMorph("package/res/head/head2.morph", 1.0f);
-        // sk->playAnimation("package/res/wasp/wasp_walk.anim");
-        // sk->update(0.03f);
-
-        HPolygon * triangle = new HPolygon();
-        triangle->setShader({"Package/shader/texture.fs", "Package/shader/texture.vs"});
-        triangle->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
-        triangle->loadVertexCoord({-1, -1, 0, 1, -1, 0, -1, 1, 0}, {0, 0, 1, 0, 0, 1}, {});
-        // director.addObject(triangle);
-
-        // auto m_drawer = new UIRectangle({0, 0}, {1, 1});
-        // m_drawer->setTexture({"Package/res/awesomeface.png", "Package/res/wall.jpg", "Package/res/timg.jpg"});
-        // director->addObject(m_drawer);
-
-        ObjLoader * obj = new ObjLoader("Package/res/capsule.obj");
+        auto * obj = new ObjLoader("Package/res/capsule.obj");
         obj->setShader({"Package/shader/common_light.vs", "Package/shader/common_light.fs"});
-        // director->addObject(obj);
+        director->addObject(obj);
 
-        HPolygon * axis = new HPolygon();
+        auto * axis = new HPolygon();
         axis->setShader({"Package/shader/axis.vs", "Package/shader/common.fs"});
         axis->setDrawMode(GL_LINES);
         axis->loadVertexCoord({
@@ -246,68 +180,25 @@ public:
         }, {}, {});
         director->addObject(axis);
 
-        Light * light = m_lightMgr->createLight();
+        Light * light = LightMgr::instance()->createLight();
         light->getTransform()->setPosition({0, 5, 0});
         auto dir = light->getTransform()->getForward();
-        //DEBUG("light forward: %lf %lf %lf\n", dir[0], dir[1], dir[2]);
         director->addObject(light);
-        director->addObject(m_lightMgr->createLight());
+        director->addObject(LightMgr::instance()->createLight());
 
-        HPolygon * polygon = new HPolygon();
-        polygon->setShader({"Package/shader/ui.vs", "package/shader/common.fs"});
-        polygon->setDrawMode(GL_TRIANGLE_FAN);
-        polygon->loadVertexCoord({
-            .25, .0, .0, 
-            .75, .0, .0, 
-            1.0, .5, .0,
-            0.75, 1.0, .0,
-            0.25, 1.0, .0,
-            .0, .5, .0
-        }, {}, {});
-        // director->addObject(polygon);
-
-        m_screen = new HPolygon();
-        m_screen->setShader({"Package/shader/ui.vs", "package/shader/postprocess/color.fs"});
-        m_screen->setDrawMode(GL_TRIANGLE_STRIP);
-        m_screen->loadVertexCoord({
-            -1, +1, 0,
-            -1, -1, 0,
-            +1, +1, 0,
-            +1, -1, 0,
-        }, {
-            0, 1,
-            0, 0,
-            1, 1,
-            1, 0,
-        }, {});
-
-        m_depth = new HPolygon();
-        m_depth->setShader({"Package/shader/ui.vs", "package/shader/postprocess/depth.fs"});
-        m_depth->setDrawMode(GL_TRIANGLE_STRIP);
-        m_depth->loadVertexCoord({
-            -0.9f, +0.9f, 0,
-            -0.9f, +0.4f, 0,
-            -0.4f, +0.9f, 0,
-            -0.4f, +0.4f, 0,
-        }, {
-            0, 1,
-            0, 0,
-            1, 1,
-            1, 0,
-        }, {});
-
-        BoxSolid * box = new BoxSolid(2, 2, 2);
+        auto * box = new BoxSolid(2, 2, 2);
+        box->getTransform()->setPosition(0, 0, 4);
         box->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box->setTexture({"Package/res/wall.jpg"});
         Director::instance()->addObject(box);
 
-        BoxSolid * box1 = new BoxSolid(2, 2, 2);
+        auto * box1 = new BoxSolid(2, 2, 2);
         box1->getTransform()->setPosition(4, 4, 4);
         box1->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box1->setTexture({"Package/res/wall.jpg"});
         Director::instance()->addObject(box1);
 
-        BoxSolid * box2 = new BoxSolid(50, 0.1, 50);
+        auto * box2 = new BoxSolid(50, 0.1, 50);
         box2->getTransform()->setPosition(0, -1, 0);
         box2->setShader({"Package/shader/common_light.vs", "package/shader/common_light.fs"});
         box2->setTexture({"Package/res/wall.jpg"});
@@ -315,7 +206,7 @@ public:
 
     }
 
-    void onMouseButton(int button, int action) {
+    void onMouseButton(int button, int action) override {
         auto touch = new Touch;
         auto width = info.windowWidth, height = info.windowHeight;
         if (button == GLFW_MOUSE_BUTTON_1) {
@@ -339,7 +230,7 @@ public:
         }
     }
 
-    void onMouseMove(int x, int y) {
+    void onMouseMove(int x, int y) override {
         auto camera = getControlCamera();
         if (left_mouse_down) {
             if (!(mouse_pos_x < 0 && mouse_pos_y < 0)) {
@@ -358,7 +249,7 @@ public:
         mouse_pos_x = x, mouse_pos_y = y;
     }
 
-    void onKey(int key, int action) {
+    void onKey(int key, int action) override {
         if (action == GLFW_PRESS) {
             EventDispatcher::instance()->dispatchKeyDownEvent(key);
         } else if (action == GLFW_RELEASE) {
@@ -366,16 +257,17 @@ public:
         }
     }
 
-    Camera * getControlCamera() {
-        return m_controlLightCamera ? m_lightCamera : m_camera;
+    Camera * getControlCamera() const {
+        auto cameras = CameraManager::getInstance()->getCameras();
+        return cameras[m_controlingCamera % cameras.size()];
     }
 
-    void onMouseWheel(int pos) {
+    void onMouseWheel(int pos) override {
         auto camera = getControlCamera();
         camera->moveCameraBy(0, 0, pos * 0.5f);
     }
 
-    void onResize(int w, int h) {
+    void onResize(int w, int h) override {
         sb7::application::onResize(w, h);
         glViewport(0, 0, w, h);
         Director::instance()->setScreenSize(w, h);
@@ -413,22 +305,19 @@ public:
         for (auto model: Director::instance()->getObjects()) {
             model->setPolygonMode(m_polygonMode);
         }
-        if (sk) {
-            sk->getSkin()->setPolygonMode(m_polygonMode);
-        }
     }
 
-    void shutdown()
+    void shutdown() override
     {
     }
 
-    virtual void run(application * app) {
+    void run(application * app) override {
         pybind11::scoped_interpreter guard{};
         pybind11::module::import("sys").attr("path").cast<pybind11::list>().append("./package/script");
         this->application::run(this);
     }
 
-    void logic() {
+    void logic() const {
         float f = (float)m_gameTime * 0.3f;
         glm::vec3 translate = glm::vec3(
             sinf(2.1f * f) * 5,
@@ -441,17 +330,16 @@ public:
             sinf(1.5f * f) * 3
         );
         glm::vec3 rotate = translate * 50.0f;
-        m_lightMgr->getLight(0)->getTransform()->setPosition(translate);
-        m_lightMgr->getLight(1)->getTransform()->setPosition(translate1);
+        LightMgr::instance()->getLight(0)->getTransform()->setPosition(translate);
+        LightMgr::instance()->getLight(1)->getTransform()->setPosition(translate1);
     }
 
     // Our rendering function
-    void render(double currentTime)
+    void render(double currentTime) override
     {
         if (!gl3wIsSupported(4, 3)) return;
         if (!m_pause) {
             m_gameTime += currentTime - m_lastTickTime;
-            if(sk) sk->update(0.03f);
         }
         
         // logic stuff
@@ -460,11 +348,6 @@ public:
         python_module.attr("logic")(currentTime);
         logic();
         m_lastTickTime = currentTime;
-
-        // light info
-        vmath::uvec4 light_num = m_lightMgr->getLightNum();
-        UniformBlock::instance()->setUniformBlockMember("light_num_info", &light_num);
-        UniformBlock::instance()->setUniformBlockMember("light_info", m_lightMgr->getLightInfo().data());
 
         // shadowmap
         glEnable(GL_DEPTH_TEST);
@@ -481,35 +364,27 @@ public:
 
         Director::instance()->render();
 
-
         // ui
         Director::instance()->draw2D();
     }
 
 private:
     float aspect;
-    LightMgr * m_lightMgr;
-    Texture2D * texture;
     bool left_mouse_down = false;
     bool middle_mouse_down = false;
     int _wndPos[2];
     int _wndSize[2];
     int mouse_pos_x = -1;
     int mouse_pos_y = -1;
-    Camera * m_camera;
     Camera * m_lightCamera;
-    bool m_controlLightCamera = false;
+    int m_controlingCamera = 0;
 
     GLenum m_polygonMode;
 
     bool m_pause;
     double m_gameTime;
     double m_lastTickTime;
-    Skeleton * sk = nullptr;
-    FrameBuffer * frameBuffer;
-    FrameBuffer * shadowMap;
-    HPolygon * m_screen;
-    HPolygon * m_depth;
 };
+
 // Our one and only instance of DECLARE_MAIN
 DECLARE_MAIN(my_application);

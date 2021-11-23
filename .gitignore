@@ -5,6 +5,7 @@
 *.pyc
 *.rdc
 *.cap
+*.dmp
 .vs
 log/*
 *.compile
