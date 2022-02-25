@@ -42,6 +42,7 @@ void Camera::_initFrameBuffer() {
     m_frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, texture, 0);
     m_frameBuffer->bindTexture(GL_DEPTH_ATTACHMENT, depth_texture, 0);
     m_frameBuffer->drawBuffer(GL_COLOR_ATTACHMENT0);
+    FrameBuffer::unbind(GL_FRAMEBUFFER);
 }
 
 void Camera::_initScreenDrawer() {

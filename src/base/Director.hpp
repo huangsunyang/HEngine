@@ -29,6 +29,7 @@ public:
     string getDefaultFont() {return "package/font/arial.ttf";}
     void draw2D();
     void draw3D();
+    void preRender();
     void render();
     void onTouchEvent(Touch * e);
 

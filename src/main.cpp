@@ -14,6 +14,7 @@
 #include "3D/ObjLoader.hpp"
 #include "3D/Terrain.hpp"
 #include "DbgHelp.h"
+#include "ui/imgui.h"
  
 LONG WINAPI ExceptionFilter(LPEXCEPTION_POINTERS lpExceptionInfo);
 
@@ -362,10 +363,14 @@ public:
         auto texture = m_lightCamera->getDepthTexture();
         texture->bindTexture(TEXTURE_SHADOW_MAP);
 
-        Director::instance()->render();
+        Director::instance()->preRender();
+//        Director::instance()->render();
 
         // ui
-        Director::instance()->draw2D();
+//        Director::instance()->draw2D();
+
+        ImGui::Button("imgui text");
+        ImGui::Text("imgui text");
     }
 
 private:

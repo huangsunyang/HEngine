@@ -33,6 +33,13 @@ void Director::draw3D() {
     }
 }
 
+void Director::preRender() {
+    glDisable(GL_DEPTH_TEST);
+    glClearBufferfv(GL_COLOR, 0, sb7::color::White);
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+    glViewport(0, 0, m_screenSize.x, m_screenSize.y);
+}
+
 void Director::render() {
     // light info
     vmath::uvec4 light_num = LightMgr::instance()->getLightNum();
@@ -47,10 +54,6 @@ void Director::render() {
         _renderOneCamera(camera);
     }
 
-    glDisable(GL_DEPTH_TEST);
-    glClearBufferfv(GL_COLOR, 0, sb7::color::White);
-    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
-    glViewport(0, 0, m_screenSize.x, m_screenSize.y);
     for (auto camera: cameras) {
         camera->drawToScreen();
     }
